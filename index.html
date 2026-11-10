@@ -1,0 +1,2959 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Lịch LETAN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  
+  <!-- Cấu hình Full màn hình như App gốc trên iPhone (iOS PWA) & Android -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lịch LETAN">
+  <meta name="theme-color" content="#111111">
+
+  <!-- Icon hiển thị trên tab trình duyệt (Favicon SVG) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%237b1113'/%3E%3Crect x='96' y='116' width='320' height='300' rx='36' fill='%23ffffff'/%3E%3Cpath d='M96 152 c0-20 16-36 36-36 h248 c20 0 36 16 36 36 v48 H96 z' fill='%23111111'/%3E%3Ccircle cx='176' cy='116' r='18' fill='%23d4d4d8'/%3E%3Ccircle cx='336' cy='116' r='18' fill='%23d4d4d8'/%3E%3Ctext x='256' y='345' font-family='Arial, sans-serif' font-size='135' font-weight='900' fill='%237b1113' text-anchor='middle'%3ELT%3C/text%3E%3C/svg%3E">
+
+  <!-- Script tự động vẽ Icon độ nét cao cho Màn hình chính iPhone & tạo Web Manifest -->
+  <script>
+    (function() {
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        var ctx = canvas.getContext('2d');
+
+        // 1. Nền đỏ đậm thương hiệu (#7b1113)
+        ctx.fillStyle = '#7b1113';
+        ctx.fillRect(0, 0, 512, 512);
+
+        // 2. Khung tờ lịch trắng ở giữa
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(86, 106, 340, 320, 42);
+        ctx.fill();
+
+        // 3. Thanh gáy lịch màu đen (#111111)
+        ctx.fillStyle = '#111111';
+        ctx.beginPath();
+        ctx.roundRect(86, 106, 340, 86, [42, 42, 0, 0]);
+        ctx.fill();
+
+        // 4. Hai khuyên lịch màu bạc
+        ctx.fillStyle = '#e4e4e7';
+        ctx.beginPath();
+        ctx.arc(176, 149, 16, 0, Math.PI * 2);
+        ctx.arc(336, 149, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 5. Chữ LT nổi bật ở giữa tờ lịch
+        ctx.fillStyle = '#7b1113';
+        ctx.font = '900 150px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('LT', 256, 315);
+
+        var pngIconUrl = canvas.toDataURL('image/png');
+
+        // Gắn Apple Touch Icon cho iOS Safari
+        var appleIcon = document.createElement('link');
+        appleIcon.rel = 'apple-touch-icon';
+        appleIcon.href = pngIconUrl;
+        document.head.appendChild(appleIcon);
+
+        // Tạo file Manifest ảo giúp iOS & Android nhận diện chuẩn Standalone App
+        var manifest = {
+          name: "Quản Lý Job - Lịch LETAN",
+          short_name: "Lịch LETAN",
+          start_url: ".",
+          display: "standalone",
+          background_color: "#111111",
+          theme_color: "#111111",
+          icons: [{ src: pngIconUrl, sizes: "512x512", type: "image/png" }]
+        };
+        var manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+        document.head.appendChild(manifestLink);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --sidebar-width: 250px;
+      --primary-dark: #7b1113;
+      --primary-hover: #9b2c2c;
+    }
+    body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; color: #1e293b; margin: 0; }
+    
+    .app-layout { display: flex; min-height: 100vh; }
+    
+    .sidebar { width: var(--sidebar-width); background-color: #111111; color: #a1a1aa; padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+    .sidebar-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #71717a; padding: 0 20px 10px; font-weight: 600; }
+    .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+    .sidebar-item { padding: 12px 20px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; color: #d4d4d8; text-decoration: none; }
+    .sidebar-item:hover { background-color: #27272a; color: #ffffff; }
+    .sidebar-item.active { background-color: #27272a; color: #ffffff; border-left: 4px solid var(--primary-dark); }
+
+    .main-content { flex-grow: 1; padding: 28px; background-color: #f8fafc; overflow-x: hidden; }
+
+    .page-subtitle { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #b91c1c; font-weight: 700; margin-bottom: 4px; }
+    .page-title { font-size: 24px; font-weight: 700; color: #09090b; margin-bottom: 16px; }
+
+    /* Khung lịch cố định tỷ lệ ổn định khi co giãn trình duyệt */
+    .calendar-card { background: white; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; width: 100%; }
+    .calendar-weekday { text-align: center; font-weight: 600; font-size: 12px; color: #71717a; padding-bottom: 6px; user-select: none; }
+    
+    .calendar-day {
+      height: 68px;
+      min-height: 68px;
+      max-height: 68px;
+      background: #ffffff; 
+      border: 1px solid #f1f5f9; 
+      border-radius: 10px;
+      padding: 4px 2px; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: flex-start;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer; 
+      transition: background-color 0.15s, border-color 0.15s;
+      overflow: hidden;
+      box-sizing: border-box;
+      user-select: none;
+    }
+    .calendar-day:hover { border-color: #cbd5e1; background: #fafafa; }
+    .calendar-day.other-month { background: #fafafa; color: #cbd5e1; pointer-events: none; }
+    .calendar-day.today { border: 2px solid var(--primary-dark); }
+    .calendar-day.has-event { background: #fff5f5; border-color: #feb2b2; }
+    .calendar-day.selected-date { background: #7b1113 !important; color: white !important; border-color: #5a0c0e !important; }
+    
+    .day-number {
+      font-weight: 600; 
+      font-size: 13px; 
+      width: 24px; 
+      height: 24px; 
+      min-height: 24px;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      border-radius: 50%; 
+      margin: 0 auto;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+    .calendar-day:hover .day-number { background-color: #f1f5f9; }
+    .calendar-day.today .day-number { background-color: #7b1113; color: white; }
+    .calendar-day.selected-date .day-number { background-color: white; color: #7b1113; }
+
+    /* CSS hiển thị ngày Âm lịch */
+    .lunar-date {
+      font-size: 10px;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .calendar-day.other-month .lunar-date {
+      color: #cbd5e1;
+    }
+    .calendar-day.has-event .lunar-date {
+      color: #9f1239;
+    }
+    .calendar-day.selected-date .lunar-date {
+      color: #fecaca !important;
+    }
+
+    .event-badge { 
+      background: #7b1113; 
+      color: white; 
+      font-size: 9.5px; 
+      font-weight: 600; 
+      padding: 1px 6px; 
+      border-radius: 8px; 
+      text-align: center; 
+      align-self: center; 
+      white-space: nowrap;
+      line-height: 1.25;
+      margin-top: 1px;
+    }
+    .calendar-day.selected-date .event-badge { background: white; color: #7b1113; }
+
+    .day-detail-panel { background: white; border: 1px solid #e4e4e7; border-radius: 16px; padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%; }
+    .event-item-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 14px; margin-top: 10px; transition: box-shadow 0.2s; }
+    .event-item-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    
+    .today-row td { background-color: #fff3cd !important; font-weight: 600; }
+    .today-row td:first-child { border-left: 4px solid #ffc107 !important; }
+    .empty-day-row td { color: #94a3b8; font-style: italic; background-color: #fcfcfd; }
+    .today-row.empty-day-row td { color: #664d03; background-color: #fff3cd !important; }
+
+    .row-status-xong td {
+      background-color: #f0fdf4 !important;
+      color: #166534 !important;
+    }
+    .row-status-xong td .job-badge {
+      background-color: #dcfce7 !important;
+      border-color: #86efac !important;
+      color: #166534 !important;
+    }
+
+    .search-filter-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 245px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0 6px 0 10px;
+      height: 31px;
+      transition: all 0.18s ease;
+    }
+    .search-filter-box:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .search-filter-icon {
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      margin-right: 7px;
+      pointer-events: none;
+    }
+    .search-filter-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 13px;
+      color: #1e293b;
+      padding: 0;
+    }
+    .search-filter-input::placeholder {
+      color: #94a3b8;
+    }
+    .btn-clear-filter {
+      border: none;
+      background: #f1f5f9;
+      color: #64748b;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-left: 4px;
+      padding: 0;
+      line-height: 1;
+      transition: all 0.15s ease;
+      opacity: 0.45;
+    }
+    .btn-clear-filter:hover {
+      background: #fee2e2;
+      color: #dc2626;
+      opacity: 1 !important;
+      transform: scale(1.08);
+    }
+    .btn-clear-filter.has-active-filter {
+      background: #fee2e2;
+      color: #dc2626;
+      opacity: 1;
+    }
+
+    #masterTableContainer table th, 
+    #masterTableContainer table td {
+      vertical-align: middle !important;
+      text-align: center !important;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 13px;
+      padding: 10px 8px !important;
+    }
+
+    #masterTableContainer table td:nth-child(4) { text-align: center !important; }
+    #masterTableContainer table td:nth-child(5) { text-align: left !important; }
+    #masterTableContainer table td:nth-child(9), 
+    #masterTableContainer table td:nth-child(10), 
+    #masterTableContainer table td:nth-child(11) { text-align: right !important; }
+
+    .job-badge { 
+      display: inline-block !important;
+      background-color: #f8fafc;
+      color: #334155;
+      font-weight: 600 !important;
+      font-size: 12px !important;
+      padding: 4px 10px !important;
+      border-radius: 6px !important;
+      border: 1px solid #cbd5e1;
+      text-decoration: none !important;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .job-badge:hover {
+      background-color: #7b1113 !important;
+      color: #ffffff !important;
+      border-color: #7b1113 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(123, 17, 19, 0.25);
+    }
+
+    .customer-badge {
+      display: inline-block !important;
+      background-color: #eff6ff;
+      color: #1e40af;
+      font-weight: 600 !important;
+      font-size: 12px !important;
+      padding: 4px 10px !important;
+      border-radius: 6px !important;
+      border: 1px solid #bfdbfe;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .customer-badge:hover {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
+      border-color: #2563eb !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+    }
+    .customer-badge.active-filter {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
+      border-color: #1d4ed8 !important;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .executor-badge {
+      display: inline-block !important;
+      background-color: #f0fdf4;
+      color: #166534;
+      font-weight: 600 !important;
+      font-size: 12px !important;
+      padding: 4px 10px !important;
+      border-radius: 6px !important;
+      border: 1px solid #bbf7d0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .executor-badge:hover {
+      background-color: #16a34a !important;
+      color: #ffffff !important;
+      border-color: #15803d !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+    }
+    .executor-badge.active-filter {
+      background-color: #16a34a !important;
+      color: #ffffff !important;
+      border-color: #15803d !important;
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);
+    }
+
+    .dropdown-menu .dropdown-item {
+      padding: 6px 12px;
+      margin: 2px 6px;
+      border-radius: 6px;
+      width: calc(100% - 12px);
+      transition: all 0.15s ease;
+      color: #334155;
+    }
+    .dropdown-menu .dropdown-item:hover, 
+    .dropdown-menu .dropdown-item:focus {
+      background-color: #fee2e2 !important;
+      color: #991b1b !important;
+      font-weight: 600;
+    }
+    .dropdown-menu .dropdown-item.active {
+      background-color: #7b1113 !important;
+      color: #ffffff !important;
+    }
+
+    .status-select { 
+      display: inline-block !important;
+      margin: 0 auto !important;
+      font-size: 12px !important; 
+      font-weight: 600 !important; 
+      padding: 4px 8px !important; 
+      border-radius: 6px !important; 
+      cursor: pointer;
+      border: 1px solid transparent; 
+      background-color: transparent; 
+      background-image: none !important; 
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      text-align: center !important;
+      text-align-last: center !important;
+      width: 100%;
+    }
+    .status-select::-ms-expand { display: none; }
+    .status-select:hover, .status-select:focus { border-color: #cbd5e1; background-color: #ffffff; outline: none; }
+
+    .status-cho { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .status-chua-thuc-hien { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
+    .status-chua-tt { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+    .status-da-tt { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+    .status-xong { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+
+    .cost-checkbox { 
+      display: block !important;
+      margin: 0 auto !important;
+      width: 18px !important; 
+      height: 18px !important; 
+      cursor: pointer; 
+      accent-color: #198754; 
+      border-radius: 4px; 
+    }
+
+    .spin-anim { animation: spin 0.8s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .money-quick-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+    .money-chip { font-size: 11px; padding: 2px 7px; border-radius: 5px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; cursor: pointer; font-weight: 600; }
+    .money-chip:hover { background: #2563eb; color: white; }
+
+    .job-info-row {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      font-size: 13.5px;
+    }
+    .job-info-row:last-child {
+      border-bottom: none;
+    }
+    .job-info-label {
+      width: 135px;
+      flex-shrink: 0;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .job-info-val {
+      flex-grow: 1;
+      color: #0f172a;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .app-toast {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px) scale(0.92);
+      background: rgba(24, 24, 27, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+    }
+    .app-toast.show {
+      transform: translateX(-50%) translateY(0) scale(1);
+      opacity: 1;
+    }
+    .app-toast.toast-warning {
+      background: rgba(153, 27, 27, 0.94);
+    }
+
+    .assistive-wrapper {
+      position: fixed;
+      left: calc(100vw - 72px);
+      top: 65vh;
+      z-index: 9999;
+      user-select: none;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .assistive-touch-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(30, 30, 34, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      opacity: 0.48;
+      transition: opacity 0.35s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+    }
+    .assistive-wrapper:hover .assistive-touch-btn,
+    .assistive-wrapper.active .assistive-touch-btn,
+    .assistive-wrapper.dragging .assistive-touch-btn {
+      opacity: 1;
+      background: rgba(28, 28, 32, 0.88);
+    }
+    .assistive-wrapper.dragging .assistive-touch-btn {
+      cursor: grabbing;
+      transform: scale(1.08);
+    }
+
+    .at-circle-outer {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .at-circle-mid {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .at-circle-inner {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .assistive-menu {
+      position: absolute;
+      right: 66px;
+      top: 50%;
+      transform: translateY(-50%) scale(0.6);
+      transform-origin: right center;
+      background: rgba(28, 28, 32, 0.88);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 26px;
+      padding: 14px 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 76px);
+      gap: 10px 6px;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.38);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .assistive-wrapper.docked-left .assistive-menu {
+      right: auto;
+      left: 66px;
+      transform-origin: left center;
+    }
+    .assistive-wrapper.active .assistive-menu {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(-50%) scale(1);
+    }
+
+    .at-action-btn {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 4px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.12s ease;
+    }
+    .at-action-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .at-action-btn:active {
+      transform: scale(0.92);
+    }
+    .at-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      color: #ffffff;
+    }
+    .at-action-btn.primary .at-icon-box {
+      background: #991b1b;
+      color: #ffffff !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 14px rgba(220, 38, 38, 0.6);
+    }
+    .at-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #f4f4f5;
+      white-space: nowrap;
+      letter-spacing: 0.2px;
+    }
+
+    @media (max-width: 992px) {
+      .app-layout { flex-direction: column; }
+      .sidebar { width: 100%; padding: 10px 0; padding-top: max(10px, env(safe-area-inset-top)); }
+      .sidebar-menu { display: flex; overflow-x: auto; }
+      .sidebar-item { padding: 10px 15px; white-space: nowrap; border-left: none !important; border-bottom: 3px solid transparent; }
+      .sidebar-item.active { border-bottom-color: var(--primary-dark); }
+      .main-content { padding: 15px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+      .calendar-day { height: 64px; min-height: 64px; max-height: 64px; padding: 3px 2px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="appToast" class="app-toast"></div>
+
+<div class="app-layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand mb-2">QUẢN LÝ JOB by LETAN</div>
+    <ul class="sidebar-menu">
+      <li class="sidebar-item active" id="nav-lich" onclick="switchTab('lich')">
+        <span>📅</span> Lịch làm việc
+      </li>
+      <li class="sidebar-item" id="nav-chitiet" onclick="switchTab('chitiet')">
+        <span>💰</span> Quản lý và Báo cáo
+      </li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    
+    <div id="errorBanner" class="alert alert-danger d-none mb-3 py-2 small"></div>
+
+    <!-- TAB 1 -->
+    <div id="tabLich">
+      <div class="mb-3">
+        <div class="page-title mb-0">Lịch của Lê Tân</div>
+      </div>
+
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-7">
+          <div class="calendar-card">
+            <div class="calendar-header">
+              <div>
+                <h5 class="fw-bold mb-0" id="calendarMonthTitle">Tháng 11 Năm 2026</h5>
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-outline-secondary btn-sm px-3" onclick="changeMonth(-1)">&lt;</button>
+                <button class="btn btn-outline-secondary btn-sm px-3" onclick="changeMonth(1)">&gt;</button>
+              </div>
+            </div>
+            
+            <div class="calendar-grid mb-2">
+              <div class="calendar-weekday">T2</div>
+              <div class="calendar-weekday">T3</div>
+              <div class="calendar-weekday">T4</div>
+              <div class="calendar-weekday">T5</div>
+              <div class="calendar-weekday">T6</div>
+              <div class="calendar-weekday">T7</div>
+              <div class="calendar-weekday">CN</div>
+            </div>
+            
+            <div class="calendar-grid" id="calendarDaysGrid"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="day-detail-panel">
+            <div class="mb-3">
+              <h6 class="fw-bold mb-0 text-dark" id="selectedDateHeader">Hôm nay</h6>
+              <small class="text-muted" id="selectedDateSubCount">0 lịch làm việc</small>
+            </div>
+            <input type="text" id="filterCustomerInput" class="form-control form-control-sm mb-3" placeholder="🔍 Tìm tên dâu rể / studio..." oninput="renderSelectedDayJobs()">
+
+            <div id="selectedDayEventsContainer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2 -->
+    <div id="tabChitiet" class="d-none">
+      <div class="mb-3">
+        <div class="page-subtitle">QUẢN LÝ TÀI CHÍNH & CÔNG NỢ</div>
+        <div class="page-title mb-0">Chi Tiết Lịch & Báo Cáo Tài Chính</div>
+      </div>
+
+      <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <select id="filterMonthTable" class="form-select form-select-sm fw-semibold text-primary shadow-sm" style="width: 165px; border-radius: 8px; height: 31px;" onchange="renderMasterTable(false)">
+              <option value="">📅 Tất cả tháng</option>
+            </select>
+            
+            <div class="search-filter-box shadow-sm">
+              <span class="search-filter-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+              <input type="text" id="searchTableInput" class="search-filter-input" placeholder="Tìm khách, việc, địa chỉ..." oninput="renderMasterTable(false)">
+              <button type="button" id="btnClearAllFilters" class="btn-clear-filter" onclick="clearAllFilters()" title="Xóa tìm kiếm & tất cả bộ lọc">✕</button>
+            </div>
+          </div>
+          
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
+              <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleOnlyEmptyDays" style="cursor: pointer;">Chỉ ngày trống</label>
+              <input class="form-check-input mt-0" type="checkbox" id="toggleOnlyEmptyDays" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
+            </div>
+            <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
+              <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleHideCompleted" style="cursor: pointer;">Ẩn job đã xong</label>
+              <input class="form-check-input mt-0" type="checkbox" id="toggleHideCompleted" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="font-size: 12px;">
+          <small class="text-muted fw-medium" id="tableStatusHint"></small>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="table-responsive" id="masterTableContainer">
+          <table class="table table-bordered table-hover align-middle mb-0" style="font-size: 13px;">
+            <thead class="table-light text-center align-middle">
+              <tr>
+                <th style="width: 60px;">Thứ</th>
+                <th style="width: 100px;">Ngày</th>
+                <th>
+                  <div class="dropdown d-inline-block w-100">
+                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-dark shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownJobType" style="font-size: 12px; border-radius: 6px;">
+                      Công việc
+                    </button>
+                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterJobType" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+                  </div>
+                </th>
+                <th style="min-width: 95px;">Thời gian</th>
+                <th style="min-width: 170px;">Địa chỉ</th>
+                <th>
+                  <div class="dropdown d-inline-block w-100">
+                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-primary shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownCustomer" style="font-size: 12px; border-radius: 6px;">
+                      Khách hàng
+                    </button>
+                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterCustomer" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+                  </div>
+                </th>
+                <th>
+                  <div class="dropdown d-inline-block w-100">
+                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-success shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownExecutor" style="font-size: 12px; border-radius: 6px;">
+                      Người thực hiện
+                    </button>
+                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterExecutor" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+                  </div>
+                </th>
+                <th>
+                  <div class="dropdown d-inline-block w-100">
+                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-danger shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownStatus" style="font-size: 12px; border-radius: 6px;">
+                      Tình trạng
+                    </button>
+                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterStatus" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+                  </div>
+                </th>
+                <th class="text-end">Giá trị</th>
+                <th class="text-end">Đã cọc</th>
+                <th class="text-end">Chi phí</th>
+                <th>TT Chi phí</th>
+              </tr>
+            </thead>
+            <tbody id="masterTableBody">
+              <tr><td colspan="12" class="text-center py-4 text-muted">⏳ Đang đồng bộ dữ liệu từ Google Sheet...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Nút AssistiveTouch phong cách iPhone -->
+<div id="floatingMenuBubble" class="assistive-wrapper">
+  <div class="assistive-touch-btn" id="assistiveBtn" title="Chạm để mở menu, giữ để kéo">
+    <div class="at-circle-outer">
+      <div class="at-circle-mid">
+        <div class="at-circle-inner"></div>
+      </div>
+    </div>
+  </div>
+  <div class="assistive-menu" id="assistiveMenu">
+    <button class="at-action-btn primary" onclick="openAddModal(); closeAssistiveMenu();">
+      <div class="at-icon-box">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </div>
+      <span class="at-label">Thêm Job</span>
+    </button>
+    <button class="at-action-btn" onclick="triggerRefresh(this)">
+      <div class="at-icon-box"><span id="refreshSpinnerIcon" style="display:inline-block;">🔄</span></div>
+      <span class="at-label">Làm mới</span>
+    </button>
+    <button class="at-action-btn" onclick="bubbleJumpToday(); closeAssistiveMenu();">
+      <div class="at-icon-box">🎯</div>
+      <span class="at-label">Hôm nay</span>
+    </button>
+    <button class="at-action-btn" onclick="openDebtQrModal(); closeAssistiveMenu();">
+      <div class="at-icon-box">📋</div>
+      <span class="at-label">Xem công nợ</span>
+    </button>
+    <button class="at-action-btn" onclick="openReportModal(); closeAssistiveMenu();">
+      <div class="at-icon-box">📊</div>
+      <span class="at-label">Báo cáo</span>
+    </button>
+    <button class="at-action-btn" onclick="openManageCatalogsModal(); closeAssistiveMenu();">
+      <div class="at-icon-box">⚙️</div>
+      <span class="at-label">QL Danh mục</span>
+    </button>
+  </div>
+</div>
+
+<!-- Modal Popup Hiển thị Thông tin Job & Copy gửi Zalo -->
+<div class="modal fade" id="jobInfoPopupModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header py-2 bg-dark text-white">
+        <h6 class="modal-title fw-bold">Chi Tiết Thông Tin Job</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div class="bg-light border rounded-3 px-3 py-2 mb-3">
+          <div class="job-info-row">
+            <div class="job-info-label">Ngày:</div>
+            <div class="job-info-val fw-bold" id="infoPopupNgay">-</div>
+          </div>
+          <div class="job-info-row">
+            <div class="job-info-label">Công việc:</div>
+            <div class="job-info-val"><span class="badge bg-danger" id="infoPopupCongViec">-</span></div>
+          </div>
+          <div class="job-info-row">
+            <div class="job-info-label">Thời gian:</div>
+            <div class="job-info-val" id="infoPopupThoiGian">-</div>
+          </div>
+          <div class="job-info-row">
+            <div class="job-info-label">Địa chỉ:</div>
+            <div class="job-info-val" id="infoPopupDiaChi">-</div>
+          </div>
+          <div class="job-info-row">
+            <div class="job-info-label">Khách hàng:</div>
+            <div class="job-info-val text-primary fw-bold" id="infoPopupKhachHang">-</div>
+          </div>
+          <div class="job-info-row">
+            <div class="job-info-label">Người thực hiện:</div>
+            <div class="job-info-val text-success fw-semibold" id="infoPopupNguoiThucHien">-</div>
+          </div>
+        </div>
+
+        <label class="form-label small fw-bold text-secondary mb-1">Nội dung tin nhắn gửi Zalo:</label>
+        <textarea id="infoPopupZaloText" class="form-control font-monospace mb-3" rows="7" style="font-size: 12.5px; background-color: #f8fafc;"></textarea>
+
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-primary fw-bold" style="flex: 1;" id="btnEditFromInfoPopup">Sửa</button>
+          <button type="button" class="btn btn-outline-danger fw-bold" style="flex: 1;" id="btnDeleteFromInfoPopup">Xoá</button>
+          <button type="button" class="btn btn-primary fw-bold" style="flex: 2;" id="btnCopyJobInfoZalo" onclick="copyJobInfoZalo(this)">
+            Gửi thông tin job
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Quản lý & Sửa tên danh mục -->
+<div class="modal fade" id="manageCatalogsModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header py-2 bg-dark text-white">
+        <h6 class="modal-title fw-bold">Quản lý & Sửa tên danh mục</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Chọn danh mục cần chỉnh sửa:</label>
+          <select id="catalogCategorySelect" class="form-select form-select-sm mb-2 fw-semibold" onchange="renderCatalogItemsList()">
+            <option value="jobTypes">Loại Công việc</option>
+            <option value="customerList">Khách hàng / Studio</option>
+            <option value="executorList">Người thực hiện</option>
+            <option value="statusList">Tình trạng Job</option>
+          </select>
+        </div>
+
+        <div class="input-group input-group-sm mb-3">
+          <input type="text" id="newCatalogItemInput" class="form-control" placeholder="Nhập tên mục mới để thêm..." onkeyup="if(event.key==='Enter') addCatalogItemDirect()">
+          <button class="btn btn-primary fw-bold px-3" type="button" onclick="addCatalogItemDirect()">+ Thêm</button>
+        </div>
+
+        <label class="form-label small fw-bold">Danh sách hiện tại (Tự động lưu vĩnh viễn):</label>
+        <div id="catalogItemsContainer" class="border rounded p-2 bg-light" style="max-height: 240px; overflow-y: auto;"></div>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thêm / Sửa Job -->
+<div class="modal fade" id="jobModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header py-2 bg-dark text-white">
+        <h6 class="modal-title fw-bold" id="modalTitle">Thêm lịch quay / chụp</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-2">
+        <form id="jobForm">
+          <input type="hidden" name="rowNumber" id="formRowNumber">
+          <input type="hidden" name="chiTiet" id="formChiTiet">
+          <div class="mb-2">
+            <label class="form-label small fw-bold mb-1">Ngày thực hiện</label>
+            <input type="date" class="form-control form-control-sm" name="ngay" id="formNgay" required>
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold mb-0">Công việc</label>
+                <a href="javascript:void(0)" class="small text-decoration-none fw-semibold" onclick="addNewJobTypeOption()">+ Thêm mới</a>
+              </div>
+              <select class="form-select form-select-sm" name="congViec" id="formCongViec" required></select>
+            </div>
+            <div class="col-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold mb-0">Tình trạng</label>
+                <a href="javascript:void(0)" class="small text-decoration-none fw-semibold" onclick="addNewStatusOption()">+ Thêm mới</a>
+              </div>
+              <select class="form-select form-select-sm" name="tinhTrang" id="formTinhTrang" required></select>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold mb-0">Khách hàng / Studio</label>
+                <a href="javascript:void(0)" class="small text-decoration-none fw-semibold" onclick="addNewCustomerOption()">+ Thêm mới</a>
+              </div>
+              <select class="form-select form-select-sm" name="khachHang" id="formKhachHang" required></select>
+            </div>
+            <div class="col-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold mb-0">Người thực hiện</label>
+                <a href="javascript:void(0)" class="small text-decoration-none fw-semibold" onclick="addNewExecutorOption()">+ Thêm mới</a>
+              </div>
+              <select class="form-select form-select-sm" name="nguoiThucHien" id="formNguoiThucHien" required></select>
+            </div>
+          </div>
+          
+          <div class="row g-2 mb-2">
+            <div class="col-4">
+              <label class="form-label small fw-bold mb-1">Thời gian</label>
+              <input type="text" class="form-control form-control-sm" id="formThoiGian" placeholder="VD: 18h có mặt">
+            </div>
+            <div class="col-8">
+              <label class="form-label small fw-bold mb-1">Địa chỉ</label>
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" id="formDiaChi" placeholder="VD: 18 Tuệ Tĩnh, Hải Dương">
+                <button class="btn btn-outline-primary" type="button" onclick="generateMapLinkFromDetail(this)" title="Tạo link Google Maps rút gọn từ địa chỉ">Tạo map</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-2">
+            <label class="form-label small fw-bold text-success mb-1">Link Google Maps (Tùy chọn)</label>
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" name="mapLink" id="formMapLink" placeholder="Dán link Google Maps hoặc tọa độ...">
+              <button class="btn btn-outline-primary fw-semibold" type="button" onclick="fixMapLinkInput(this)" title="Chuẩn hóa về link rút gọn">Fix maps</button>
+              <button class="btn btn-outline-success" type="button" onclick="fetchAddressFromMap()" title="Trích xuất địa chỉ tự động vào ô Địa chỉ">Lấy địa chỉ</button>
+            </div>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-4">
+              <label class="form-label small fw-bold mb-1">Giá trị</label>
+              <input type="number" class="form-control form-control-sm" name="giaTri" id="formGiaTri" list="listGiaTri" oninput="suggestMoney(this, 'listGiaTri', 'chipsGiaTri')" placeholder="Gõ 1, 2...">
+              <datalist id="listGiaTri"></datalist>
+              <div id="chipsGiaTri" class="money-quick-chips"></div>
+            </div>
+            <div class="col-4">
+              <label class="form-label small fw-bold mb-1">Đã cọc</label>
+              <input type="number" class="form-control form-control-sm" name="daCoc" id="formDaCoc" list="listDaCoc" oninput="suggestMoney(this, 'listDaCoc', 'chipsDaCoc')" placeholder="Gõ 1, 2...">
+              <datalist id="listDaCoc"></datalist>
+              <div id="chipsDaCoc" class="money-quick-chips"></div>
+            </div>
+            <div class="col-4">
+              <label class="form-label small fw-bold mb-1">Chi phí</label>
+              <input type="number" class="form-control form-control-sm" name="chiPhi" id="formChiPhi" list="listChiPhi" oninput="suggestMoney(this, 'listChiPhi', 'chipsChiPhi')" placeholder="Gõ 1, 2...">
+              <datalist id="listChiPhi"></datalist>
+              <div id="chipsChiPhi" class="money-quick-chips"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer py-2 justify-content-between">
+        <button type="button" class="btn btn-outline-danger btn-sm px-3 d-none" id="btnDeleteInModal" onclick="confirmDeleteFromModal()">Xóa Job</button>
+        <div class="d-flex gap-1 ms-auto">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary btn-sm px-4" id="btnSave" onclick="submitJob()">Lưu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Xem Công Nợ Phải Thu -->
+<div class="modal fade" id="debtQrModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h6 class="modal-title fw-bold">Xem Công Nợ & Bảng Kê Tổng Job</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div class="row g-2 mb-2">
+          <div class="col-7">
+            <label class="form-label small fw-bold mb-1">1. Tìm & Chọn Khách hàng:</label>
+            <input type="text" id="qrSearchCustomerInput" class="form-control form-control-sm mb-1" placeholder="🔍 Gõ tên khách / studio để lọc..." oninput="filterQrCustomerDropdown()">
+            <select id="qrCustomerSelect" class="form-select form-select-sm fw-semibold text-primary" onchange="generateQrStatement()">
+              <option value="">-- Chọn khách hàng --</option>
+            </select>
+          </div>
+          <div class="col-5">
+            <label class="form-label small fw-bold mb-1">2. Kỳ công nợ (Tháng):</label>
+            <select id="qrMonthSelect" class="form-select form-select-sm fw-semibold" onchange="generateQrStatement()">
+              <option value="">Tất cả các tháng</option>
+            </select>
+            <div class="form-text mt-1" style="font-size: 11px;">Chọn tất cả hoặc lọc riêng từng tháng.</div>
+          </div>
+        </div>
+
+        <label class="form-label small fw-bold mt-1">3. Nội dung bảng kê gửi khách:</label>
+        <textarea id="qrStatementText" class="form-control font-monospace mb-3" rows="11" style="font-size: 11.5px; background-color: #f8fafc;"></textarea>
+        <button type="button" class="btn btn-primary btn-sm w-100 fw-bold py-2" id="btnCopyDebtText" onclick="copyDebtText(this)">Copy Bảng Kê Gửi Zalo</button>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Báo Cáo Tài Chính Tổng Hợp -->
+<div class="modal fade" id="reportModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h6 class="modal-title fw-bold">BÁO CÁO TÀI CHÍNH TỔNG HỢP <span id="reportSubtitleModal" class="text-primary fw-normal"></span></h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div class="row g-3 text-center">
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded bg-light border">
+              <div class="small text-muted mb-1">Tổng Doanh Thu (Giá trị)</div>
+              <div class="fs-5 fw-bold text-primary" id="repTotalRevenue">0 đ</div>
+              <small class="text-muted" id="repTotalJobCount">0 job</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded bg-light border">
+              <div class="small text-muted mb-1">Tổng Chi Phí</div>
+              <div class="fs-5 fw-bold text-secondary" id="repTotalCost">0 đ</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded bg-light border">
+              <div class="small text-muted mb-1">Tổng Lợi Nhuận Thực Tế</div>
+              <div class="fs-5 fw-bold text-success" id="repTotalProfit">0 đ</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded bg-danger bg-opacity-10 border border-danger">
+              <div class="small text-danger fw-semibold mb-1">Công Nợ Phải Thu</div>
+              <div class="fs-5 fw-bold text-danger" id="repTotalUnpaid">0 đ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Dialog Modal -->
+<div class="modal fade" id="customDialogModal" tabindex="-1" style="z-index: 100000;">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+      <div class="modal-header py-2.5 bg-dark text-white border-0">
+        <h6 class="modal-title fw-bold" id="customDialogTitle" style="font-size: 14px;">Xác nhận</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-3 px-3 text-center">
+        <div id="customDialogMessage" class="mb-2 fw-semibold text-dark" style="font-size: 13.5px;"></div>
+        <input type="text" id="customDialogInput" class="form-control form-control-sm text-center mt-2 d-none" autocomplete="off">
+      </div>
+      <div class="modal-footer py-2 justify-content-center border-0 bg-light gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold px-3" data-bs-dismiss="modal" id="customDialogCancelBtn">Hủy</button>
+        <button type="button" class="btn btn-primary btn-sm fw-bold px-4" id="customDialogConfirmBtn">Đồng ý</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // =========================================================================
+  // DÁN LINK WEB APP GOOGLE APPS SCRIPT (/exec) CỦA BẠN VÀO DÒNG DƯỚI ĐÂY:
+  // =========================================================================
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1ejYEbbnM_IAZIuEnOsFByh1O8nQeL7LILoJtVpCSy8wphj93GB0PiAxri6Dz2MKZA/exec";
+
+  // Cầu nối giả lập google.script.run khi chạy trên GitHub Pages
+  if (typeof google === 'undefined' || !google.script) {
+    function createGasRunner(successCb, failureCb) {
+      return new Proxy({}, {
+        get: function(target, prop) {
+          if (prop === 'withSuccessHandler') {
+            return function(cb) { return createGasRunner(cb, failureCb); };
+          }
+          if (prop === 'withFailureHandler') {
+            return function(cb) { return createGasRunner(successCb, cb); };
+          }
+          return function(...args) {
+            fetch(APPS_SCRIPT_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({ action: prop, args: args })
+            })
+            .then(res => res.json())
+            .then(res => {
+              if (res.status === 'success') {
+                if (successCb) successCb(res.data);
+              } else {
+                if (failureCb) failureCb(new Error(res.message));
+              }
+            })
+            .catch(err => {
+              if (failureCb) failureCb(err);
+            });
+          };
+        }
+      });
+    }
+    window.google = { script: { get run() { return createGasRunner(null, null); } } };
+  }
+
+  let allJobs = [];
+  let currentDisplayDate = new Date();
+  let selectedDateIso = getLocalIsoDate(new Date());
+  let jobModalInstance;
+  let debtQrModalInstance;
+  let manageCatalogsModalInstance;
+  let reportModalInstance;
+  let jobInfoPopupModalInstance;
+  let customDialogModalInstance;
+  let toastTimeout;
+
+  const shortUrlCache = {};
+
+  let jobTypes = ["Chụp PSC", "Quay PSC", "Chụp SK", "Quay SK", "Ăn hỏi", "Khác"];
+  let customerList = ["OneStory", "Chiến", "June", "Lita", "Kog", "MinhThe", "Thangken", "Dungcasau", "Mira", "Khách lẻ"];
+  let executorList = ["Lê Tân", "Cộng sự 1", "Cộng sự 2", "Team Media"];
+  let statusList = ["Chờ", "Chưa thực hiện", "Chưa TT", "Đã TT", "Xong"];
+
+  let filterJobTypeVal = "";
+  let filterCustomerVal = "";
+  let filterExecutorVal = "";
+  let filterStatusVal = "";
+
+  let qrUnpaidCustomersCache = [];
+  let customDialogCallback = null;
+
+  // === THUẬT TOÁN TÍNH ÂM LỊCH VIỆT NAM (MÚI GIỜ UTC+7) ===
+  function jdFromDate(dd, mm, yy) {
+    const a = Math.floor((14 - mm) / 12);
+    const y = yy + 4800 - a;
+    const m = mm + 12 * a - 3;
+    let jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+    if (jd < 2299161) {
+      jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - 32083;
+    }
+    return jd;
+  }
+
+  function getNewMoonDay(k, timeZone) {
+    const T = k / 1236.85;
+    const T2 = T * T;
+    const T3 = T2 * T;
+    const dr = Math.PI / 180;
+    let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
+    Jd1 = Jd1 + 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+    const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+    const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+    const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+    let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * dr * M);
+    C1 = C1 - 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(dr * 2 * Mpr);
+    C1 = C1 - 0.0004 * Math.sin(dr * 3 * Mpr);
+    C1 = C1 + 0.0104 * Math.sin(dr * 2 * F) - 0.0051 * Math.sin(dr * (M + Mpr));
+    C1 = C1 - 0.0074 * Math.sin(dr * (M - Mpr)) + 0.0004 * Math.sin(dr * (2 * F + M));
+    C1 = C1 - 0.0004 * Math.sin(dr * (2 * F - M)) - 0.0006 * Math.sin(dr * (2 * F + Mpr));
+    C1 = C1 + 0.0010 * Math.sin(dr * (2 * F - Mpr)) + 0.0005 * Math.sin(dr * (2 * Mpr + M));
+    let deltat;
+    if (T < -11) {
+      deltat = 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3;
+    } else {
+      deltat = -0.000278 + 0.000265 * T + 0.000262 * T2;
+    }
+    const JdNew = Jd1 + C1 - deltat;
+    return Math.floor(JdNew + 0.5 + timeZone / 24);
+  }
+
+  function getSunLongitude(jdn, timeZone) {
+    const T = (jdn - 2451545.5 - timeZone / 24) / 36525;
+    const T2 = T * T;
+    const dr = Math.PI / 180;
+    const M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T * T2;
+    const L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
+    let DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(dr * M);
+    DL = DL + (0.019993 - 0.000101 * T) * Math.sin(dr * 2 * M) + 0.000290 * Math.sin(dr * 3 * M);
+    let L = L0 + DL;
+    L = L * dr;
+    L = L - Math.PI * 2 * (Math.floor(L / (Math.PI * 2)));
+    return Math.floor(L / Math.PI * 6);
+  }
+
+  function getLunarMonth11(yy, timeZone) {
+    const off = jdFromDate(31, 12, yy) - 2415021;
+    const k = Math.floor(off / 29.530588853);
+    let nm = getNewMoonDay(k, timeZone);
+    const sunLong = getSunLongitude(nm, timeZone);
+    if (sunLong >= 9) {
+      nm = getNewMoonDay(k - 1, timeZone);
+    }
+    return nm;
+  }
+
+  function getLeapMonthOffset(a11, timeZone) {
+    const k = Math.floor((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+    let last = 0;
+    let i = 1;
+    let arc = getSunLongitude(getNewMoonDay(k + i, timeZone), timeZone);
+    do {
+      last = arc;
+      i++;
+      arc = getSunLongitude(getNewMoonDay(k + i, timeZone), timeZone);
+    } while (arc !== last && i < 14);
+    return i - 1;
+  }
+
+  function convertSolar2Lunar(dd, mm, yy, timeZone = 7) {
+    const dayNumber = jdFromDate(dd, mm, yy);
+    const k = Math.floor((dayNumber - 2415021.076998695) / 29.530588853);
+    let monthStart = getNewMoonDay(k + 1, timeZone);
+    if (monthStart > dayNumber) {
+      monthStart = getNewMoonDay(k, timeZone);
+    }
+    let a11 = getLunarMonth11(yy, timeZone);
+    let b11 = a11;
+    let lunarYear;
+    if (a11 >= monthStart) {
+      lunarYear = yy;
+      a11 = getLunarMonth11(yy - 1, timeZone);
+    } else {
+      lunarYear = yy + 1;
+      b11 = getLunarMonth11(yy + 1, timeZone);
+    }
+    const lunarDay = dayNumber - monthStart + 1;
+    const diff = Math.floor((monthStart - a11) / 29);
+    let lunarLeap = 0;
+    let lunarMonth = diff + 11;
+    if (b11 - a11 > 365) {
+      const leapMonthDiff = getLeapMonthOffset(a11, timeZone);
+      if (diff >= leapMonthDiff) {
+        lunarMonth = diff + 10;
+        if (diff === leapMonthDiff) {
+          lunarLeap = 1;
+        }
+      }
+    }
+    if (lunarMonth > 12) {
+      lunarMonth = lunarMonth - 12;
+    }
+    if (lunarMonth >= 11 && diff < 4) {
+      lunarYear -= 1;
+    }
+    return [lunarDay, lunarMonth, lunarYear, lunarLeap];
+  }
+
+  function getLunarDateStr(year, monthIndex, day) {
+    try {
+      const [lDay, lMonth] = convertSolar2Lunar(day, monthIndex + 1, year, 7);
+      return `AL ${lDay}/${lMonth}`;
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function initCustomDialog() {
+    customDialogModalInstance = new bootstrap.Modal(document.getElementById('customDialogModal'));
+    
+    document.getElementById('customDialogConfirmBtn').addEventListener('click', function() {
+       const inputEl = document.getElementById('customDialogInput');
+       let val = true;
+       if (!inputEl.classList.contains('d-none')) {
+           val = inputEl.value;
+           if (val === null || val.trim() === '') return;
+       }
+       customDialogModalInstance.hide();
+       if (customDialogCallback) customDialogCallback(val);
+    });
+
+    document.getElementById('customDialogInput').addEventListener('keyup', function(e) {
+       if (e.key === 'Enter') document.getElementById('customDialogConfirmBtn').click();
+    });
+  }
+
+  function showConfirmDialog(message, onConfirm) {
+    document.getElementById('customDialogTitle').innerText = 'Xác nhận thao tác';
+    document.getElementById('customDialogMessage').innerText = message;
+    
+    document.getElementById('customDialogInput').classList.add('d-none');
+    document.getElementById('customDialogInput').value = '';
+    document.getElementById('customDialogCancelBtn').classList.remove('d-none');
+    
+    const btnConfirm = document.getElementById('customDialogConfirmBtn');
+    btnConfirm.className = 'btn btn-danger btn-sm fw-bold px-4';
+    btnConfirm.innerText = 'Xác nhận Xóa';
+    
+    customDialogCallback = onConfirm;
+    customDialogModalInstance.show();
+  }
+
+  function showPromptDialog(title, defaultValue, onConfirm) {
+    document.getElementById('customDialogTitle').innerText = 'Cập nhật thông tin';
+    document.getElementById('customDialogMessage').innerText = title;
+    
+    const inputEl = document.getElementById('customDialogInput');
+    inputEl.classList.remove('d-none');
+    inputEl.value = defaultValue || '';
+    
+    document.getElementById('customDialogCancelBtn').classList.remove('d-none');
+    
+    const btnConfirm = document.getElementById('customDialogConfirmBtn');
+    btnConfirm.className = 'btn btn-primary btn-sm fw-bold px-4';
+    btnConfirm.innerText = 'Lưu lại';
+    
+    customDialogCallback = onConfirm;
+    customDialogModalInstance.show();
+    setTimeout(() => inputEl.focus(), 400);
+  }
+
+  function showToast(msg, isWarning = false) {
+    const t = document.getElementById('appToast');
+    if (!t) return;
+    t.innerHTML = msg;
+    if (isWarning) t.classList.add('toast-warning');
+    else t.classList.remove('toast-warning');
+    t.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      t.classList.remove('show');
+    }, 2000);
+  }
+
+  function animateCopyButton(btnEl, originalHtml) {
+    if (!btnEl) return;
+    btnEl.innerHTML = 'Đã copy thành công!';
+    btnEl.classList.replace('btn-primary', 'btn-success');
+    setTimeout(() => {
+      btnEl.innerHTML = originalHtml;
+      btnEl.classList.replace('btn-success', 'btn-primary');
+    }, 1600);
+  }
+
+  function splitJobDetail(chiTietStr) {
+    if (!chiTietStr) return { thoiGian: "", diaChi: "" };
+    const s = String(chiTietStr).trim();
+    if (!s) return { thoiGian: "", diaChi: "" };
+
+    if (s.includes(" | ")) {
+      const idx = s.indexOf(" | ");
+      return { thoiGian: s.slice(0, idx).trim(), diaChi: s.slice(idx + 3).trim() };
+    }
+    if (s.includes(" - ")) {
+      const idx = s.indexOf(" - ");
+      return { thoiGian: s.slice(0, idx).trim(), diaChi: s.slice(idx + 3).trim() };
+    }
+    if (s.includes("-")) {
+      const idx = s.indexOf("-");
+      return { thoiGian: s.slice(0, idx).trim(), diaChi: s.slice(idx + 1).trim() };
+    }
+
+    const timeRegex = /^(\d{1,2}\s*[hH:]\s*\d{0,2}(\s*(sáng|chiều|tối|trưa|đêm|am|pm|có mặt))?)\s+(.+)$/i;
+    const match = s.match(timeRegex);
+    if (match) {
+      return { thoiGian: match[1].trim(), diaChi: match[4].trim() };
+    }
+
+    const onlyTimeRegex = /^(\d{1,2}\s*[hH:]\s*\d{0,2}|sáng|chiều|tối|trưa|cả ngày)/i;
+    if (onlyTimeRegex.test(s) && s.length <= 22) {
+      return { thoiGian: s, diaChi: "" };
+    }
+
+    return { thoiGian: "", diaChi: s };
+  }
+
+  function combineJobDetail(thoiGian, diaChi) {
+    const t = String(thoiGian || "").trim();
+    const d = String(diaChi || "").trim();
+    if (t && d) return `${t} - ${d}`;
+    if (t) return `${t} - `;
+    return d;
+  }
+
+  function buildZaloJobText(j, mapLinkToUse) {
+    const parsed = splitJobDetail(j.chiTiet);
+    const ngayFull = j.thu ? `${j.thu}, ${j.ngay}` : j.ngay;
+    const congViecStr = j.congViec || 'Chưa cập nhật';
+    const thoiGianStr = parsed.thoiGian || 'Chưa cập nhật';
+    const diaChiText = parsed.diaChi || 'Chưa cập nhật';
+    const khachHangStr = j.khachHang || 'Chưa cập nhật';
+    const nguoiThucHienStr = j.nguoiThucHien || 'Lê Tân';
+
+    const lines = [
+      `THÔNG TIN LỊCH LÀM VIỆC`,
+      `--------------------------------`,
+      `Ngày: ${ngayFull}`,
+      `Công việc: ${congViecStr}`,
+      `Thời gian: ${thoiGianStr}`,
+      `Địa chỉ: ${diaChiText}${mapLinkToUse ? '\nGoogle Maps: ' + mapLinkToUse : ''}`,
+      `Khách hàng: ${khachHangStr}`,
+      `Người thực hiện: ${nguoiThucHienStr}`
+    ];
+    return lines.join('\n');
+  }
+
+  function openJobInfoPopup(rowNumber) {
+    const j = allJobs.find(item => item.rowNumber === rowNumber);
+    if (!j) return;
+
+    const parsed = splitJobDetail(j.chiTiet);
+    const ngayFull = j.thu ? `${j.thu}, ${j.ngay}` : j.ngay;
+    const congViecStr = j.congViec || 'Chưa cập nhật';
+    const thoiGianStr = parsed.thoiGian || 'Chưa cập nhật';
+    const diaChiText = parsed.diaChi || 'Chưa cập nhật';
+    const khachHangStr = j.khachHang || 'Chưa cập nhật';
+    const nguoiThucHienStr = j.nguoiThucHien || 'Lê Tân';
+    const savedMapLink = (j.mapLink || '').trim();
+
+    document.getElementById('infoPopupNgay').innerText = ngayFull;
+    document.getElementById('infoPopupCongViec').innerText = congViecStr;
+    document.getElementById('infoPopupThoiGian').innerText = thoiGianStr;
+    document.getElementById('infoPopupKhachHang').innerText = khachHangStr;
+    document.getElementById('infoPopupNguoiThucHien').innerText = nguoiThucHienStr;
+
+    const btnEdit = document.getElementById('btnEditFromInfoPopup');
+    btnEdit.onclick = function() {
+      jobInfoPopupModalInstance.hide();
+      openEditModal(rowNumber);
+    };
+
+    const btnDelete = document.getElementById('btnDeleteFromInfoPopup');
+    btnDelete.onclick = function() {
+      jobInfoPopupModalInstance.hide();
+      deleteJobFromTable(rowNumber);
+    };
+
+    let addrHtml = `<span>${diaChiText}</span>`;
+    if (savedMapLink) {
+      addrHtml += `<div class="mt-1"><a href="${savedMapLink}" target="_blank" class="badge bg-success bg-opacity-10 text-success border border-success text-decoration-none">${savedMapLink}</a></div>`;
+    }
+    document.getElementById('infoPopupDiaChi').innerHTML = addrHtml;
+    document.getElementById('infoPopupZaloText').value = buildZaloJobText(j, savedMapLink);
+
+    jobInfoPopupModalInstance.show();
+  }
+
+  function copyJobInfoZalo(btnEl) {
+    const ta = document.getElementById('infoPopupZaloText');
+    navigator.clipboard.writeText(ta.value).then(() => {
+      animateCopyButton(btnEl, 'Gửi thông tin job');
+      showToast('Đã copy thông tin Job');
+    });
+  }
+
+  function setFilter(type, val) {
+    if (type === 'jobType') filterJobTypeVal = val;
+    if (type === 'customer') filterCustomerVal = val;
+    if (type === 'executor') filterExecutorVal = val;
+    if (type === 'status') filterStatusVal = val;
+    renderMasterTable();
+  }
+
+  function toggleCustomerFilter(custName) {
+    if (!custName) return;
+    if (filterCustomerVal.toLowerCase() === custName.trim().toLowerCase()) {
+      filterCustomerVal = "";
+    } else {
+      filterCustomerVal = custName.trim();
+    }
+    renderMasterTable();
+  }
+
+  function toggleExecutorFilter(execName) {
+    if (!execName) return;
+    if (filterExecutorVal.toLowerCase() === execName.trim().toLowerCase()) {
+      filterExecutorVal = "";
+    } else {
+      filterExecutorVal = execName.trim();
+    }
+    renderMasterTable();
+  }
+
+  function loadCategoriesPrefs() {
+    try {
+      const savedJobTypes = localStorage.getItem('pref_job_types');
+      const savedCustomers = localStorage.getItem('pref_customer_list');
+      const savedExecutors = localStorage.getItem('pref_executor_list');
+      const savedStatuses = localStorage.getItem('pref_status_list');
+      if (savedJobTypes) jobTypes = JSON.parse(savedJobTypes);
+      if (savedCustomers) customerList = JSON.parse(savedCustomers);
+      if (savedExecutors) executorList = JSON.parse(savedExecutors);
+      if (savedStatuses) statusList = JSON.parse(savedStatuses);
+    } catch(e) {}
+  }
+
+  function saveCategoriesPrefs() {
+    try {
+      localStorage.setItem('pref_job_types', JSON.stringify(jobTypes));
+      localStorage.setItem('pref_customer_list', JSON.stringify(customerList));
+      localStorage.setItem('pref_executor_list', JSON.stringify(executorList));
+      localStorage.setItem('pref_status_list', JSON.stringify(statusList));
+    } catch(e) {}
+
+    const cats = {
+      jobTypes: jobTypes,
+      customerList: customerList,
+      executorList: executorList,
+      statusList: statusList
+    };
+    if (typeof google !== 'undefined' && google.script) {
+      google.script.run.saveCategoriesToSheet(cats);
+    }
+  }
+
+  const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+  const weekdayNames = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+
+  function getLocalIsoDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function getTodayFormatted() {
+    const d = new Date();
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  }
+
+  function parseMoney(str) {
+    if (!str) return 0;
+    return parseInt(String(str).replace(/[^0-9-]/g, ''), 10) || 0;
+  }
+
+  function toInputDate(ddmmyyyy) {
+    if (!ddmmyyyy || !ddmmyyyy.includes('/')) return getLocalIsoDate(new Date());
+    const parts = ddmmyyyy.split('/');
+    return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+  }
+
+  function suggestMoney(inputEl, listId, chipsId) {
+    const raw = String(inputEl.value).trim();
+    const listEl = document.getElementById(listId);
+    const chipsEl = document.getElementById(chipsId);
+    
+    if (!raw || isNaN(raw)) {
+      listEl.innerHTML = '';
+      chipsEl.innerHTML = '';
+      return;
+    }
+
+    const num = parseInt(raw, 10);
+    if (num <= 0 || num >= 100000) {
+      chipsEl.innerHTML = '';
+      return;
+    }
+
+    let options = [];
+    if (num < 10) {
+      options.push({ val: num * 100000, label: (num * 100000).toLocaleString('vi-VN') + ' đ' });
+      options.push({ val: num * 1000000, label: (num * 1000000).toLocaleString('vi-VN') + ' đ' });
+    } else if (num < 1000) {
+      options.push({ val: num * 10000, label: (num * 10000).toLocaleString('vi-VN') + ' đ' });
+      options.push({ val: num * 100000, label: (num * 100000).toLocaleString('vi-VN') + ' đ' });
+    }
+
+    listEl.innerHTML = options.map(o => `<option value="${o.val}">${o.label}</option>`).join('');
+    chipsEl.innerHTML = options.map(o => 
+      `<span class="money-chip" onclick="pickSuggestedMoney('${inputEl.id}', ${o.val}, '${chipsId}')">${o.label}</span>`
+    ).join('');
+  }
+
+  function pickSuggestedMoney(inputId, val, chipsId) {
+    document.getElementById(inputId).value = val;
+    document.getElementById(chipsId).innerHTML = '';
+  }
+
+  function triggerRefresh(btnEl) {
+    const icon = document.getElementById('refreshSpinnerIcon');
+    if (icon) icon.classList.add('spin-anim');
+    loadData(function() {
+      if (icon) setTimeout(() => icon.classList.remove('spin-anim'), 500);
+      closeAssistiveMenu();
+      showToast('Đã đồng bộ dữ liệu');
+    });
+  }
+
+  function switchTab(tabKey) {
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('tabLich').classList.add('d-none');
+    document.getElementById('tabChitiet').classList.add('d-none');
+
+    if (tabKey === 'lich') {
+      document.getElementById('nav-lich').classList.add('active');
+      document.getElementById('tabLich').classList.remove('d-none');
+      renderCalendar();
+    } else if (tabKey === 'chitiet') {
+      document.getElementById('nav-chitiet').classList.add('active');
+      document.getElementById('tabChitiet').classList.remove('d-none');
+      renderMasterTable();
+    }
+  }
+
+  function loadData(doneCallback) {
+    const errBanner = document.getElementById('errorBanner');
+    errBanner.classList.add('d-none');
+
+    if (APPS_SCRIPT_URL.includes("DÁN_LINK_WEB_APP")) {
+      errBanner.innerText = "Chưa cấu hình APPS_SCRIPT_URL: Hãy dán link Web App (/exec) vào dòng 617 trong file index.html!";
+      errBanner.classList.remove('d-none');
+      if (doneCallback) doneCallback();
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = (res && res.jobs) ? res.jobs : [];
+        
+        if (res && res.categories) {
+          if (Array.isArray(res.categories.jobTypes)) jobTypes = res.categories.jobTypes;
+          if (Array.isArray(res.categories.customerList)) customerList = res.categories.customerList;
+          if (Array.isArray(res.categories.executorList)) executorList = res.categories.executorList;
+          if (Array.isArray(res.categories.statusList)) statusList = res.categories.statusList;
+          try {
+            localStorage.setItem('pref_job_types', JSON.stringify(jobTypes));
+            localStorage.setItem('pref_customer_list', JSON.stringify(customerList));
+            localStorage.setItem('pref_executor_list', JSON.stringify(executorList));
+            localStorage.setItem('pref_status_list', JSON.stringify(statusList));
+          } catch(e) {}
+        } else {
+          allJobs.forEach(j => {
+            if (j.congViec && !jobTypes.includes(j.congViec.trim())) jobTypes.push(j.congViec.trim());
+            if (j.khachHang && !customerList.includes(j.khachHang.trim())) customerList.push(j.khachHang.trim());
+            if (j.nguoiThucHien && !executorList.includes(j.nguoiThucHien.trim())) executorList.push(j.nguoiThucHien.trim());
+            if (j.tinhTrang && !statusList.includes(j.tinhTrang.trim())) statusList.push(j.tinhTrang.trim());
+          });
+          saveCategoriesPrefs();
+        }
+
+        renderCalendar();
+        updateHeaderStats();
+        renderSelectedDayJobs();
+        renderMasterTable();
+        if (doneCallback) doneCallback();
+      })
+      .withFailureHandler(function(err) {
+        errBanner.innerText = "Lỗi tải dữ liệu từ Google Sheet: " + (err.message || err);
+        errBanner.classList.remove('d-none');
+        if (doneCallback) doneCallback();
+      })
+      .getAllJobsData();
+  }
+
+  function changeMonth(direction) {
+    currentDisplayDate = new Date(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth() + direction, 1);
+    renderCalendar();
+    updateHeaderStats();
+  }
+
+  function goToTodayMonth() {
+    currentDisplayDate = new Date();
+    selectedDateIso = getLocalIsoDate(new Date());
+    renderCalendar();
+    updateHeaderStats();
+    renderSelectedDayJobs();
+  }
+
+  function renderCalendar() {
+    const year = currentDisplayDate.getFullYear();
+    const month = currentDisplayDate.getMonth();
+    
+    document.getElementById('calendarMonthTitle').innerText = `${monthNames[month]} Năm ${year}`;
+
+    const gridEl = document.getElementById('calendarDaysGrid');
+    let html = '';
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    let startDayOfWeek = firstDayOfMonth.getDay() - 1;
+    if (startDayOfWeek === -1) startDayOfWeek = 6;
+
+    const totalDays = lastDayOfMonth.getDate();
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    const todayIso = getLocalIsoDate(new Date());
+
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+      let dNum = prevMonthLastDay - i;
+      let lunarStr = getLunarDateStr(prevYear, prevMonth, dNum);
+      html += `<div class="calendar-day other-month">
+        <div class="day-number">${dNum}</div>
+        <div class="lunar-date">${lunarStr}</div>
+      </div>`;
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+      let mStr = String(month + 1).padStart(2, '0');
+      let dStr = String(day).padStart(2, '0');
+      let dateIso = `${year}-${mStr}-${dStr}`;
+      let dateFormatted = `${dStr}/${mStr}/${year}`;
+
+      let dayJobs = allJobs.filter(j => j.ngay === dateFormatted && (j.congViec.trim() !== '' || j.khachHang.trim() !== ''));
+      let hasEvent = dayJobs.length > 0;
+      let isToday = (dateIso === todayIso);
+      let isSelected = (dateIso === selectedDateIso);
+
+      let classList = "calendar-day";
+      if (hasEvent) classList += " has-event";
+      if (isSelected) classList += " selected-date";
+      if (isToday) classList += " today";
+
+      let lunarStr = getLunarDateStr(year, month, day);
+
+      html += `<div class="${classList}" onclick="selectDate('${dateIso}')">
+        <div class="day-number">${day}</div>
+        <div class="lunar-date">${lunarStr}</div>
+        ${hasEvent ? `<div class="event-badge">${dayJobs.length} lịch</div>` : ''}
+      </div>`;
+    }
+
+    let totalCellsSoFar = startDayOfWeek + totalDays;
+    let nextMonthDaysNeeded = 42 - totalCellsSoFar;
+    const nextMonth = month === 11 ? 0 : month + 1;
+    const nextYear = month === 11 ? year + 1 : year;
+    
+    for (let d = 1; d <= nextMonthDaysNeeded; d++) {
+      let lunarStr = getLunarDateStr(nextYear, nextMonth, d);
+      html += `<div class="calendar-day other-month">
+        <div class="day-number">${d}</div>
+        <div class="lunar-date">${lunarStr}</div>
+      </div>`;
+    }
+
+    gridEl.innerHTML = html;
+  }
+
+  function selectDate(dateIso) {
+    selectedDateIso = dateIso;
+    renderCalendar();
+    renderSelectedDayJobs();
+  }
+
+  function renderSelectedDayJobs() {
+    const parts = selectedDateIso.split('-');
+    const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    
+    const yNum = Number(parts[0]);
+    const mIdx = Number(parts[1]) - 1;
+    const dNum = Number(parts[2]);
+    const dateObj = new Date(yNum, mIdx, dNum);
+    const lunarStr = getLunarDateStr(yNum, mIdx, dNum);
+    document.getElementById('selectedDateHeader').innerText = `${weekdayNames[dateObj.getDay()]}, ${dNum} tháng ${Number(parts[1])} (${lunarStr})`;
+
+    const filterText = document.getElementById('filterCustomerInput').value.toLowerCase();
+    
+    const dayJobs = allJobs.filter(j => {
+      if (j.ngay !== formatted || (j.congViec.trim() === '' && j.khachHang.trim() === '')) return false;
+      if (filterText && !j.khachHang.toLowerCase().includes(filterText) && !j.congViec.toLowerCase().includes(filterText)) return false;
+      return true;
+    });
+
+    document.getElementById('selectedDateSubCount').innerText = `${dayJobs.length} lịch làm việc`;
+    const container = document.getElementById('selectedDayEventsContainer');
+    
+    if (dayJobs.length === 0) {
+      container.innerHTML = `<div class="text-center text-muted py-4 small">Không có lịch làm việc trong ngày này</div>`;
+      return;
+    }
+
+    let html = '';
+    dayJobs.forEach(j => {
+      const parsed = splitJobDetail(j.chiTiet);
+      const hasDiaChi = Boolean(parsed.diaChi && parsed.diaChi.trim() !== '');
+      const hasMapLink = Boolean(j.mapLink && j.mapLink.trim() !== '');
+
+      let mapStatusBadgeHtml = '';
+      if (!hasDiaChi) {
+        mapStatusBadgeHtml = `<span class="badge bg-light text-secondary border">Chưa có đ/c</span>`;
+      } else if (!hasMapLink) {
+        mapStatusBadgeHtml = `<span class="badge bg-light text-secondary border">Chưa có maps</span>`;
+      } else {
+        mapStatusBadgeHtml = `<a href="${j.mapLink.trim()}" target="_blank" class="badge bg-success text-decoration-none">📍 Mở Bản Đồ</a>`;
+      }
+
+      let timeAndAddrHtml = '';
+      if (parsed.thoiGian) {
+        timeAndAddrHtml += `<div class="text-dark small fw-semibold mb-1">⏰ ${parsed.thoiGian}</div>`;
+      }
+      if (hasDiaChi) {
+        timeAndAddrHtml += `<div class="text-muted small mb-1">📍 ${parsed.diaChi}</div>`;
+      }
+      if (!parsed.thoiGian && !hasDiaChi) {
+        timeAndAddrHtml = `<div class="text-muted small mb-1">Chưa có chi tiết giờ / địa điểm</div>`;
+      }
+
+      html += `<div class="event-item-card">
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <span class="badge rounded-pill" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3; font-size: 12px;" onclick="openJobInfoPopup(${j.rowNumber})" role="button" title="Bấm để xem chi tiết & thao tác">${j.congViec || 'Chưa phân loại'}</span>
+            <h6 class="fw-bold mb-0 text-dark">${j.khachHang || 'Chưa ghi tên'}</h6>
+          </div>
+          <div>
+            ${mapStatusBadgeHtml}
+          </div>
+        </div>
+        ${timeAndAddrHtml}
+        <div class="text-success small fw-semibold">👤 ${j.nguoiThucHien || 'Lê Tân'}</div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  function updateHeaderStats() {}
+
+  function populateModalDropdowns(selectedJob = "", selectedCust = "", selectedExec = "", selectedStatus = "") {
+    let jobOpts = [...jobTypes];
+    if (selectedJob && !jobOpts.includes(selectedJob)) jobOpts.push(selectedJob);
+    const jobSel = document.getElementById('formCongViec');
+    jobSel.innerHTML = `<option value="">-- Chọn công việc --</option>` + jobOpts.map(j => `<option value="${j}" ${j === selectedJob ? 'selected' : ''}>${j}</option>`).join('');
+
+    let custOpts = [...customerList];
+    if (selectedCust && !custOpts.includes(selectedCust)) custOpts.push(selectedCust);
+    const custSel = document.getElementById('formKhachHang');
+    custSel.innerHTML = `<option value="">-- Chọn khách hàng --</option>` + custOpts.map(c => `<option value="${c}" ${c === selectedCust ? 'selected' : ''}>${c}</option>`).join('');
+
+    let execOpts = [...executorList];
+    const targetExec = selectedExec || "Lê Tân";
+    if (targetExec && !execOpts.includes(targetExec)) execOpts.push(targetExec);
+    const execSel = document.getElementById('formNguoiThucHien');
+    execSel.innerHTML = `<option value="">-- Chọn người thực hiện --</option>` + execOpts.map(e => `<option value="${e}" ${e === targetExec ? 'selected' : ''}>${e}</option>`).join('');
+
+    let statusOpts = [...statusList];
+    const targetStatus = selectedStatus || "Chờ";
+    if (targetStatus && !statusOpts.includes(targetStatus)) statusOpts.push(targetStatus);
+    const statusSel = document.getElementById('formTinhTrang');
+    if (statusSel) {
+      statusSel.innerHTML = statusOpts.map(s => `<option value="${s}" ${s === targetStatus ? 'selected' : ''}>${s}</option>`).join('');
+    }
+  }
+
+  function addNewJobTypeOption() {
+    showPromptDialog("Nhập loại công việc mới:", "", (newName) => {
+      if (newName && newName.trim() !== "") {
+        const cleanName = newName.trim();
+        if (!jobTypes.includes(cleanName)) jobTypes.push(cleanName);
+        saveCategoriesPrefs();
+        populateModalDropdowns(cleanName, document.getElementById('formKhachHang').value, document.getElementById('formNguoiThucHien').value, document.getElementById('formTinhTrang').value);
+        showToast(`Đã thêm "${cleanName}"`);
+      }
+    });
+  }
+
+  function addNewCustomerOption() {
+    showPromptDialog("Nhập tên Khách hàng / Studio mới:", "", (newName) => {
+      if (newName && newName.trim() !== "") {
+        const cleanName = newName.trim();
+        if (!customerList.includes(cleanName)) customerList.unshift(cleanName);
+        saveCategoriesPrefs();
+        populateModalDropdowns(document.getElementById('formCongViec').value, cleanName, document.getElementById('formNguoiThucHien').value, document.getElementById('formTinhTrang').value);
+        showToast(`Đã thêm "${cleanName}"`);
+      }
+    });
+  }
+
+  function addNewExecutorOption() {
+    showPromptDialog("Nhập tên Người thực hiện mới:", "", (newName) => {
+      if (newName && newName.trim() !== "") {
+        const cleanName = newName.trim();
+        if (!executorList.includes(cleanName)) executorList.push(cleanName);
+        saveCategoriesPrefs();
+        populateModalDropdowns(document.getElementById('formCongViec').value, document.getElementById('formKhachHang').value, cleanName, document.getElementById('formTinhTrang').value);
+        showToast(`Đã thêm "${cleanName}"`);
+      }
+    });
+  }
+
+  function addNewStatusOption() {
+    showPromptDialog("Nhập tình trạng Job mới:", "", (newName) => {
+      if (newName && newName.trim() !== "") {
+        const cleanName = newName.trim();
+        if (!statusList.includes(cleanName)) statusList.push(cleanName);
+        saveCategoriesPrefs();
+        populateModalDropdowns(
+          document.getElementById('formCongViec').value, 
+          document.getElementById('formKhachHang').value, 
+          document.getElementById('formNguoiThucHien').value, 
+          cleanName
+        );
+        showToast(`Đã thêm "${cleanName}"`);
+      }
+    });
+  }
+
+  function fixMapLinkInput(btnEl) {
+    const mapLinkInput = document.getElementById('formMapLink');
+    const rawVal = mapLinkInput.value.trim();
+
+    if (!rawVal) {
+      showToast('Chưa nhập link hoặc tọa độ Google Maps', true);
+      return;
+    }
+
+    const btn = btnEl || event.target;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = 'Đang fix...';
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+        if (res && res.success) {
+          mapLinkInput.value = res.url;
+          showToast('Đã chuẩn hóa link Google Maps');
+        } else {
+          showToast((res && res.message) || 'Không thể chuẩn hóa link', true);
+        }
+      })
+      .withFailureHandler(function() {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+        showToast('Lỗi kết nối khi chuẩn hóa link', true);
+      })
+      .normalizeAndFixMapUrl(rawVal);
+  }
+
+  function fetchAddressFromMap() {
+    const mapLinkInput = document.getElementById('formMapLink');
+    const diaChiInput = document.getElementById('formDiaChi');
+    const url = mapLinkInput.value.trim();
+    
+    if (!url) {
+      showToast('Chưa dán link Google Maps', true);
+      return;
+    }
+    
+    const btn = event.target;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = 'Đang đọc...';
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+        if (res.success) {
+          diaChiInput.value = res.address;
+          showToast('Đã điền địa chỉ từ Map');
+        } else {
+          showToast(res.message, true);
+        }
+      })
+      .withFailureHandler(function(err) {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+        showToast('Lỗi đọc bản đồ', true);
+      })
+      .extractAddressFromMap(url);
+  }
+
+  function generateMapLinkFromDetail(btnEl) {
+    const diaChiInput = document.getElementById('formDiaChi');
+    const mapLinkInput = document.getElementById('formMapLink');
+    const queryText = diaChiInput.value.trim();
+    
+    if (!queryText) {
+      showToast('Hãy nhập ô Địa chỉ trước', true);
+      return;
+    }
+
+    const encodedQuery = encodeURIComponent(queryText);
+    const rawMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
+
+    const btn = btnEl || event.target;
+    const oldHtml = btn ? btn.innerHTML : 'Tạo map';
+    if (btn) {
+      btn.innerHTML = 'Đang tạo...';
+      btn.disabled = true;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (btn) {
+          btn.innerHTML = oldHtml;
+          btn.disabled = false;
+        }
+        if (res && res.success) {
+          mapLinkInput.value = res.url;
+          showToast('Đã tạo & chuẩn hóa link Google Maps');
+        } else {
+          mapLinkInput.value = rawMapUrl;
+          showToast('Đã tạo link Google Maps');
+        }
+      })
+      .withFailureHandler(function() {
+        if (btn) {
+          btn.innerHTML = oldHtml;
+          btn.disabled = false;
+        }
+        mapLinkInput.value = rawMapUrl;
+        showToast('Đã tạo link Google Maps');
+      })
+      .normalizeAndFixMapUrl(rawMapUrl);
+  }
+
+  function openManageCatalogsModal() {
+    renderCatalogItemsList();
+    manageCatalogsModalInstance.show();
+  }
+
+  function openReportModal() {
+    reportModalInstance.show();
+  }
+
+  function clearAllFilters() {
+    document.getElementById('searchTableInput').value = '';
+    document.getElementById('filterMonthTable').value = '';
+    filterJobTypeVal = "";
+    filterCustomerVal = "";
+    filterExecutorVal = "";
+    filterStatusVal = "";
+    renderMasterTable();
+    showToast('Đã xóa bộ lọc');
+  }
+
+  function addCatalogItemDirect() {
+    const inputEl = document.getElementById('newCatalogItemInput');
+    const val = inputEl.value.trim();
+    if (!val) {
+      showToast('Vui lòng nhập tên mục cần thêm', true);
+      return;
+    }
+    const catKey = document.getElementById('catalogCategorySelect').value;
+    let list = jobTypes;
+    if (catKey === 'customerList') list = customerList;
+    else if (catKey === 'executorList') list = executorList;
+    else if (catKey === 'statusList') list = statusList;
+
+    if (list.includes(val)) {
+      showToast('Mục này đã tồn tại trong danh sách', true);
+      return;
+    }
+
+    if (catKey === 'customerList') list.unshift(val);
+    else list.push(val);
+
+    inputEl.value = '';
+    saveCategoriesPrefs();
+    renderCatalogItemsList();
+    renderMasterTable();
+    showToast(`Đã thêm "${val}"`);
+  }
+
+  function renderCatalogItemsList() {
+    const catKey = document.getElementById('catalogCategorySelect').value;
+    let list = jobTypes;
+    if (catKey === 'customerList') list = customerList;
+    else if (catKey === 'executorList') list = executorList;
+    else if (catKey === 'statusList') list = statusList;
+    
+    let html = '';
+    list.forEach((item, idx) => {
+      html += `<div class="d-flex justify-content-between align-items-center bg-white border rounded p-2 mb-1">
+        <span class="fw-semibold">${item}</span>
+        <div>
+          <button class="btn btn-outline-primary btn-sm py-0 px-2 me-1" style="font-size:11px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
+          ${list.length > 1 ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>` : ''}
+        </div>
+      </div>`;
+    });
+    document.getElementById('catalogItemsContainer').innerHTML = html;
+  }
+
+  function renameCatalogItem(catKey, idx) {
+    let list = jobTypes;
+    if (catKey === 'customerList') list = customerList;
+    else if (catKey === 'executorList') list = executorList;
+    else if (catKey === 'statusList') list = statusList;
+
+    const oldName = list[idx];
+    
+    showPromptDialog(`Đổi tên "${oldName}" thành:`, oldName, (newName) => {
+      if (newName && newName.trim() !== "" && newName.trim() !== oldName) {
+        const cleanNewName = newName.trim();
+        
+        if (list.includes(cleanNewName)) {
+          showToast("Tên này đã tồn tại", true);
+          return;
+        }
+
+        list[idx] = cleanNewName;
+        saveCategoriesPrefs();
+        renderCatalogItemsList();
+
+        google.script.run
+          .withSuccessHandler(function(res) {
+            allJobs = res.jobs || [];
+            renderMasterTable();
+            renderCalendar();
+            renderSelectedDayJobs();
+            showToast(`Đã đổi thành "${cleanNewName}"`);
+          })
+          .withFailureHandler(function(err) {
+            showToast("Lỗi cập nhật danh mục", true);
+          })
+          .updateCatalogItemInSheet(catKey, oldName, newName.trim());
+      }
+    });
+  }
+
+  function deleteCatalogItem(catKey, idx) {
+    let list = jobTypes;
+    if (catKey === 'customerList') list = customerList;
+    else if (catKey === 'executorList') list = executorList;
+    else if (catKey === 'statusList') list = statusList;
+
+    const targetName = list[idx];
+    showConfirmDialog(`Bạn có chắc muốn xóa "${targetName}" khỏi danh mục?`, () => {
+      list.splice(idx, 1);
+      saveCategoriesPrefs();
+      renderCatalogItemsList();
+      renderMasterTable();
+      showToast(`Đã xóa "${targetName}"`);
+    });
+  }
+
+  function loadTablePrefs() {
+    try {
+      const onlyEmpty = localStorage.getItem('pref_only_empty_days');
+      const hideCompleted = localStorage.getItem('pref_hide_completed');
+      
+      if (onlyEmpty !== null) document.getElementById('toggleOnlyEmptyDays').checked = (onlyEmpty === 'true');
+      if (hideCompleted !== null) document.getElementById('toggleHideCompleted').checked = (hideCompleted === 'true');
+    } catch (e) {}
+  }
+
+  function saveTablePrefs() {
+    try {
+      localStorage.setItem('pref_only_empty_days', document.getElementById('toggleOnlyEmptyDays').checked);
+      localStorage.setItem('pref_hide_completed', document.getElementById('toggleHideCompleted').checked);
+    } catch (e) {}
+  }
+
+  function scrollToTodayRow() {
+    const todayEl = document.getElementById('masterTodayRow');
+    if (todayEl) {
+      todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function jumpToTodayInTable() {
+    const now = new Date();
+    const curMonthStr = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+    const monthSelect = document.getElementById('filterMonthTable');
+    
+    if (monthSelect.value && monthSelect.value !== curMonthStr) {
+      monthSelect.value = curMonthStr;
+    }
+    renderMasterTable();
+    setTimeout(scrollToTodayRow, 100);
+  }
+
+  function escapeJsQuotes(str) {
+    return String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
+  function renderMasterTable() {
+    const keyword = document.getElementById('searchTableInput').value.toLowerCase().trim();
+    const monthSelectEl = document.getElementById('filterMonthTable');
+    let selectedMonth = monthSelectEl.value;
+
+    const selectedJobType = filterJobTypeVal;
+    const selectedCust = filterCustomerVal;
+    const selectedExecutor = filterExecutorVal;
+    const selectedStatus = filterStatusVal;
+
+    const onlyEmptyDays = document.getElementById('toggleOnlyEmptyDays').checked;
+    const hideCompleted = document.getElementById('toggleHideCompleted').checked;
+
+    const todayFormatted = getTodayFormatted();
+    const now = new Date();
+    const currentMonthKey = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+
+    const setMonths = new Set([currentMonthKey]);
+    allJobs.forEach(j => {
+      if (j.ngay && j.ngay.includes('/')) {
+        let p = j.ngay.split('/');
+        if (p.length === 3) setMonths.add(`${p[1].padStart(2, '0')}/${p[2]}`);
+      }
+    });
+
+    const sortedMonths = Array.from(setMonths).sort((a, b) => {
+      const [m1, y1] = a.split('/').map(Number);
+      const [m2, y2] = b.split('/').map(Number);
+      return (y1 * 12 + m1) - (y2 * 12 + m2);
+    });
+
+    let monthOpts = `<option value="">📅 Tất cả tháng</option>`;
+    sortedMonths.forEach(m => {
+      monthOpts += `<option value="${m}" ${m === selectedMonth ? 'selected' : ''}>Tháng ${m}</option>`;
+    });
+    monthSelectEl.innerHTML = monthOpts;
+
+    const hasAnyFilter = Boolean(keyword || selectedMonth || selectedJobType || selectedCust || selectedExecutor || selectedStatus);
+    const clearBtn = document.getElementById('btnClearAllFilters');
+    if (clearBtn) {
+      if (hasAnyFilter) clearBtn.classList.add('has-active-filter');
+      else clearBtn.classList.remove('has-active-filter');
+    }
+
+    const baseFilteredJobs = allJobs.filter(j => {
+      if (!j.congViec && !j.khachHang) return false;
+      if (hideCompleted && j.tinhTrang === 'Xong') return false;
+      if (selectedMonth) {
+        let p = j.ngay.split('/');
+        if (p.length !== 3 || `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
+      }
+      if (keyword &&
+          !j.khachHang.toLowerCase().includes(keyword) &&
+          !j.congViec.toLowerCase().includes(keyword) &&
+          !j.chiTiet.toLowerCase().includes(keyword) &&
+          !j.ngay.toLowerCase().includes(keyword) &&
+          !(j.nguoiThucHien || 'Lê Tân').toLowerCase().includes(keyword)) {
+        return false;
+      }
+      return true;
+    });
+
+    const matchJT = (j) => !selectedJobType || j.congViec.trim().toLowerCase() === selectedJobType.toLowerCase();
+    const matchCust = (j) => !selectedCust || j.khachHang.trim().toLowerCase() === selectedCust.toLowerCase();
+    const matchExec = (j) => !selectedExecutor || (j.nguoiThucHien || "Lê Tân").trim().toLowerCase() === selectedExecutor.toLowerCase();
+    const matchSt = (j) => !selectedStatus || j.tinhTrang.trim() === selectedStatus;
+
+    const extractUniqueOptions = (jobsSubset, getterFn, catalogOrder) => {
+      const mapLowerToOriginal = new Map();
+      jobsSubset.forEach(j => {
+        const val = String(getterFn(j) || '').trim();
+        if (val && !mapLowerToOriginal.has(val.toLowerCase())) {
+          mapLowerToOriginal.set(val.toLowerCase(), val);
+        }
+      });
+      const arr = Array.from(mapLowerToOriginal.values());
+      arr.sort((a, b) => {
+        const idxA = catalogOrder.findIndex(x => x.toLowerCase() === a.toLowerCase());
+        const idxB = catalogOrder.findIndex(x => x.toLowerCase() === b.toLowerCase());
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return a.localeCompare(b, 'vi');
+      });
+      return arr;
+    };
+
+    const isFilteringSpecific = (keyword !== '' || selectedJobType !== '' || selectedCust !== '' || selectedExecutor !== '' || selectedStatus !== '');
+    const effectiveBaseJobs = (onlyEmptyDays && !isFilteringSpecific && !hideCompleted) ? [] : baseFilteredJobs;
+
+    const activeJobTypes = extractUniqueOptions(
+      effectiveBaseJobs.filter(j => matchCust(j) && matchExec(j) && matchSt(j)),
+      j => j.congViec,
+      jobTypes
+    );
+    if (selectedJobType && !activeJobTypes.some(x => x.toLowerCase() === selectedJobType.toLowerCase())) activeJobTypes.unshift(selectedJobType);
+
+    const activeCustomers = extractUniqueOptions(
+      effectiveBaseJobs.filter(j => matchJT(j) && matchExec(j) && matchSt(j)),
+      j => j.khachHang,
+      customerList
+    );
+    if (selectedCust && !activeCustomers.some(x => x.toLowerCase() === selectedCust.toLowerCase())) activeCustomers.unshift(selectedCust);
+
+    const activeExecutors = extractUniqueOptions(
+      effectiveBaseJobs.filter(j => matchJT(j) && matchCust(j) && matchSt(j)),
+      j => j.nguoiThucHien || "Lê Tân",
+      executorList
+    );
+    if (selectedExecutor && !activeExecutors.some(x => x.toLowerCase() === selectedExecutor.toLowerCase())) activeExecutors.unshift(selectedExecutor);
+
+    const activeStatuses = extractUniqueOptions(
+      effectiveBaseJobs.filter(j => matchJT(j) && matchCust(j) && matchExec(j)),
+      j => j.tinhTrang || "Chờ",
+      statusList
+    );
+    if (selectedStatus && !activeStatuses.some(x => x.toLowerCase() === selectedStatus.toLowerCase())) activeStatuses.unshift(selectedStatus);
+
+    document.getElementById('btnDropdownJobType').innerHTML = selectedJobType ? `${selectedJobType} ✕` : `Công việc`;
+    document.getElementById('btnDropdownCustomer').innerHTML = selectedCust ? `${selectedCust} ✕` : `Khách hàng`;
+    document.getElementById('btnDropdownExecutor').innerHTML = selectedExecutor ? `${selectedExecutor} ✕` : `Người thực hiện`;
+    document.getElementById('btnDropdownStatus').innerHTML = selectedStatus ? `${selectedStatus} ✕` : `Tình trạng`;
+
+    let jobTypeMenuHtml = `<li><a class="dropdown-item ${!selectedJobType ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('jobType', '')">Tất cả Công việc (${activeJobTypes.length})</a></li>`;
+    activeJobTypes.forEach(jt => {
+      const isAct = selectedJobType.toLowerCase() === jt.toLowerCase();
+      jobTypeMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('jobType', '${escapeJsQuotes(jt)}')">${jt}</a></li>`;
+    });
+    document.getElementById('menuFilterJobType').innerHTML = jobTypeMenuHtml;
+
+    let custMenuHtml = `<li><a class="dropdown-item ${!selectedCust ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('customer', '')">Tất cả Khách hàng (${activeCustomers.length})</a></li>`;
+    activeCustomers.forEach(c => {
+      const isAct = selectedCust.toLowerCase() === c.toLowerCase();
+      custMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('customer', '${escapeJsQuotes(c)}')">${c}</a></li>`;
+    });
+    document.getElementById('menuFilterCustomer').innerHTML = custMenuHtml;
+
+    let execMenuHtml = `<li><a class="dropdown-item ${!selectedExecutor ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('executor', '')">Tất cả Người thực hiện (${activeExecutors.length})</a></li>`;
+    activeExecutors.forEach(e => {
+      const isAct = selectedExecutor.toLowerCase() === e.toLowerCase();
+      execMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('executor', '${escapeJsQuotes(e)}')">${e}</a></li>`;
+    });
+    document.getElementById('menuFilterExecutor').innerHTML = execMenuHtml;
+
+    let statusMenuHtml = `<li><a class="dropdown-item ${!selectedStatus ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('status', '')">Tất cả Tình trạng (${activeStatuses.length})</a></li>`;
+    activeStatuses.forEach(s => {
+      const isAct = selectedStatus === s;
+      statusMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('status', '${escapeJsQuotes(s)}')">${s}</a></li>`;
+    });
+    document.getElementById('menuFilterStatus').innerHTML = statusMenuHtml;
+
+    let displayItems = [];
+
+    if (onlyEmptyDays && !isFilteringSpecific && !hideCompleted) {
+      const monthsToGenerate = selectedMonth ? [selectedMonth] : sortedMonths;
+      
+      monthsToGenerate.forEach(mKey => {
+        const [mNum, yNum] = mKey.split('/').map(Number);
+        const daysInMonth = new Date(yNum, mNum, 0).getDate();
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dStr = String(d).padStart(2, '0');
+          const mStr = String(mNum).padStart(2, '0');
+          const fullDateStr = `${dStr}/${mStr}/${yNum}`;
+          const dateObj = new Date(yNum, mNum - 1, d);
+          const thuStr = weekdayNames[dateObj.getDay()];
+
+          const jobsOnDate = allJobs.filter(j => j.ngay === fullDateStr && (j.congViec.trim() !== '' || j.khachHang.trim() !== ''));
+
+          if (jobsOnDate.length === 0) {
+            displayItems.push({
+              isEmpty: true,
+              dateStr: fullDateStr,
+              isoDate: `${yNum}-${mStr}-${dStr}`,
+              thu: thuStr
+            });
+          }
+        }
+      });
+    } else {
+      baseFilteredJobs.forEach(j => {
+        if (!matchJT(j) || !matchCust(j) || !matchExec(j) || !matchSt(j)) return;
+        displayItems.push({ isEmpty: false, job: j, dateStr: j.ngay, thu: j.thu });
+      });
+    }
+
+    displayItems.sort((a, b) => {
+      const d1 = a.dateStr || (a.job ? a.job.ngay : '');
+      const d2 = b.dateStr || (b.job ? b.job.ngay : '');
+      const parseD = (s) => {
+        if (!s || !s.includes('/')) return 0;
+        const p = s.split('/');
+        return new Date(`${p[2]}-${p[1].padStart(2, '0')}-${p[0]}`).getTime();
+      };
+      return parseD(d1) - parseD(d2);
+    });
+
+    const tbody = document.getElementById('masterTableBody');
+    let html = '';
+    let sumGiaTri = 0, sumChiPhi = 0, sumLoiNhuan = 0, sumChuaTT = 0;
+    let filteredJobCount = 0;
+    let hasMarkedTodayId = false;
+
+    displayItems.forEach(item => {
+      const isToday = (item.dateStr === todayFormatted);
+      let rowIdAttr = '';
+      if (isToday && !hasMarkedTodayId) {
+        rowIdAttr = 'id="masterTodayRow"';
+        hasMarkedTodayId = true;
+      }
+
+      const todayBadge = isToday ? ` <span class="badge bg-warning text-dark ms-1">Hôm nay</span>` : '';
+
+      if (item.isEmpty) {
+        html += `<tr ${rowIdAttr} class="empty-day-row ${isToday ? 'today-row' : ''}">
+          <td class="text-center text-nowrap">${item.thu}</td>
+          <td class="text-center text-nowrap">${item.dateStr}${todayBadge}</td>
+          <td class="text-center">-</td>
+          <td class="text-center">-</td>
+          <td>Trống lịch</td>
+          <td class="text-center">-</td>
+          <td class="text-center">-</td>
+          <td class="text-center">-</td>
+          <td class="text-end">-</td>
+          <td class="text-end">-</td>
+          <td class="text-end">-</td>
+          <td class="text-center">-</td>
+        </tr>`;
+      } else {
+        const j = item.job;
+        filteredJobCount++;
+        let gVal = j.luuTruGiaTri || parseMoney(j.giaTri);
+        let cCoc = j.luuTruDaCoc || parseMoney(j.daCoc);
+        let cVal = j.luuTruChiPhi || parseMoney(j.chiPhi);
+        let lVal = gVal - cVal;
+
+        sumGiaTri += gVal;
+        sumChiPhi += cVal;
+        sumLoiNhuan += lVal;
+
+        if (j.tinhTrang === 'Chưa TT') {
+          sumChuaTT += (gVal > 0 ? Math.max(0, gVal - cCoc) : lVal);
+        }
+
+        let selectClass = 'status-cho';
+        if (j.tinhTrang === 'Chưa thực hiện') selectClass = 'status-chua-thuc-hien';
+        else if (j.tinhTrang === 'Chưa TT') selectClass = 'status-chua-tt';
+        else if (j.tinhTrang === 'Đã TT') selectClass = 'status-da-tt';
+        else if (j.tinhTrang === 'Xong') selectClass = 'status-xong';
+
+        let isXong = (j.tinhTrang === 'Xong');
+        let rowClassAttr = isXong ? 'row-status-xong' : '';
+        if (isToday) rowClassAttr += (rowClassAttr ? ' today-row' : 'today-row');
+
+        const parsedDetail = splitJobDetail(j.chiTiet);
+        let thoiGianDisplay = parsedDetail.thoiGian || '-';
+        let diaChiDisplay = parsedDetail.diaChi || '-';
+        if (j.mapLink && j.mapLink.trim() !== '') {
+          const mapBtn = `<a href="${j.mapLink.trim()}" target="_blank" class="badge bg-success text-decoration-none ms-1">📍 Bản đồ</a>`;
+          diaChiDisplay = (diaChiDisplay === '-') ? mapBtn : (diaChiDisplay + ' ' + mapBtn);
+        }
+
+        let statusOpts = [...statusList];
+        if (j.tinhTrang && !statusOpts.includes(j.tinhTrang)) statusOpts.push(j.tinhTrang);
+        let statusOptionsHtml = statusOpts.map(s => `<option value="${s}" ${j.tinhTrang === s ? 'selected' : ''}>${s}</option>`).join('');
+
+        const isCustFiltered = selectedCust && j.khachHang && j.khachHang.trim().toLowerCase() === selectedCust.toLowerCase();
+        const safeCust = escapeJsQuotes(j.khachHang || '');
+
+        const execName = j.nguoiThucHien || 'Lê Tân';
+        const isExecFiltered = selectedExecutor && execName.trim().toLowerCase() === selectedExecutor.toLowerCase();
+        const safeExec = escapeJsQuotes(execName);
+
+        html += `<tr ${rowIdAttr} class="${rowClassAttr}">
+          <td class="text-center text-nowrap">${item.thu}</td>
+          <td class="text-center text-nowrap">${j.ngay}${todayBadge}</td>
+          <td class="text-center">
+            <span class="job-badge" onclick="openJobInfoPopup(${j.rowNumber})" title="Bấm để xem chi tiết & thao tác">${j.congViec}</span>
+          </td>
+          <td class="text-center fw-medium">${thoiGianDisplay}</td>
+          <td>${diaChiDisplay}</td>
+          <td class="text-center">
+            <span class="customer-badge ${isCustFiltered ? 'active-filter' : ''}" onclick="toggleCustomerFilter('${safeCust}')" title="${isCustFiltered ? 'Bấm lần nữa để bỏ lọc' : 'Bấm để lọc riêng khách hàng này'}">${j.khachHang}</span>
+          </td>
+          <td class="text-center">
+            <span class="executor-badge ${isExecFiltered ? 'active-filter' : ''}" onclick="toggleExecutorFilter('${safeExec}')" title="${isExecFiltered ? 'Bấm lần nữa để bỏ lọc' : 'Bấm để lọc riêng nhân sự này'}">${execName}</span>
+          </td>
+          <td class="text-center">
+            <select class="form-select form-select-sm status-select ${selectClass}" onchange="changeStatusDropdown(${j.rowNumber}, this)">
+              ${statusOptionsHtml}
+            </select>
+          </td>
+          <td class="text-end text-nowrap">${gVal.toLocaleString('vi-VN')} đ</td>
+          <td class="text-end text-muted text-nowrap">${cCoc.toLocaleString('vi-VN')} đ</td>
+          <td class="text-end text-muted text-nowrap">${cVal.toLocaleString('vi-VN')} đ</td>
+          <td class="text-center">
+            <input type="checkbox" class="cost-checkbox" ${j.ttChiPhi === 'Đã trả' ? 'checked' : ''} onchange="toggleCostStatus(${j.rowNumber}, this)" title="Tích chọn nếu đã thanh toán chi phí">
+          </td>
+        </tr>`;
+      }
+    });
+
+    tbody.innerHTML = html || `<tr><td colspan="12" class="text-center py-4 text-muted">Không có dữ liệu phù hợp</td></tr>`;
+
+    document.getElementById('tableStatusHint').innerText = isFilteringSpecific 
+      ? `Đang lọc theo tiêu chí (${filteredJobCount} job hiển thị)` 
+      : `Hiển thị ${displayItems.length} dòng (${filteredJobCount} job có lịch)`;
+
+    document.getElementById('reportSubtitleModal').innerText = selectedExecutor ? `(Nhân sự: ${selectedExecutor})` : '';
+    document.getElementById('repTotalRevenue').innerText = sumGiaTri.toLocaleString('vi-VN') + ' đ';
+    document.getElementById('repTotalJobCount').innerText = `${filteredJobCount} job`;
+    document.getElementById('repTotalCost').innerText = sumChiPhi.toLocaleString('vi-VN') + ' đ';
+    document.getElementById('repTotalProfit').innerText = sumLoiNhuan.toLocaleString('vi-VN') + ' đ';
+    document.getElementById('repTotalUnpaid').innerText = sumChuaTT.toLocaleString('vi-VN') + ' đ';
+  }
+
+  function changeStatusDropdown(rowNumber, selectEl) {
+    const chosenStatus = selectEl.value;
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = res.jobs || [];
+        renderCalendar();
+        updateHeaderStats();
+        renderSelectedDayJobs();
+        renderMasterTable();
+        showToast(`Đã chuyển sang "${chosenStatus}"`);
+      })
+      .quickSetStatus(rowNumber, chosenStatus);
+  }
+
+  function toggleCostStatus(rowNumber, checkboxEl) {
+    const newStatus = checkboxEl.checked ? "Đã trả" : "Chưa trả";
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = res.jobs || [];
+        showToast(checkboxEl.checked ? 'Đã thanh toán chi phí' : 'Đã bỏ tích chi phí');
+      })
+      .withFailureHandler(function(err) {
+        showToast("Lỗi cập nhật chi phí", true);
+        checkboxEl.checked = !checkboxEl.checked;
+      })
+      .quickSetCostStatus(rowNumber, newStatus);
+  }
+
+  function openAddModal() {
+    openAddModalForDate(selectedDateIso);
+  }
+
+  function openAddModalForDate(isoDateStr) {
+    document.getElementById('jobForm').reset();
+    document.getElementById('formRowNumber').value = '';
+    document.getElementById('formChiTiet').value = '';
+    document.getElementById('formThoiGian').value = '';
+    document.getElementById('formDiaChi').value = '';
+    document.getElementById('formNgay').value = isoDateStr || getLocalIsoDate(new Date());
+    document.getElementById('chipsGiaTri').innerHTML = '';
+    document.getElementById('chipsDaCoc').innerHTML = '';
+    document.getElementById('chipsChiPhi').innerHTML = '';
+    document.getElementById('modalTitle').innerText = 'Thêm lịch quay / chụp mới';
+    const delBtn = document.getElementById('btnDeleteInModal');
+    if (delBtn) delBtn.classList.add('d-none');
+    populateModalDropdowns("", "", "Lê Tân", "Chờ");
+    jobModalInstance.show();
+  }
+
+  function openEditModal(rowNumber) {
+    const j = allJobs.find(item => item.rowNumber === rowNumber);
+    if (!j) return;
+    const parsedDetail = splitJobDetail(j.chiTiet);
+
+    document.getElementById('formRowNumber').value = j.rowNumber;
+    document.getElementById('formNgay').value = toInputDate(j.ngay);
+    document.getElementById('formChiTiet').value = j.chiTiet || '';
+    document.getElementById('formThoiGian').value = parsedDetail.thoiGian || '';
+    document.getElementById('formDiaChi').value = parsedDetail.diaChi || '';
+    document.getElementById('formMapLink').value = j.mapLink || '';
+    document.getElementById('formGiaTri').value = j.luuTruGiaTri || '';
+    document.getElementById('formDaCoc').value = j.luuTruDaCoc || '';
+    document.getElementById('formChiPhi').value = j.luuTruChiPhi || '';
+
+    populateModalDropdowns(j.congViec || "", j.khachHang || "", j.nguoiThucHien || "Lê Tân", j.tinhTrang || "Chờ");
+
+    document.getElementById('modalTitle').innerText = `Sửa Job ngày ${j.ngay}`;
+    const delBtn = document.getElementById('btnDeleteInModal');
+    if (delBtn) delBtn.classList.remove('d-none');
+    jobModalInstance.show();
+  }
+
+  function submitJob() {
+    const formEl = document.getElementById('jobForm');
+    if (!formEl.checkValidity()) { formEl.reportValidity(); return; }
+    
+    const thoiGianVal = document.getElementById('formThoiGian').value;
+    const diaChiVal = document.getElementById('formDiaChi').value;
+    document.getElementById('formChiTiet').value = combineJobDetail(thoiGianVal, diaChiVal);
+
+    const btn = document.getElementById('btnSave');
+    btn.disabled = true; btn.innerText = 'Đang lưu...';
+
+    const formData = Object.fromEntries(new FormData(formEl).entries());
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = res.jobs || [];
+        renderCalendar();
+        updateHeaderStats();
+        renderSelectedDayJobs();
+        renderMasterTable();
+        btn.disabled = false; btn.innerText = 'Lưu';
+        jobModalInstance.hide();
+        showToast('Đã lưu lịch thành công');
+      })
+      .withFailureHandler(function(err) {
+        showToast('Lỗi khi lưu: ' + err.message, true);
+        btn.disabled = false; btn.innerText = 'Lưu';
+      })
+      .saveJobData(formData);
+  }
+
+  function confirmDeleteFromModal() {
+    const rowNumber = document.getElementById('formRowNumber').value;
+    if (!rowNumber) return;
+    
+    showConfirmDialog("Bạn có chắc chắn muốn xóa lịch này không?", () => {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          allJobs = res.jobs || [];
+          renderCalendar();
+          updateHeaderStats();
+          renderSelectedDayJobs();
+          renderMasterTable();
+          jobModalInstance.hide();
+          showToast('Đã xóa lịch');
+        })
+        .deleteOrClearJob(rowNumber);
+    });
+  }
+
+  function deleteJobFromTable(rowNumber) {
+    if (!rowNumber) return;
+    
+    showConfirmDialog("Bạn có chắc chắn muốn xóa lịch này không?", () => {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          allJobs = res.jobs || [];
+          renderCalendar();
+          updateHeaderStats();
+          renderSelectedDayJobs();
+          renderMasterTable();
+          showToast('Đã xóa lịch');
+        })
+        .withFailureHandler(function(err) {
+          showToast("Lỗi khi xóa", true);
+        })
+        .deleteOrClearJob(rowNumber);
+    });
+  }
+
+  function openDebtQrModal() {
+    const custMap = new Map();
+    const setMonths = new Set();
+
+    allJobs.forEach(j => {
+      if (j.tinhTrang === 'Chưa TT' && j.khachHang && j.khachHang.trim() !== '') {
+        const cName = j.khachHang.trim();
+        custMap.set(cName, (custMap.get(cName) || 0) + 1);
+      }
+      if (j.ngay && j.ngay.includes('/')) {
+        const p = j.ngay.split('/');
+        if (p.length === 3) setMonths.add(`${p[1].padStart(2, '0')}/${p[2]}`);
+      }
+    });
+
+    qrUnpaidCustomersCache = Array.from(custMap.entries()).map(([name, count]) => ({ name, count }));
+
+    const sortedMonths = Array.from(setMonths).sort((a, b) => {
+      const [m1, y1] = a.split('/').map(Number);
+      const [m2, y2] = b.split('/').map(Number);
+      return (y1 * 12 + m1) - (y2 * 12 + m2);
+    });
+
+    const currentTableMonth = document.getElementById('filterMonthTable').value || '';
+    let monthOpts = `<option value="">📅 Tất cả các tháng</option>`;
+    sortedMonths.forEach(m => {
+      monthOpts += `<option value="${m}" ${m === currentTableMonth ? 'selected' : ''}>Tháng ${m}</option>`;
+    });
+    document.getElementById('qrMonthSelect').innerHTML = monthOpts;
+
+    document.getElementById('qrSearchCustomerInput').value = '';
+    filterQrCustomerDropdown(filterCustomerVal);
+
+    generateQrStatement();
+    debtQrModalInstance.show();
+  }
+
+  function filterQrCustomerDropdown(preferredCust = null) {
+    const keyword = document.getElementById('qrSearchCustomerInput').value.toLowerCase().trim();
+    const selectEl = document.getElementById('qrCustomerSelect');
+    const previousSelected = preferredCust !== null ? preferredCust : selectEl.value;
+
+    const filtered = qrUnpaidCustomersCache.filter(item =>
+      item.name.toLowerCase().includes(keyword)
+    );
+
+    let opts = `<option value="">-- Chọn khách hàng (${filtered.length}) --</option>`;
+    filtered.forEach(item => {
+      const isSelected = (item.name.toLowerCase() === String(previousSelected).toLowerCase());
+      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} job chưa TT)</option>`;
+    });
+
+    if (keyword && filtered.length === 1) {
+      opts = `<option value="">-- Chọn khách hàng (1) --</option>` +
+             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} job chưa TT)</option>`;
+    }
+
+    selectEl.innerHTML = opts;
+    generateQrStatement();
+  }
+
+  function generateQrStatement() {
+    const cust = document.getElementById('qrCustomerSelect').value;
+    const selectedMonth = document.getElementById('qrMonthSelect').value;
+
+    if (!cust) {
+      document.getElementById('qrStatementText').value = "Vui lòng chọn hoặc tìm kiếm khách hàng ở trên để tạo bảng kê công nợ.";
+      return;
+    }
+
+    const unpaidJobs = allJobs.filter(j => {
+      if (!j.khachHang || j.khachHang.trim().toLowerCase() !== cust.toLowerCase() || j.tinhTrang !== 'Chưa TT') return false;
+      if (selectedMonth) {
+        let p = j.ngay.split('/');
+        if (p.length === 3 && `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
+      }
+      return true;
+    });
+
+    if (unpaidJobs.length === 0) {
+      document.getElementById('qrStatementText').value = `Khách hàng "${cust}" không có job nào Chưa TT trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
+      return;
+    }
+
+    let totalValue = 0;
+    let totalDeposit = 0;
+    let lines = [];
+
+    lines.push(`BẢNG KÊ TỔNG JOB - ${cust.toUpperCase()}${selectedMonth ? ' (Tháng ' + selectedMonth + ')' : ' (Tất cả tháng)'}`);
+    lines.push(`-------------------------------------------`);
+
+    unpaidJobs.forEach((j, i) => {
+      let g = j.luuTruGiaTri || parseMoney(j.giaTri);
+      let c = j.luuTruDaCoc || parseMoney(j.daCoc);
+      let remainJob = Math.max(0, g - c);
+
+      totalValue += g;
+      totalDeposit += c;
+
+      const parsed = splitJobDetail(j.chiTiet);
+      const cleanDetail = [parsed.thoiGian, parsed.diaChi].filter(Boolean).join(' - ');
+
+      let lineStr = `${i + 1}. Ngày ${j.ngay}: ${j.congViec}${cleanDetail ? ' (' + cleanDetail + ')' : ''} — ${g.toLocaleString('vi-VN')} đ`;
+      if (c > 0) {
+        lineStr += ` (Đã cọc: ${c.toLocaleString('vi-VN')} đ -> Còn: ${remainJob.toLocaleString('vi-VN')} đ)`;
+      }
+      lines.push(lineStr);
+    });
+
+    let totalRemain = Math.max(0, totalValue - totalDeposit);
+
+    lines.push(`-------------------------------------------`);
+    lines.push(`Tổng giá trị (${unpaidJobs.length} job): ${totalValue.toLocaleString('vi-VN')} đ`);
+    if (totalDeposit > 0) {
+      lines.push(`Đã cọc: -${totalDeposit.toLocaleString('vi-VN')} đ`);
+    }
+    lines.push(`TỔNG CÒN LẠI: ${totalRemain.toLocaleString('vi-VN')} đ`);
+    lines.push(`-------------------------------------------`);
+    lines.push(`Cảm ơn đã tin tưởng giao nhiệm vụ!`);
+
+    document.getElementById('qrStatementText').value = lines.join('\n');
+  }
+
+  function copyDebtText(btnEl) {
+    const ta = document.getElementById('qrStatementText');
+    navigator.clipboard.writeText(ta.value).then(() => {
+      animateCopyButton(btnEl, 'Copy Bảng Kê Gửi Zalo');
+      showToast("Đã copy bảng kê công nợ");
+    });
+  }
+
+  // === LOGIC KÉO THẢ ASSISTIVETOUCH ===
+  const bubble = document.getElementById('floatingMenuBubble');
+  const assistiveBtn = document.getElementById('assistiveBtn');
+  let isDragging = false;
+  let hasMoved = false;
+  let startX = 0, startY = 0;
+  let initialLeft = 0, initialTop = 0;
+
+  function closeAssistiveMenu() {
+    bubble.classList.remove('active');
+  }
+
+  function startAssistiveDrag(e) {
+    if (e.target.closest('.assistive-menu')) return;
+    isDragging = true;
+    hasMoved = false;
+
+    const point = e.touches ? e.touches[0] : e;
+    startX = point.clientX;
+    startY = point.clientY;
+
+    const rect = bubble.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+
+    bubble.style.transition = 'none';
+    bubble.style.left = initialLeft + 'px';
+    bubble.style.top = initialTop + 'px';
+
+    document.addEventListener('mousemove', onAssistiveMove);
+    document.addEventListener('mouseup', endAssistiveDrag);
+    document.addEventListener('touchmove', onAssistiveMove, { passive: false });
+    document.addEventListener('touchend', endAssistiveDrag);
+  }
+
+  function onAssistiveMove(e) {
+    if (!isDragging) return;
+    const point = e.touches ? e.touches[0] : e;
+    const dx = point.clientX - startX;
+    const dy = point.clientY - startY;
+
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+      if (!hasMoved) {
+        hasMoved = true;
+        bubble.classList.add('dragging');
+        bubble.classList.remove('active');
+      }
+    }
+
+    if (!hasMoved) return;
+    if (e.cancelable) e.preventDefault();
+
+    const btnSize = 56;
+    const maxX = window.innerWidth - btnSize - 6;
+    const maxY = window.innerHeight - btnSize - 6;
+
+    const newLeft = Math.max(6, Math.min(initialLeft + dx, maxX));
+    const newTop = Math.max(6, Math.min(initialTop + dy, maxY));
+
+    bubble.style.left = newLeft + 'px';
+    bubble.style.top = newTop + 'px';
+  }
+
+  function endAssistiveDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    bubble.classList.remove('dragging');
+
+    document.removeEventListener('mousemove', onAssistiveMove);
+    document.removeEventListener('mouseup', endAssistiveDrag);
+    document.removeEventListener('touchmove', onAssistiveMove);
+    document.removeEventListener('touchend', endAssistiveDrag);
+
+    if (!hasMoved) {
+      bubble.classList.toggle('active');
+      return;
+    }
+
+    const rect = bubble.getBoundingClientRect();
+    const btnSize = 56;
+    const margin = 12;
+    const centerX = rect.left + btnSize / 2;
+    const isLeftHalf = centerX < window.innerWidth / 2;
+    const targetLeft = isLeftHalf ? margin : (window.innerWidth - btnSize - margin);
+
+    if (isLeftHalf) {
+      bubble.classList.add('docked-left');
+    } else {
+      bubble.classList.remove('docked-left');
+    }
+
+    bubble.style.transition = 'left 0.32s cubic-bezier(0.22, 1, 0.36, 1), top 0.25s ease';
+    bubble.style.left = targetLeft + 'px';
+  }
+
+  assistiveBtn.addEventListener('mousedown', startAssistiveDrag);
+  assistiveBtn.addEventListener('touchstart', startAssistiveDrag, { passive: true });
+
+  document.addEventListener('click', function(e) {
+    if (!bubble.contains(e.target)) {
+      bubble.classList.remove('active');
+    }
+  });
+
+  window.addEventListener('resize', function() {
+    const rect = bubble.getBoundingClientRect();
+    const btnSize = 56;
+    const margin = 12;
+    const isLeft = bubble.classList.contains('docked-left');
+    bubble.style.left = (isLeft ? margin : (window.innerWidth - btnSize - margin)) + 'px';
+    if (rect.top > window.innerHeight - btnSize - margin) {
+      bubble.style.top = (window.innerHeight - btnSize - margin) + 'px';
+    }
+  });
+
+  function bubbleJumpToday() {
+    const tabLich = document.getElementById('tabLich');
+    if (tabLich && !tabLich.classList.contains('d-none')) {
+      goToTodayMonth();
+      selectDate(getLocalIsoDate(new Date()));
+    } else {
+      jumpToTodayInTable();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initCustomDialog();
+    loadCategoriesPrefs();
+    jobModalInstance = new bootstrap.Modal(document.getElementById('jobModal'));
+    debtQrModalInstance = new bootstrap.Modal(document.getElementById('debtQrModal'));
+    manageCatalogsModalInstance = new bootstrap.Modal(document.getElementById('manageCatalogsModal'));
+    reportModalInstance = new bootstrap.Modal(document.getElementById('reportModal'));
+    jobInfoPopupModalInstance = new bootstrap.Modal(document.getElementById('jobInfoPopupModal'));
+    loadTablePrefs();
+    renderCalendar();
+    updateHeaderStats();
+    renderSelectedDayJobs();
+    loadData();
+  });
+</script>
+</body>
+</html>
