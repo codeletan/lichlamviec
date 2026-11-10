@@ -5,17 +5,14 @@
   <title>Lịch LETAN</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   
-  <!-- Cấu hình Full màn hình như App gốc trên iPhone (iOS PWA) & Android -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lịch LETAN">
   <meta name="theme-color" content="#111111">
 
-  <!-- Icon hiển thị trên tab trình duyệt (Favicon SVG) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%237b1113'/%3E%3Crect x='96' y='116' width='320' height='300' rx='36' fill='%23ffffff'/%3E%3Cpath d='M96 152 c0-20 16-36 36-36 h248 c20 0 36 16 36 36 v48 H96 z' fill='%23111111'/%3E%3Ccircle cx='176' cy='116' r='18' fill='%23d4d4d8'/%3E%3Ccircle cx='336' cy='116' r='18' fill='%23d4d4d8'/%3E%3Ctext x='256' y='345' font-family='Arial, sans-serif' font-size='135' font-weight='900' fill='%237b1113' text-anchor='middle'%3ELT%3C/text%3E%3C/svg%3E">
 
-  <!-- Script tự động vẽ Icon độ nét cao cho Màn hình chính iPhone & tạo Web Manifest -->
   <script>
     (function() {
       try {
@@ -24,30 +21,25 @@
         canvas.height = 512;
         var ctx = canvas.getContext('2d');
 
-        // 1. Nền đỏ đậm thương hiệu (#7b1113)
         ctx.fillStyle = '#7b1113';
         ctx.fillRect(0, 0, 512, 512);
 
-        // 2. Khung tờ lịch trắng ở giữa
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.roundRect(86, 106, 340, 320, 42);
         ctx.fill();
 
-        // 3. Thanh gáy lịch màu đen (#111111)
         ctx.fillStyle = '#111111';
         ctx.beginPath();
         ctx.roundRect(86, 106, 340, 86, [42, 42, 0, 0]);
         ctx.fill();
 
-        // 4. Hai khuyên lịch màu bạc
         ctx.fillStyle = '#e4e4e7';
         ctx.beginPath();
         ctx.arc(176, 149, 16, 0, Math.PI * 2);
         ctx.arc(336, 149, 16, 0, Math.PI * 2);
         ctx.fill();
 
-        // 5. Chữ LT nổi bật ở giữa tờ lịch
         ctx.fillStyle = '#7b1113';
         ctx.font = '900 150px "Segoe UI", Arial, sans-serif';
         ctx.textAlign = 'center';
@@ -56,13 +48,11 @@
 
         var pngIconUrl = canvas.toDataURL('image/png');
 
-        // Gắn Apple Touch Icon cho iOS Safari
         var appleIcon = document.createElement('link');
         appleIcon.rel = 'apple-touch-icon';
         appleIcon.href = pngIconUrl;
         document.head.appendChild(appleIcon);
 
-        // Tạo file Manifest ảo giúp iOS & Android nhận diện chuẩn Standalone App
         var manifest = {
           name: "Quản Lý Job - Lịch LETAN",
           short_name: "Lịch LETAN",
@@ -81,7 +71,177 @@
   </script>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- ================= CSS POPUP XÁC THỰC & ADMIN ================= -->
   <style>
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .auth-card {
+      background: #ffffff;
+      width: 92%;
+      max-width: 420px;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    .auth-card.admin-wide {
+      max-width: 680px;
+    }
+    .auth-title {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      text-align: center;
+    }
+    .auth-subtitle {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: #64748b;
+      text-align: center;
+    }
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+    }
+    .auth-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .auth-tab-btn.active {
+      background: #ffffff;
+      color: #2563eb;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .auth-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-align: center;
+      text-transform: uppercase;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .auth-input:focus {
+      border-color: #2563eb;
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .auth-btn:hover { background: #1d4ed8; }
+    .auth-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    .auth-msg {
+      margin-top: 12px;
+      font-size: 13px;
+      text-align: center;
+      min-height: 18px;
+    }
+    .auth-msg.error { color: #dc2626; font-weight: 600; }
+    .auth-msg.success { color: #16a34a; font-weight: 600; }
+
+    /* Thanh hiển thị mã đang dùng */
+    .auth-Session-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 9990;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .auth-Session-bar button {
+      border: none;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-switch-code { background: #334155; color: #fff; }
+    .btn-admin-panel { background: #f59e0b; color: #0f172a; }
+
+    /* Bảng Admin */
+    .admin-table-wrap {
+      max-height: 360px;
+      overflow-y: auto;
+      margin-top: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .admin-table th, .admin-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+    }
+    .admin-table th { background: #f8fafc; font-weight: 700; color: #334155; }
+    .badge-status {
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-ACTIVE { background: #dcfce7; color: #15803d; }
+    .badge-PENDING { background: #fef3c7; color: #b45309; }
+    .badge-PAUSED { background: #fee2e2; color: #b91c1c; }
+    .act-btn {
+      border: none;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+    .act-approve { background: #16a34a; color: #fff; }
+    .act-pause { background: #eab308; color: #0f172a; }
+    .act-delete { background: #dc2626; color: #fff; }
+
     :root {
       --sidebar-width: 250px;
       --primary-dark: #7b1113;
@@ -103,7 +263,6 @@
     .page-subtitle { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #b91c1c; font-weight: 700; margin-bottom: 4px; }
     .page-title { font-size: 24px; font-weight: 700; color: #09090b; margin-bottom: 16px; }
 
-    /* Khung lịch cố định tỷ lệ ổn định khi co giãn trình duyệt */
     .calendar-card { background: white; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; width: 100%; }
@@ -152,7 +311,6 @@
     .calendar-day.today .day-number { background-color: #7b1113; color: white; }
     .calendar-day.selected-date .day-number { background-color: white; color: #7b1113; }
 
-    /* CSS hiển thị ngày Âm lịch */
     .lunar-date {
       font-size: 10px;
       color: #64748b;
@@ -160,15 +318,9 @@
       line-height: 1.1;
       white-space: nowrap;
     }
-    .calendar-day.other-month .lunar-date {
-      color: #cbd5e1;
-    }
-    .calendar-day.has-event .lunar-date {
-      color: #9f1239;
-    }
-    .calendar-day.selected-date .lunar-date {
-      color: #fecaca !important;
-    }
+    .calendar-day.other-month .lunar-date { color: #cbd5e1; }
+    .calendar-day.has-event .lunar-date { color: #9f1239; }
+    .calendar-day.selected-date .lunar-date { color: #fecaca !important; }
 
     .event-badge { 
       background: #7b1113; 
@@ -208,7 +360,7 @@
       position: relative;
       display: flex;
       align-items: center;
-      width: 245px;
+      width: 235px;
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
@@ -236,9 +388,7 @@
       color: #1e293b;
       padding: 0;
     }
-    .search-filter-input::placeholder {
-      color: #94a3b8;
-    }
+    .search-filter-input::placeholder { color: #94a3b8; }
     .btn-clear-filter {
       border: none;
       background: #f1f5f9;
@@ -271,6 +421,37 @@
       opacity: 1;
     }
 
+    .column-visibility-dropdown {
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 8px !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+      min-width: 215px !important;
+    }
+    .col-vis-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .col-vis-item:hover {
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+    .col-vis-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #7b1113;
+      border-radius: 4px;
+    }
+
     #masterTableContainer table th, 
     #masterTableContainer table td {
       vertical-align: middle !important;
@@ -280,11 +461,27 @@
       padding: 10px 8px !important;
     }
 
-    #masterTableContainer table td:nth-child(4) { text-align: center !important; }
-    #masterTableContainer table td:nth-child(5) { text-align: left !important; }
-    #masterTableContainer table td:nth-child(9), 
+    #masterTableContainer table th[draggable="true"] {
+      cursor: grab;
+      user-select: none;
+      position: relative;
+    }
+    #masterTableContainer table th[draggable="true"]:active {
+      cursor: grabbing;
+    }
+    #masterTableContainer table th.dragging-col {
+      opacity: 0.4;
+      background: #e2e8f0 !important;
+    }
+    #masterTableContainer table th.drag-over {
+      border-left: 3px dashed #7b1113 !important;
+    }
+
+    #masterTableContainer table td:nth-child(5) { text-align: center !important; }
+    #masterTableContainer table td:nth-child(6) { text-align: left !important; }
     #masterTableContainer table td:nth-child(10), 
-    #masterTableContainer table td:nth-child(11) { text-align: right !important; }
+    #masterTableContainer table td:nth-child(11), 
+    #masterTableContainer table td:nth-child(12) { text-align: right !important; }
 
     .job-badge { 
       display: inline-block !important;
@@ -305,6 +502,10 @@
       border-color: #7b1113 !important;
       transform: translateY(-1px);
       box-shadow: 0 2px 6px rgba(123, 17, 19, 0.25);
+    }
+
+    .dropdown-toggle::after {
+      display: none !important;
     }
 
     .customer-badge {
@@ -333,32 +534,6 @@
       box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
     }
 
-    .executor-badge {
-      display: inline-block !important;
-      background-color: #f0fdf4;
-      color: #166534;
-      font-weight: 600 !important;
-      font-size: 12px !important;
-      padding: 4px 10px !important;
-      border-radius: 6px !important;
-      border: 1px solid #bbf7d0;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .executor-badge:hover {
-      background-color: #16a34a !important;
-      color: #ffffff !important;
-      border-color: #15803d !important;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
-    }
-    .executor-badge.active-filter {
-      background-color: #16a34a !important;
-      color: #ffffff !important;
-      border-color: #15803d !important;
-      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);
-    }
-
     .dropdown-menu .dropdown-item {
       padding: 6px 12px;
       margin: 2px 6px;
@@ -377,33 +552,6 @@
       background-color: #7b1113 !important;
       color: #ffffff !important;
     }
-
-    .status-select { 
-      display: inline-block !important;
-      margin: 0 auto !important;
-      font-size: 12px !important; 
-      font-weight: 600 !important; 
-      padding: 4px 8px !important; 
-      border-radius: 6px !important; 
-      cursor: pointer;
-      border: 1px solid transparent; 
-      background-color: transparent; 
-      background-image: none !important; 
-      -webkit-appearance: none !important;
-      -moz-appearance: none !important;
-      appearance: none !important;
-      text-align: center !important;
-      text-align-last: center !important;
-      width: 100%;
-    }
-    .status-select::-ms-expand { display: none; }
-    .status-select:hover, .status-select:focus { border-color: #cbd5e1; background-color: #ffffff; outline: none; }
-
-    .status-cho { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-    .status-chua-thuc-hien { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
-    .status-chua-tt { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
-    .status-da-tt { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
-    .status-xong { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
 
     .cost-checkbox { 
       display: block !important;
@@ -428,21 +576,9 @@
       border-bottom: 1px dashed #e2e8f0;
       font-size: 13.5px;
     }
-    .job-info-row:last-child {
-      border-bottom: none;
-    }
-    .job-info-label {
-      width: 135px;
-      flex-shrink: 0;
-      color: #64748b;
-      font-weight: 600;
-    }
-    .job-info-val {
-      flex-grow: 1;
-      color: #0f172a;
-      font-weight: 500;
-      word-break: break-word;
-    }
+    .job-info-row:last-child { border-bottom: none; }
+    .job-info-label { width: 135px; flex-shrink: 0; color: #64748b; font-weight: 600; }
+    .job-info-val { flex-grow: 1; color: #0f172a; font-weight: 500; word-break: break-word; }
 
     .app-toast {
       position: fixed;
@@ -468,13 +604,8 @@
       transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
       white-space: nowrap;
     }
-    .app-toast.show {
-      transform: translateX(-50%) translateY(0) scale(1);
-      opacity: 1;
-    }
-    .app-toast.toast-warning {
-      background: rgba(153, 27, 27, 0.94);
-    }
+    .app-toast.show { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+    .app-toast.toast-warning { background: rgba(153, 27, 27, 0.94); }
 
     .assistive-wrapper {
       position: fixed;
@@ -585,12 +716,8 @@
       cursor: pointer;
       transition: background 0.18s ease, transform 0.12s ease;
     }
-    .at-action-btn:hover {
-      background: rgba(255, 255, 255, 0.14);
-    }
-    .at-action-btn:active {
-      transform: scale(0.92);
-    }
+    .at-action-btn:hover { background: rgba(255, 255, 255, 0.14); }
+    .at-action-btn:active { transform: scale(0.92); }
     .at-icon-box {
       width: 42px;
       height: 42px;
@@ -628,6 +755,85 @@
   </style>
 </head>
 <body>
+
+<!-- ================= POPUP ĐĂNG NHẬP / TẠO MÃ / ĐỔI MÃ ================= -->
+<div id="authModal" class="auth-overlay">
+  <div class="auth-card">
+    <h3 class="auth-title">MÃ TRUY CẬP DỮ LIỆU</h3>
+    <p class="auth-subtitle">Nhập mật mã được cấp để kết nối trang tính</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" onclick="switchAuthTab('LOGIN')">Đăng nhập</button>
+      <button class="auth-tab-btn" onclick="switchAuthTab('REGISTER')">Tạo mã mới</button>
+      <button class="auth-tab-btn" onclick="switchAuthTab('CHANGE')">Đổi mã</button>
+    </div>
+
+    <!-- Form Đăng Nhập -->
+    <div id="tabLogin">
+      <input type="text" id="inputLoginCode" class="auth-input" placeholder="NHẬP MÃ TRUY CẬP"
+             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')"
+             onkeydown="if(event.key==='Enter') submitLoginCode()" />
+      <button id="btnLoginSubmit" class="auth-btn" onclick="submitLoginCode()">Kết nối dữ liệu</button>
+    </div>
+
+    <!-- Form Tạo Mã Mới -->
+    <div id="tabRegister" style="display:none;">
+      <input type="text" id="inputRegisterCode" class="auth-input" placeholder="NHẬP MÃ MUỐN TẠO"
+             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')"
+             onkeydown="if(event.key==='Enter') submitRegisterCode()" />
+      <button id="btnRegisterSubmit" class="auth-btn" onclick="submitRegisterCode()">Gửi yêu cầu tạo mã</button>
+    </div>
+
+    <!-- Form Đổi Mã -->
+    <div id="tabChange" style="display:none;">
+      <input type="text" id="inputOldCode" class="auth-input" placeholder="MÃ HIỆN TẠI"
+             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')" />
+      <input type="text" id="inputNewCode" class="auth-input" placeholder="MÃ MỚI MUỐN ĐỔI"
+             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')"
+             onkeydown="if(event.key==='Enter') submitChangeCode()" />
+      <button id="btnChangeSubmit" class="auth-btn" onclick="submitChangeCode()">Cập nhật mã mới</button>
+    </div>
+
+    <div id="authMessage" class="auth-msg"></div>
+  </div>
+</div>
+
+<!-- ================= POPUP QUẢN TRỊ MÃ (CHỈ DÀNH CHO LETAN2306) ================= -->
+<div id="adminCodeModal" class="auth-overlay" style="display:none;">
+  <div class="auth-card admin-wide">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 class="auth-title" style="text-align:left; margin:0;">QUẢN LÝ MÃ TRUY CẬP (ADMIN)</h3>
+      <button onclick="closeAdminModal()" style="border:none; background:#e2e8f0; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:700;">Đóng ✕</button>
+    </div>
+    <p style="font-size:13px; color:#64748b; margin:6px 0 12px;">
+      Mã mới duyệt sẽ tự động tạo trang tính riêng (trống dữ liệu job và trống danh mục).
+    </p>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Mã</th>
+            <th>Trang tính</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="adminCodeTableBody">
+          <tr><td colspan="4" style="text-align:center;">Đang tải...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ================= THANH TRẠNG THÁI MÃ ĐANG KẾT NỐI ================= -->
+<div id="authSessionBar" class="auth-Session-bar">
+  <span>Mã: <strong id="currentCodeLabel">---</strong></span>
+  <button id="btnOpenAdmin" class="btn-admin-panel" style="display:none;" onclick="openAdminModal()">
+    Quản lý mã <span id="adminPendingBadge"></span>
+  </button>
+  <button class="btn-switch-code" onclick="logoutOrSwitchCode()">Đổi mã</button>
+</div>
 
 <div id="appToast" class="app-toast"></div>
 
@@ -719,12 +925,26 @@
               <input type="text" id="searchTableInput" class="search-filter-input" placeholder="Tìm khách, việc, địa chỉ..." oninput="renderMasterTable(false)">
               <button type="button" id="btnClearAllFilters" class="btn-clear-filter" onclick="clearAllFilters()" title="Xóa tìm kiếm & tất cả bộ lọc">✕</button>
             </div>
+
+            <div class="dropdown">
+              <button class="btn btn-sm dropdown-toggle bg-white fw-semibold shadow-sm d-flex align-items-center gap-1.5 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155; transition: all 0.2s;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                </svg>
+                <span>Cột hiển thị</span>
+              </button>
+              <ul class="dropdown-menu column-visibility-dropdown shadow" id="columnVisibilityDropdown"></ul>
+            </div>
           </div>
           
           <div class="d-flex flex-wrap align-items-center gap-2">
             <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
               <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleOnlyEmptyDays" style="cursor: pointer;">Chỉ ngày trống</label>
               <input class="form-check-input mt-0" type="checkbox" id="toggleOnlyEmptyDays" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
+            </div>
+            <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
+              <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleMissingTimeOrAddress" style="cursor: pointer;">Thiếu giờ/địa chỉ</label>
+              <input class="form-check-input mt-0" type="checkbox" id="toggleMissingTimeOrAddress" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
             </div>
             <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
               <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleHideCompleted" style="cursor: pointer;">Ẩn job đã xong</label>
@@ -735,58 +955,16 @@
 
         <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="font-size: 12px;">
           <small class="text-muted fw-medium" id="tableStatusHint"></small>
+          <small class="text-muted fst-italic">💡 Mẹo: Kéo thả các tiêu đề cột để thay đổi vị trí</small>
         </div>
       </div>
 
       <div class="card border-0 shadow-sm p-3 mb-3">
         <div class="table-responsive" id="masterTableContainer">
           <table class="table table-bordered table-hover align-middle mb-0" style="font-size: 13px;">
-            <thead class="table-light text-center align-middle">
-              <tr>
-                <th style="width: 60px;">Thứ</th>
-                <th style="width: 100px;">Ngày</th>
-                <th>
-                  <div class="dropdown d-inline-block w-100">
-                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-dark shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownJobType" style="font-size: 12px; border-radius: 6px;">
-                      Công việc
-                    </button>
-                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterJobType" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
-                  </div>
-                </th>
-                <th style="min-width: 95px;">Thời gian</th>
-                <th style="min-width: 170px;">Địa chỉ</th>
-                <th>
-                  <div class="dropdown d-inline-block w-100">
-                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-primary shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownCustomer" style="font-size: 12px; border-radius: 6px;">
-                      Khách hàng
-                    </button>
-                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterCustomer" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
-                  </div>
-                </th>
-                <th>
-                  <div class="dropdown d-inline-block w-100">
-                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-success shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownExecutor" style="font-size: 12px; border-radius: 6px;">
-                      Người thực hiện
-                    </button>
-                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterExecutor" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
-                  </div>
-                </th>
-                <th>
-                  <div class="dropdown d-inline-block w-100">
-                    <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-danger shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownStatus" style="font-size: 12px; border-radius: 6px;">
-                      Tình trạng
-                    </button>
-                    <ul class="dropdown-menu shadow-sm py-1" id="menuFilterStatus" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
-                  </div>
-                </th>
-                <th class="text-end">Giá trị</th>
-                <th class="text-end">Đã cọc</th>
-                <th class="text-end">Chi phí</th>
-                <th>TT Chi phí</th>
-              </tr>
-            </thead>
+            <thead class="table-light text-center align-middle" id="masterTableHead"></thead>
             <tbody id="masterTableBody">
-              <tr><td colspan="12" class="text-center py-4 text-muted">⏳ Đang đồng bộ dữ liệu từ Google Sheet...</td></tr>
+              <tr><td colspan="13" class="text-center py-4 text-muted">⏳ Vui lòng nhập mã truy cập để tải dữ liệu...</td></tr>
             </tbody>
           </table>
         </div>
@@ -825,7 +1003,7 @@
     </button>
     <button class="at-action-btn" onclick="openDebtQrModal(); closeAssistiveMenu();">
       <div class="at-icon-box">📋</div>
-      <span class="at-label">Xem công nợ</span>
+      <span class="at-label">Công nợ</span>
     </button>
     <button class="at-action-btn" onclick="openReportModal(); closeAssistiveMenu();">
       <div class="at-icon-box">📊</div>
@@ -877,12 +1055,10 @@
         <label class="form-label small fw-bold text-secondary mb-1">Nội dung tin nhắn gửi Zalo:</label>
         <textarea id="infoPopupZaloText" class="form-control font-monospace mb-3" rows="7" style="font-size: 12.5px; background-color: #f8fafc;"></textarea>
 
-        <div class="d-flex gap-2">
-          <button type="button" class="btn btn-outline-primary fw-bold" style="flex: 1;" id="btnEditFromInfoPopup">Sửa</button>
-          <button type="button" class="btn btn-outline-danger fw-bold" style="flex: 1;" id="btnDeleteFromInfoPopup">Xoá</button>
-          <button type="button" class="btn btn-primary fw-bold" style="flex: 2;" id="btnCopyJobInfoZalo" onclick="copyJobInfoZalo(this)">
-            Gửi thông tin job
-          </button>
+        <div class="d-flex gap-2 justify-content-end align-items-center">
+          <button type="button" class="btn btn-outline-secondary btn-sm px-3 fw-semibold" id="btnEditFromInfoPopup" style="border-radius: 8px; font-size: 12.5px;">✏️ Sửa</button>
+          <button type="button" class="btn btn-outline-danger btn-sm px-3 fw-semibold" id="btnDeleteFromInfoPopup" style="border-radius: 8px; font-size: 12.5px;">🗑️ Xoá</button>
+          <button type="button" class="btn btn-dark btn-sm px-4 fw-bold" id="btnCopyJobInfoZalo" onclick="copyJobInfoZalo(this)" style="border-radius: 8px; font-size: 12.5px; background-color: #7b1113; border-color: #7b1113;">📤 Gửi</button>
         </div>
       </div>
       <div class="modal-footer py-2">
@@ -916,7 +1092,7 @@
           <button class="btn btn-primary fw-bold px-3" type="button" onclick="addCatalogItemDirect()">+ Thêm</button>
         </div>
 
-        <label class="form-label small fw-bold">Danh sách hiện tại (Tự động lưu vĩnh viễn):</label>
+        <label class="form-label small fw-bold">Danh sách hiện tại (Tự động lưu theo mã truy cập):</label>
         <div id="catalogItemsContainer" class="border rounded p-2 bg-light" style="max-height: 240px; overflow-y: auto;"></div>
       </div>
       <div class="modal-footer py-2">
@@ -1001,20 +1177,17 @@
           <div class="row g-2">
             <div class="col-4">
               <label class="form-label small fw-bold mb-1">Giá trị</label>
-              <input type="number" class="form-control form-control-sm" name="giaTri" id="formGiaTri" list="listGiaTri" oninput="suggestMoney(this, 'listGiaTri', 'chipsGiaTri')" placeholder="Gõ 1, 2...">
-              <datalist id="listGiaTri"></datalist>
+              <input type="text" inputmode="numeric" class="form-control form-control-sm" name="giaTri" id="formGiaTri" oninput="handleMoneyInput(this, 'chipsGiaTri')" onblur="formatMoneyBlur(this)" placeholder="Gõ 1, 2...">
               <div id="chipsGiaTri" class="money-quick-chips"></div>
             </div>
             <div class="col-4">
               <label class="form-label small fw-bold mb-1">Đã cọc</label>
-              <input type="number" class="form-control form-control-sm" name="daCoc" id="formDaCoc" list="listDaCoc" oninput="suggestMoney(this, 'listDaCoc', 'chipsDaCoc')" placeholder="Gõ 1, 2...">
-              <datalist id="listDaCoc"></datalist>
+              <input type="text" inputmode="numeric" class="form-control form-control-sm" name="daCoc" id="formDaCoc" oninput="handleMoneyInput(this, 'chipsDaCoc')" onblur="formatMoneyBlur(this)" placeholder="Gõ 1, 2...">
               <div id="chipsDaCoc" class="money-quick-chips"></div>
             </div>
             <div class="col-4">
               <label class="form-label small fw-bold mb-1">Chi phí</label>
-              <input type="number" class="form-control form-control-sm" name="chiPhi" id="formChiPhi" list="listChiPhi" oninput="suggestMoney(this, 'listChiPhi', 'chipsChiPhi')" placeholder="Gõ 1, 2...">
-              <datalist id="listChiPhi"></datalist>
+              <input type="text" inputmode="numeric" class="form-control form-control-sm" name="chiPhi" id="formChiPhi" oninput="handleMoneyInput(this, 'chipsChiPhi')" onblur="formatMoneyBlur(this)" placeholder="Gõ 1, 2...">
               <div id="chipsChiPhi" class="money-quick-chips"></div>
             </div>
           </div>
@@ -1031,33 +1204,53 @@
   </div>
 </div>
 
-<!-- Modal Xem Công Nợ Phải Thu -->
+<!-- Modal Công Nợ & Bảng Kê Lương -->
 <div class="modal fade" id="debtQrModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header py-2">
-        <h6 class="modal-title fw-bold">Xem Công Nợ & Bảng Kê Tổng Job</h6>
+        <h6 class="modal-title fw-bold">Công Nợ & Bảng Kê Lương</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body py-3">
-        <div class="row g-2 mb-2">
-          <div class="col-7">
-            <label class="form-label small fw-bold mb-1">1. Tìm & Chọn Khách hàng:</label>
-            <input type="text" id="qrSearchCustomerInput" class="form-control form-control-sm mb-1" placeholder="🔍 Gõ tên khách / studio để lọc..." oninput="filterQrCustomerDropdown()">
-            <select id="qrCustomerSelect" class="form-select form-select-sm fw-semibold text-primary" onchange="generateQrStatement()">
-              <option value="">-- Chọn khách hàng --</option>
-            </select>
+        <div class="mb-2 d-flex align-items-center gap-4 bg-light p-2 rounded border">
+          <div class="form-check mb-0">
+            <input class="form-check-input" type="radio" name="statementMode" id="modeCustomer" value="customer" checked onchange="switchStatementMode()">
+            <label class="form-check-label small fw-bold text-primary" for="modeCustomer" style="cursor: pointer;">📋 Công nợ Khách hàng</label>
           </div>
-          <div class="col-5">
-            <label class="form-label small fw-bold mb-1">2. Kỳ công nợ (Tháng):</label>
-            <select id="qrMonthSelect" class="form-select form-select-sm fw-semibold" onchange="generateQrStatement()">
-              <option value="">Tất cả các tháng</option>
-            </select>
-            <div class="form-text mt-1" style="font-size: 11px;">Chọn tất cả hoặc lọc riêng từng tháng.</div>
+          <div class="form-check mb-0">
+            <input class="form-check-input" type="radio" name="statementMode" id="modeExecutor" value="executor" onchange="switchStatementMode()">
+            <label class="form-check-label small fw-bold text-success" for="modeExecutor" style="cursor: pointer;">💰 Bảng kê Lương</label>
           </div>
         </div>
 
-        <label class="form-label small fw-bold mt-1">3. Nội dung bảng kê gửi khách:</label>
+        <div class="row g-2 mb-2">
+          <div class="col-7">
+            <div id="customerSelectorGroup">
+              <label class="form-label small fw-bold mb-1">1. Tìm & Chọn Khách hàng:</label>
+              <input type="text" id="qrSearchCustomerInput" class="form-control form-control-sm mb-1" placeholder="🔍 Gõ tên khách / studio..." oninput="filterQrCustomerDropdown()">
+              <select id="qrCustomerSelect" class="form-select form-select-sm fw-semibold text-primary" onchange="generateQrStatement()">
+                <option value="">-- Chọn khách hàng --</option>
+              </select>
+            </div>
+            <div id="executorSelectorGroup" class="d-none">
+              <label class="form-label small fw-bold mb-1">1. Tìm & Chọn Nhân sự:</label>
+              <input type="text" id="qrSearchExecutorInput" class="form-control form-control-sm mb-1" placeholder="🔍 Gõ tên nhân sự..." oninput="filterQrExecutorDropdown()">
+              <select id="qrExecutorSelect" class="form-select form-select-sm fw-semibold text-success" onchange="generateQrStatement()">
+                <option value="">-- Chọn nhân sự --</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-5">
+            <label class="form-label small fw-bold mb-1">2. Kỳ (Tháng):</label>
+            <select id="qrMonthSelect" class="form-select form-select-sm fw-semibold" onchange="generateQrStatement()">
+              <option value="">Tất cả các tháng</option>
+            </select>
+            <div class="form-text mt-1" style="font-size: 11px;">Chọn tất cả hoặc lọc theo tháng.</div>
+          </div>
+        </div>
+
+        <label class="form-label small fw-bold mt-1">3. Nội dung bảng kê:</label>
         <textarea id="qrStatementText" class="form-control font-monospace mb-3" rows="11" style="font-size: 11.5px; background-color: #f8fafc;"></textarea>
         <button type="button" class="btn btn-primary btn-sm w-100 fw-bold py-2" id="btnCopyDebtText" onclick="copyDebtText(this)">Copy Bảng Kê Gửi Zalo</button>
       </div>
@@ -1134,13 +1327,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // =========================================================================
-  // DÁN LINK WEB APP GOOGLE APPS SCRIPT (/exec) CỦA BẠN VÀO DÒNG DƯỚI ĐÂY:
-  // =========================================================================
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzV1J6HSLZd_2tC6i_M5URuC1nNSeaxL6uZXjqGIdSEf55lddZIgmTbh-xHznx2Go9xCA/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQim0dan3MwTla1hczKJ84zCjKfojIVLQpdUx1UqjzBU2eM5EjwzmC8FHm-3sdquOCXQ/exec";
+  const IS_GAS_NATIVE = (typeof google !== 'undefined' && google.script && google.script.run);
 
-  // Cầu nối giả lập google.script.run khi chạy trên GitHub Pages
-  if (typeof google === 'undefined' || !google.script) {
+  let CURRENT_ACCESS_CODE = localStorage.getItem('APP_ACCESS_CODE') || '';
+  let IS_ADMIN_SESSION = false;
+
+  if (!IS_GAS_NATIVE) {
     function createGasRunner(successCb, failureCb) {
       return new Proxy({}, {
         get: function(target, prop) {
@@ -1154,7 +1347,11 @@
             fetch(APPS_SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: prop, args: args })
+              body: JSON.stringify({
+                action: prop,
+                args: args,
+                accessCode: CURRENT_ACCESS_CODE
+              })
             })
             .then(res => res.json())
             .then(res => {
@@ -1174,6 +1371,239 @@
     window.google = { script: { get run() { return createGasRunner(null, null); } } };
   }
 
+  // ================= XỬ LÝ XÁC THỰC & ADMIN MÃ TRUY CẬP =================
+  async function callAuthApi(payload) {
+    payload.action = 'auth';
+    if (IS_GAS_NATIVE) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .handleAuthAction(payload);
+      });
+    }
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const json = await response.json();
+    if (json.status === 'error') {
+      throw new Error(json.message);
+    }
+    return json.data !== undefined ? json.data : json;
+  }
+
+  function showAuthMsg(text, isError = true) {
+    const el = document.getElementById('authMessage');
+    el.textContent = text;
+    el.className = 'auth-msg ' + (isError ? 'error' : 'success');
+  }
+
+  function switchAuthTab(mode) {
+    showAuthMsg('', false);
+    const tabs = document.querySelectorAll('.auth-tab-btn');
+    tabs[0].classList.toggle('active', mode === 'LOGIN');
+    tabs[1].classList.toggle('active', mode === 'REGISTER');
+    tabs[2].classList.toggle('active', mode === 'CHANGE');
+
+    document.getElementById('tabLogin').style.display = mode === 'LOGIN' ? 'block' : 'none';
+    document.getElementById('tabRegister').style.display = mode === 'REGISTER' ? 'block' : 'none';
+    document.getElementById('tabChange').style.display = mode === 'CHANGE' ? 'block' : 'none';
+  }
+
+  async function submitLoginCode(autoCode) {
+    const inputEl = document.getElementById('inputLoginCode');
+    const code = (autoCode || inputEl.value || '').trim().toUpperCase();
+    if (!code) {
+      showAuthMsg('Vui lòng nhập mã truy cập!');
+      return;
+    }
+
+    const btn = document.getElementById('btnLoginSubmit');
+    btn.disabled = true;
+    showAuthMsg('Đang kiểm tra mã và kết nối dữ liệu...', false);
+
+    try {
+      const res = await callAuthApi({ authAction: 'LOGIN', code: code });
+      btn.disabled = false;
+
+      if (!res || !res.success) {
+        localStorage.removeItem('APP_ACCESS_CODE');
+        document.getElementById('authModal').style.display = 'flex';
+        showAuthMsg((res && res.message) || 'Mã truy cập không hợp lệ!', true);
+        return;
+      }
+
+      CURRENT_ACCESS_CODE = res.code;
+      IS_ADMIN_SESSION = Boolean(res.isAdmin);
+      localStorage.setItem('APP_ACCESS_CODE', res.code);
+
+      document.getElementById('authModal').style.display = 'none';
+      document.getElementById('authSessionBar').style.display = 'flex';
+      document.getElementById('currentCodeLabel').textContent = res.code;
+
+      const adminBtn = document.getElementById('btnOpenAdmin');
+      if (res.isAdmin) {
+        adminBtn.style.display = 'inline-block';
+        document.getElementById('adminPendingBadge').textContent =
+          res.pendingCount > 0 ? '(' + res.pendingCount + ' chờ duyệt)' : '';
+      } else {
+        adminBtn.style.display = 'none';
+      }
+
+      loadCategoriesPrefs();
+      loadData();
+    } catch (err) {
+      btn.disabled = false;
+      document.getElementById('authModal').style.display = 'flex';
+      showAuthMsg('Lỗi kết nối máy chủ: ' + err.message, true);
+    }
+  }
+
+  async function submitRegisterCode() {
+    const newCode = document.getElementById('inputRegisterCode').value.trim().toUpperCase();
+    if (!newCode) return showAuthMsg('Vui lòng nhập mã muốn tạo!');
+
+    const btn = document.getElementById('btnRegisterSubmit');
+    btn.disabled = true;
+    try {
+      const res = await callAuthApi({ authAction: 'REGISTER', newCode: newCode });
+      btn.disabled = false;
+      showAuthMsg(res.message, !res.success);
+      if (res.success) document.getElementById('inputRegisterCode').value = '';
+    } catch (err) {
+      btn.disabled = false;
+      showAuthMsg('Lỗi: ' + err.message, true);
+    }
+  }
+
+  async function submitChangeCode() {
+    const oldCode = document.getElementById('inputOldCode').value.trim().toUpperCase();
+    const newCode = document.getElementById('inputNewCode').value.trim().toUpperCase();
+    if (!oldCode || !newCode) return showAuthMsg('Vui lòng nhập cả mã cũ và mã mới!');
+
+    const btn = document.getElementById('btnChangeSubmit');
+    btn.disabled = true;
+    try {
+      const res = await callAuthApi({ authAction: 'CHANGE_CODE', oldCode: oldCode, newCode: newCode });
+      btn.disabled = false;
+      showAuthMsg(res.message, !res.success);
+      if (res.success) {
+        document.getElementById('inputLoginCode').value = res.newCode;
+        setTimeout(() => switchAuthTab('LOGIN'), 1200);
+      }
+    } catch (err) {
+      btn.disabled = false;
+      showAuthMsg('Lỗi: ' + err.message, true);
+    }
+  }
+
+  function logoutOrSwitchCode() {
+    localStorage.removeItem('APP_ACCESS_CODE');
+    CURRENT_ACCESS_CODE = '';
+    IS_ADMIN_SESSION = false;
+    allJobs = [];
+    renderCalendar();
+    renderSelectedDayJobs();
+    renderMasterTable();
+    document.getElementById('inputLoginCode').value = '';
+    showAuthMsg('', false);
+    switchAuthTab('LOGIN');
+    document.getElementById('authModal').style.display = 'flex';
+  }
+
+  async function openAdminModal() {
+    document.getElementById('adminCodeModal').style.display = 'flex';
+    await loadAdminCodeList();
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminCodeModal').style.display = 'none';
+  }
+
+  async function loadAdminCodeList() {
+    const tbody = document.getElementById('adminCodeTableBody');
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Đang tải danh sách mã...</td></tr>';
+
+    try {
+      const res = await callAuthApi({ authAction: 'ADMIN_LIST', adminCode: CURRENT_ACCESS_CODE });
+      if (!res.success) {
+        tbody.innerHTML = '<tr><td colspan="4" style="color:red;text-align:center;">' + res.message + '</td></tr>';
+        return;
+      }
+
+      const pendingItems = res.list.filter(item => item.status === 'PENDING').length;
+      document.getElementById('adminPendingBadge').textContent =
+        pendingItems > 0 ? '(' + pendingItems + ' chờ duyệt)' : '';
+
+      tbody.innerHTML = res.list.map(item => {
+        const isMaster = item.code === 'LETAN2306';
+        let actionsHtml = '<span style="color:#64748b;font-size:12px;">Mặc định (Admin)</span>';
+
+        if (!isMaster) {
+          const approveBtn = item.status === 'PENDING'
+            ? `<button class="act-btn act-approve" onclick="adminApproveCode('${item.code}')">Duyệt & Tạo Sheet</button>`
+            : '';
+          const pauseLabel = item.status === 'PAUSED' ? 'Mở lại' : 'Tạm dừng';
+          const pauseBtn = item.status !== 'PENDING'
+            ? `<button class="act-btn act-pause" onclick="adminTogglePause('${item.code}')">${pauseLabel}</button>`
+            : '';
+          const deleteBtn = `<button class="act-btn act-delete" onclick="adminDeleteCode('${item.code}')">Xoá</button>`;
+          actionsHtml = approveBtn + pauseBtn + deleteBtn;
+        }
+
+        return `
+          <tr>
+            <td><strong>${item.code}</strong></td>
+            <td>${item.jobSheetName}</td>
+            <td><span class="badge-status badge-${item.status}">${item.status}</span></td>
+            <td>${actionsHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:red;text-align:center;">Lỗi tải danh sách: ' + err.message + '</td></tr>';
+    }
+  }
+
+  async function adminApproveCode(targetCode) {
+    const res = await callAuthApi({
+      authAction: 'ADMIN_APPROVE',
+      adminCode: CURRENT_ACCESS_CODE,
+      targetCode: targetCode
+    });
+    showToast(res.message, !res.success);
+    await loadAdminCodeList();
+  }
+
+  async function adminTogglePause(targetCode) {
+    const res = await callAuthApi({
+      authAction: 'ADMIN_TOGGLE_PAUSE',
+      adminCode: CURRENT_ACCESS_CODE,
+      targetCode: targetCode
+    });
+    showToast(res.message, !res.success);
+    await loadAdminCodeList();
+  }
+
+  async function adminDeleteCode(targetCode) {
+    if (!confirm('Bạn có chắc chắn muốn XOÁ mã "' + targetCode + '" và toàn bộ trang tính dữ liệu của mã này?')) return;
+    const res = await callAuthApi({
+      authAction: 'ADMIN_DELETE',
+      adminCode: CURRENT_ACCESS_CODE,
+      targetCode: targetCode
+    });
+    showToast(res.message, !res.success);
+    await loadAdminCodeList();
+  }
+
+  // ================= DỮ LIỆU & LOGIC ỨNG DỤNG CHÍNH =================
+  const DEFAULT_ADMIN_JOB_TYPES = ["Chụp PSC", "Quay PSC", "Chụp SK", "Quay SK", "Ăn hỏi", "Khác"];
+  const DEFAULT_ADMIN_CUSTOMERS = ["OneStory", "Chiến", "June", "Lita", "Kog", "MinhThe", "Thangken", "Dungcasau", "Mira", "Khách lẻ"];
+  const DEFAULT_ADMIN_EXECUTORS = ["Lê Tân", "Cộng sự 1", "Cộng sự 2", "Team Media"];
+  const DEFAULT_ADMIN_STATUSES = ["Chờ", "Chưa thực hiện", "Chưa TT", "Đã TT", "Xong"];
+
   let allJobs = [];
   let currentDisplayDate = new Date();
   let selectedDateIso = getLocalIsoDate(new Date());
@@ -1185,12 +1615,10 @@
   let customDialogModalInstance;
   let toastTimeout;
 
-  const shortUrlCache = {};
-
-  let jobTypes = ["Chụp PSC", "Quay PSC", "Chụp SK", "Quay SK", "Ăn hỏi", "Khác"];
-  let customerList = ["OneStory", "Chiến", "June", "Lita", "Kog", "MinhThe", "Thangken", "Dungcasau", "Mira", "Khách lẻ"];
-  let executorList = ["Lê Tân", "Cộng sự 1", "Cộng sự 2", "Team Media"];
-  let statusList = ["Chờ", "Chưa thực hiện", "Chưa TT", "Đã TT", "Xong"];
+  let jobTypes = [...DEFAULT_ADMIN_JOB_TYPES];
+  let customerList = [...DEFAULT_ADMIN_CUSTOMERS];
+  let executorList = [...DEFAULT_ADMIN_EXECUTORS];
+  let statusList = [...DEFAULT_ADMIN_STATUSES];
 
   let filterJobTypeVal = "";
   let filterCustomerVal = "";
@@ -1198,9 +1626,169 @@
   let filterStatusVal = "";
 
   let qrUnpaidCustomersCache = [];
+  let qrExecutorsCache = [];
   let customDialogCallback = null;
 
-  // === THUẬT TOÁN TÍNH ÂM LỊCH VIỆT NAM (MÚI GIỜ UTC+7) ===
+  let tableColumns = [
+    { id: 'checkbox', label: '<input type="checkbox" id="selectAllJobs" class="form-check-input mt-0" onclick="toggleSelectAllJobs(this)" title="Chọn tất cả">', removable: false, visible: true, width: '40px' },
+    { id: 'thu', label: 'Thứ', removable: true, visible: true, width: '60px' },
+    { id: 'ngay', label: 'Ngày', removable: false, visible: true, width: '100px' },
+    { id: 'congViec', label: 'Công việc', removable: false, visible: true },
+    { id: 'thoiGian', label: 'Thời gian', removable: true, visible: true, width: '95px' },
+    { id: 'diaChi', label: 'Địa chỉ', removable: true, visible: true, minWidth: '170px' },
+    { id: 'khachHang', label: 'Khách hàng', removable: false, visible: true },
+    { id: 'nguoiThucHien', label: 'Người thực hiện', removable: false, visible: true },
+    { id: 'tinhTrang', label: 'Tình trạng', removable: false, visible: true },
+    { id: 'giaTri', label: 'Giá trị', removable: false, visible: true, align: 'end' },
+    { id: 'daCoc', label: 'Đã cọc', removable: true, visible: true, align: 'end' },
+    { id: 'chiPhi', label: 'Chi phí', removable: true, visible: true, align: 'end' },
+    { id: 'ttChiPhi', label: 'TT Chi phí', removable: true, visible: true }
+  ];
+
+  function getPrefKey(baseKey) {
+    return CURRENT_ACCESS_CODE ? `${baseKey}_${CURRENT_ACCESS_CODE}` : baseKey;
+  }
+
+  function loadTableColumnSettings() {
+    try {
+      const savedOrder = localStorage.getItem('pref_table_col_order');
+      const savedVis = localStorage.getItem('pref_table_col_vis');
+      if (savedOrder) {
+        const orderIds = JSON.parse(savedOrder);
+        let reordered = [];
+        orderIds.forEach(id => {
+          let found = tableColumns.find(c => c.id === id);
+          if (found) reordered.push(found);
+        });
+        tableColumns.forEach(c => {
+          if (!reordered.some(r => r.id === c.id)) reordered.push(c);
+        });
+        tableColumns = reordered;
+      }
+      if (savedVis) {
+        const visMap = JSON.parse(savedVis);
+        tableColumns.forEach(c => {
+          if (c.removable && visMap[c.id] !== undefined) {
+            c.visible = visMap[c.id];
+          }
+        });
+      }
+    } catch (e) {}
+  }
+
+  function saveTableColumnSettings() {
+    try {
+      const orderIds = tableColumns.map(c => c.id);
+      localStorage.setItem('pref_table_col_order', JSON.stringify(orderIds));
+      let visMap = {};
+      tableColumns.forEach(c => {
+        if (c.removable) visMap[c.id] = c.visible;
+      });
+      localStorage.setItem('pref_table_col_vis', JSON.stringify(visMap));
+    } catch (e) {}
+  }
+
+  let draggedColId = null;
+
+  function handleDragStart(e, colId) {
+    draggedColId = colId;
+    e.target.classList.add('dragging-col');
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const th = e.target.closest('th');
+    if (th) th.classList.add('drag-over');
+  }
+
+  function handleDragLeave(e) {
+    const th = e.target.closest('th');
+    if (th) th.classList.remove('drag-over');
+  }
+
+  function handleDrop(e, targetColId) {
+    e.preventDefault();
+    const th = e.target.closest('th');
+    if (th) th.classList.remove('drag-over');
+
+    if (!draggedColId || draggedColId === targetColId) return;
+
+    const fromIdx = tableColumns.findIndex(c => c.id === draggedColId);
+    const toIdx = tableColumns.findIndex(c => c.id === targetColId);
+
+    if (fromIdx !== -1 && toIdx !== -1) {
+      const moved = tableColumns.splice(fromIdx, 1)[0];
+      tableColumns.splice(toIdx, 0, moved);
+      saveTableColumnSettings();
+      renderMasterTable();
+      showToast('Đã đổi vị trí cột');
+    }
+    draggedColId = null;
+  }
+
+  function handleDragEnd(e) {
+    e.target.classList.remove('dragging-col');
+    document.querySelectorAll('#masterTableHead th').forEach(th => th.classList.remove('drag-over'));
+  }
+
+  function toggleColumnVisibility(colId) {
+    const col = tableColumns.find(c => c.id === colId);
+    if (col && col.removable) {
+      col.visible = !col.visible;
+      saveTableColumnSettings();
+      renderMasterTable();
+      renderColumnVisibilityMenu();
+      showToast(`Đã ${col.visible ? 'hiện' : 'ẩn'} cột ${col.label}`);
+    }
+  }
+
+  function resetAllColumns(e) {
+    if (e) e.stopPropagation();
+    tableColumns.forEach(c => {
+      if (c.removable) c.visible = true;
+    });
+    saveTableColumnSettings();
+    renderMasterTable();
+    renderColumnVisibilityMenu();
+    showToast('Đã hiển thị tất cả các cột');
+  }
+
+  function renderColumnVisibilityMenu() {
+    const dropdownEl = document.getElementById('columnVisibilityDropdown');
+    if (!dropdownEl) return;
+    
+    let activeCount = tableColumns.filter(c => c.removable && c.visible).length;
+    let totalRemovable = tableColumns.filter(c => c.removable).length;
+
+    let html = `
+      <div class="px-2 py-1 mb-1 d-flex justify-content-between align-items-center border-bottom" style="font-size: 11.5px;">
+        <span class="fw-bold text-uppercase text-muted" style="letter-spacing: 0.5px;">Tùy chọn cột</span>
+        <span class="badge bg-light text-secondary border px-2 py-0.5" style="font-size: 11px;">${activeCount}/${totalRemovable} hiển thị</span>
+      </div>
+    `;
+
+    tableColumns.forEach(c => {
+      if (c.removable) {
+        html += `
+          <div class="col-vis-item" onclick="toggleColumnVisibility('${c.id}')">
+            <input type="checkbox" class="form-check-input mt-0 m-0" ${c.visible ? 'checked' : ''} onclick="event.stopPropagation(); toggleColumnVisibility('${c.id}')">
+            <span class="flex-grow-1">${c.label}</span>
+          </div>
+        `;
+      }
+    });
+
+    html += `
+      <div class="mt-1 pt-1.5 border-top d-flex justify-content-between px-1" style="font-size: 11.5px;">
+        <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-danger fw-semibold" onclick="resetAllColumns(event)">Hiển thị tất cả</button>
+      </div>
+    `;
+
+    dropdownEl.innerHTML = html;
+  }
+
   function jdFromDate(dd, mm, yy) {
     const a = Math.floor((14 - mm) / 12);
     const y = yy + 4800 - a;
@@ -1453,7 +2041,7 @@
 
     const lines = [
       `THÔNG TIN LỊCH LÀM VIỆC`,
-      `--------------------------------`,
+      `-----------------`,
       `Ngày: ${ngayFull}`,
       `Công việc: ${congViecStr}`,
       `Thời gian: ${thoiGianStr}`,
@@ -1508,7 +2096,7 @@
   function copyJobInfoZalo(btnEl) {
     const ta = document.getElementById('infoPopupZaloText');
     navigator.clipboard.writeText(ta.value).then(() => {
-      animateCopyButton(btnEl, 'Gửi thông tin job');
+      animateCopyButton(btnEl, '📤 Gửi');
       showToast('Đã copy thông tin Job');
     });
   }
@@ -1531,35 +2119,27 @@
     renderMasterTable();
   }
 
-  function toggleExecutorFilter(execName) {
-    if (!execName) return;
-    if (filterExecutorVal.toLowerCase() === execName.trim().toLowerCase()) {
-      filterExecutorVal = "";
-    } else {
-      filterExecutorVal = execName.trim();
-    }
-    renderMasterTable();
-  }
-
   function loadCategoriesPrefs() {
     try {
-      const savedJobTypes = localStorage.getItem('pref_job_types');
-      const savedCustomers = localStorage.getItem('pref_customer_list');
-      const savedExecutors = localStorage.getItem('pref_executor_list');
-      const savedStatuses = localStorage.getItem('pref_status_list');
-      if (savedJobTypes) jobTypes = JSON.parse(savedJobTypes);
-      if (savedCustomers) customerList = JSON.parse(savedCustomers);
-      if (savedExecutors) executorList = JSON.parse(savedExecutors);
-      if (savedStatuses) statusList = JSON.parse(savedStatuses);
+      const isMaster = (CURRENT_ACCESS_CODE === 'LETAN2306' || !CURRENT_ACCESS_CODE);
+      const savedJobTypes = localStorage.getItem(getPrefKey('pref_job_types'));
+      const savedCustomers = localStorage.getItem(getPrefKey('pref_customer_list'));
+      const savedExecutors = localStorage.getItem(getPrefKey('pref_executor_list'));
+      const savedStatuses = localStorage.getItem(getPrefKey('pref_status_list'));
+
+      jobTypes = savedJobTypes ? JSON.parse(savedJobTypes) : (isMaster ? [...DEFAULT_ADMIN_JOB_TYPES] : []);
+      customerList = savedCustomers ? JSON.parse(savedCustomers) : (isMaster ? [...DEFAULT_ADMIN_CUSTOMERS] : []);
+      executorList = savedExecutors ? JSON.parse(savedExecutors) : (isMaster ? [...DEFAULT_ADMIN_EXECUTORS] : []);
+      statusList = savedStatuses ? JSON.parse(savedStatuses) : (isMaster ? [...DEFAULT_ADMIN_STATUSES] : []);
     } catch(e) {}
   }
 
   function saveCategoriesPrefs() {
     try {
-      localStorage.setItem('pref_job_types', JSON.stringify(jobTypes));
-      localStorage.setItem('pref_customer_list', JSON.stringify(customerList));
-      localStorage.setItem('pref_executor_list', JSON.stringify(executorList));
-      localStorage.setItem('pref_status_list', JSON.stringify(statusList));
+      localStorage.setItem(getPrefKey('pref_job_types'), JSON.stringify(jobTypes));
+      localStorage.setItem(getPrefKey('pref_customer_list'), JSON.stringify(customerList));
+      localStorage.setItem(getPrefKey('pref_executor_list'), JSON.stringify(executorList));
+      localStorage.setItem(getPrefKey('pref_status_list'), JSON.stringify(statusList));
     } catch(e) {}
 
     const cats = {
@@ -1568,8 +2148,8 @@
       executorList: executorList,
       statusList: statusList
     };
-    if (typeof google !== 'undefined' && google.script) {
-      google.script.run.saveCategoriesToSheet(cats);
+    if (typeof google !== 'undefined' && google.script && CURRENT_ACCESS_CODE) {
+      google.script.run.saveCategoriesToSheet(cats, CURRENT_ACCESS_CODE);
     }
   }
 
@@ -1599,19 +2179,18 @@
     return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
   }
 
-  function suggestMoney(inputEl, listId, chipsId) {
+  function handleMoneyInput(inputEl, chipsId) {
     const raw = String(inputEl.value).trim();
-    const listEl = document.getElementById(listId);
     const chipsEl = document.getElementById(chipsId);
     
-    if (!raw || isNaN(raw)) {
-      listEl.innerHTML = '';
+    const digits = raw.replace(/[^0-9]/g, '');
+    if (!digits) {
       chipsEl.innerHTML = '';
       return;
     }
 
-    const num = parseInt(raw, 10);
-    if (num <= 0 || num >= 100000) {
+    const num = parseInt(digits, 10);
+    if (num <= 0 || num >= 1000000000) {
       chipsEl.innerHTML = '';
       return;
     }
@@ -1625,14 +2204,26 @@
       options.push({ val: num * 100000, label: (num * 100000).toLocaleString('vi-VN') + ' đ' });
     }
 
-    listEl.innerHTML = options.map(o => `<option value="${o.val}">${o.label}</option>`).join('');
     chipsEl.innerHTML = options.map(o => 
       `<span class="money-chip" onclick="pickSuggestedMoney('${inputEl.id}', ${o.val}, '${chipsId}')">${o.label}</span>`
     ).join('');
   }
 
+  function formatMoneyBlur(inputEl) {
+    const raw = String(inputEl.value).trim();
+    if (!raw) return;
+    const digits = raw.replace(/[^0-9]/g, '');
+    if (!digits) {
+      inputEl.value = '';
+      return;
+    }
+    const num = parseInt(digits, 10);
+    inputEl.value = num.toLocaleString('vi-VN') + " đ";
+  }
+
   function pickSuggestedMoney(inputId, val, chipsId) {
-    document.getElementById(inputId).value = val;
+    const el = document.getElementById(inputId);
+    el.value = val.toLocaleString('vi-VN') + " đ";
     document.getElementById(chipsId).innerHTML = '';
   }
 
@@ -1658,16 +2249,22 @@
     } else if (tabKey === 'chitiet') {
       document.getElementById('nav-chitiet').classList.add('active');
       document.getElementById('tabChitiet').classList.remove('d-none');
+      renderColumnVisibilityMenu();
       renderMasterTable();
     }
   }
 
   function loadData(doneCallback) {
+    if (!CURRENT_ACCESS_CODE) {
+      if (doneCallback) doneCallback();
+      return;
+    }
+
     const errBanner = document.getElementById('errorBanner');
     errBanner.classList.add('d-none');
 
     if (APPS_SCRIPT_URL.includes("DÁN_LINK_WEB_APP")) {
-      errBanner.innerText = "Chưa cấu hình APPS_SCRIPT_URL: Hãy dán link Web App (/exec) vào dòng 617 trong file index.html!";
+      errBanner.innerText = "Chưa cấu hình APPS_SCRIPT_URL!";
       errBanner.classList.remove('d-none');
       if (doneCallback) doneCallback();
       return;
@@ -1683,10 +2280,10 @@
           if (Array.isArray(res.categories.executorList)) executorList = res.categories.executorList;
           if (Array.isArray(res.categories.statusList)) statusList = res.categories.statusList;
           try {
-            localStorage.setItem('pref_job_types', JSON.stringify(jobTypes));
-            localStorage.setItem('pref_customer_list', JSON.stringify(customerList));
-            localStorage.setItem('pref_executor_list', JSON.stringify(executorList));
-            localStorage.setItem('pref_status_list', JSON.stringify(statusList));
+            localStorage.setItem(getPrefKey('pref_job_types'), JSON.stringify(jobTypes));
+            localStorage.setItem(getPrefKey('pref_customer_list'), JSON.stringify(customerList));
+            localStorage.setItem(getPrefKey('pref_executor_list'), JSON.stringify(executorList));
+            localStorage.setItem(getPrefKey('pref_status_list'), JSON.stringify(statusList));
           } catch(e) {}
         } else {
           allJobs.forEach(j => {
@@ -1701,6 +2298,7 @@
         renderCalendar();
         updateHeaderStats();
         renderSelectedDayJobs();
+        renderColumnVisibilityMenu();
         renderMasterTable();
         if (doneCallback) doneCallback();
       })
@@ -1709,7 +2307,7 @@
         errBanner.classList.remove('d-none');
         if (doneCallback) doneCallback();
       })
-      .getAllJobsData();
+      .getAllJobsData(CURRENT_ACCESS_CODE);
   }
 
   function changeMonth(direction) {
@@ -1862,9 +2460,7 @@
             <span class="badge rounded-pill" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3; font-size: 12px;" onclick="openJobInfoPopup(${j.rowNumber})" role="button" title="Bấm để xem chi tiết & thao tác">${j.congViec || 'Chưa phân loại'}</span>
             <h6 class="fw-bold mb-0 text-dark">${j.khachHang || 'Chưa ghi tên'}</h6>
           </div>
-          <div>
-            ${mapStatusBadgeHtml}
-          </div>
+          <div>${mapStatusBadgeHtml}</div>
         </div>
         ${timeAndAddrHtml}
         <div class="text-success small fw-semibold">👤 ${j.nguoiThucHien || 'Lê Tân'}</div>
@@ -1887,13 +2483,13 @@
     custSel.innerHTML = `<option value="">-- Chọn khách hàng --</option>` + custOpts.map(c => `<option value="${c}" ${c === selectedCust ? 'selected' : ''}>${c}</option>`).join('');
 
     let execOpts = [...executorList];
-    const targetExec = selectedExec || "Lê Tân";
+    const targetExec = selectedExec || (execOpts[0] || "Lê Tân");
     if (targetExec && !execOpts.includes(targetExec)) execOpts.push(targetExec);
     const execSel = document.getElementById('formNguoiThucHien');
     execSel.innerHTML = `<option value="">-- Chọn người thực hiện --</option>` + execOpts.map(e => `<option value="${e}" ${e === targetExec ? 'selected' : ''}>${e}</option>`).join('');
 
     let statusOpts = [...statusList];
-    const targetStatus = selectedStatus || "Chờ";
+    const targetStatus = selectedStatus || (statusOpts[0] || "Chờ");
     if (targetStatus && !statusOpts.includes(targetStatus)) statusOpts.push(targetStatus);
     const statusSel = document.getElementById('formTinhTrang');
     if (statusSel) {
@@ -2122,15 +2718,19 @@
     else if (catKey === 'statusList') list = statusList;
     
     let html = '';
-    list.forEach((item, idx) => {
-      html += `<div class="d-flex justify-content-between align-items-center bg-white border rounded p-2 mb-1">
-        <span class="fw-semibold">${item}</span>
-        <div>
-          <button class="btn btn-outline-primary btn-sm py-0 px-2 me-1" style="font-size:11px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
-          ${list.length > 1 ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>` : ''}
-        </div>
-      </div>`;
-    });
+    if (list.length === 0) {
+      html = `<div class="text-center text-muted small py-3">Danh mục đang trống. Hãy nhập tên mới ở trên để thêm!</div>`;
+    } else {
+      list.forEach((item, idx) => {
+        html += `<div class="d-flex justify-content-between align-items-center bg-white border rounded p-2 mb-1">
+          <span class="fw-semibold">${item}</span>
+          <div>
+            <button class="btn btn-outline-primary btn-sm py-0 px-2 me-1" style="font-size:11px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
+            <button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>
+          </div>
+        </div>`;
+      });
+    }
     document.getElementById('catalogItemsContainer').innerHTML = html;
   }
 
@@ -2166,7 +2766,7 @@
           .withFailureHandler(function(err) {
             showToast("Lỗi cập nhật danh mục", true);
           })
-          .updateCatalogItemInSheet(catKey, oldName, newName.trim());
+          .updateCatalogItemInSheet(catKey, oldName, newName.trim(), CURRENT_ACCESS_CODE);
       }
     });
   }
@@ -2182,7 +2782,6 @@
       list.splice(idx, 1);
       saveCategoriesPrefs();
       renderCatalogItemsList();
-      renderMasterTable();
       showToast(`Đã xóa "${targetName}"`);
     });
   }
@@ -2190,9 +2789,11 @@
   function loadTablePrefs() {
     try {
       const onlyEmpty = localStorage.getItem('pref_only_empty_days');
+      const missingTimeAddr = localStorage.getItem('pref_missing_time_addr');
       const hideCompleted = localStorage.getItem('pref_hide_completed');
       
       if (onlyEmpty !== null) document.getElementById('toggleOnlyEmptyDays').checked = (onlyEmpty === 'true');
+      if (missingTimeAddr !== null) document.getElementById('toggleMissingTimeOrAddress').checked = (missingTimeAddr === 'true');
       if (hideCompleted !== null) document.getElementById('toggleHideCompleted').checked = (hideCompleted === 'true');
     } catch (e) {}
   }
@@ -2200,6 +2801,7 @@
   function saveTablePrefs() {
     try {
       localStorage.setItem('pref_only_empty_days', document.getElementById('toggleOnlyEmptyDays').checked);
+      localStorage.setItem('pref_missing_time_addr', document.getElementById('toggleMissingTimeOrAddress').checked);
       localStorage.setItem('pref_hide_completed', document.getElementById('toggleHideCompleted').checked);
     } catch (e) {}
   }
@@ -2227,6 +2829,88 @@
     return String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   }
 
+  function toggleSelectAllJobs(masterCb) {
+    const checkboxes = document.querySelectorAll('.job-row-checkbox');
+    checkboxes.forEach(cb => {
+      cb.checked = masterCb.checked;
+    });
+  }
+
+  function getSelectedRowNumbers() {
+    const checkedBoxes = document.querySelectorAll('.job-row-checkbox:checked');
+    let rows = [];
+    checkedBoxes.forEach(cb => {
+      rows.push(Number(cb.getAttribute('data-row')));
+    });
+    return rows;
+  }
+
+  function changeExecutorValue(targetRowNumber, newExecutor) {
+    const selectedRows = getSelectedRowNumbers();
+    let targetRows = [targetRowNumber];
+    if (selectedRows.includes(targetRowNumber) && selectedRows.length > 1) {
+      targetRows = selectedRows;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = res.jobs || [];
+        renderCalendar();
+        updateHeaderStats();
+        renderSelectedDayJobs();
+        renderMasterTable();
+        showToast(`Đã đổi Người thực hiện thành "${newExecutor}"` + (targetRows.length > 1 ? ` (${targetRows.length} job)` : ''));
+      })
+      .withFailureHandler(function() {
+        showToast("Lỗi cập nhật người thực hiện", true);
+      })
+      .batchUpdateExecutor(targetRows, newExecutor, CURRENT_ACCESS_CODE);
+  }
+
+  function changeStatusValue(targetRowNumber, chosenStatus) {
+    const selectedRows = getSelectedRowNumbers();
+    let targetRows = [targetRowNumber];
+    if (selectedRows.includes(targetRowNumber) && selectedRows.length > 1) {
+      targetRows = selectedRows;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = res.jobs || [];
+        renderCalendar();
+        updateHeaderStats();
+        renderSelectedDayJobs();
+        renderMasterTable();
+        showToast(`Đã chuyển sang "${chosenStatus}"` + (targetRows.length > 1 ? ` (${targetRows.length} job)` : ''));
+      })
+      .withFailureHandler(function() {
+        showToast("Lỗi cập nhật tình trạng", true);
+      })
+      .batchUpdateStatus(targetRows, chosenStatus, CURRENT_ACCESS_CODE);
+  }
+
+  function toggleCostStatus(targetRowNumber, checkboxEl) {
+    const newCostStatus = checkboxEl.checked ? "Đã trả" : "Chưa trả";
+    const selectedRows = getSelectedRowNumbers();
+
+    let targetRows = [targetRowNumber];
+    if (selectedRows.includes(targetRowNumber) && selectedRows.length > 1) {
+      targetRows = selectedRows;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        allJobs = res.jobs || [];
+        renderMasterTable();
+        showToast((checkboxEl.checked ? 'Đã thanh toán chi phí' : 'Đã bỏ tích chi phí') + (targetRows.length > 1 ? ` (${targetRows.length} job)` : ''));
+      })
+      .withFailureHandler(function(err) {
+        showToast("Lỗi cập nhật chi phí", true);
+        checkboxEl.checked = !checkboxEl.checked;
+      })
+      .batchUpdateCostStatus(targetRows, newCostStatus, CURRENT_ACCESS_CODE);
+  }
+
   function renderMasterTable() {
     const keyword = document.getElementById('searchTableInput').value.toLowerCase().trim();
     const monthSelectEl = document.getElementById('filterMonthTable');
@@ -2238,6 +2922,7 @@
     const selectedStatus = filterStatusVal;
 
     const onlyEmptyDays = document.getElementById('toggleOnlyEmptyDays').checked;
+    const missingTimeOrAddress = document.getElementById('toggleMissingTimeOrAddress').checked;
     const hideCompleted = document.getElementById('toggleHideCompleted').checked;
 
     const todayFormatted = getTodayFormatted();
@@ -2264,7 +2949,7 @@
     });
     monthSelectEl.innerHTML = monthOpts;
 
-    const hasAnyFilter = Boolean(keyword || selectedMonth || selectedJobType || selectedCust || selectedExecutor || selectedStatus);
+    const hasAnyFilter = Boolean(keyword || selectedMonth || selectedJobType || selectedCust || selectedExecutor || selectedStatus || missingTimeOrAddress);
     const clearBtn = document.getElementById('btnClearAllFilters');
     if (clearBtn) {
       if (hasAnyFilter) clearBtn.classList.add('has-active-filter');
@@ -2274,6 +2959,12 @@
     const baseFilteredJobs = allJobs.filter(j => {
       if (!j.congViec && !j.khachHang) return false;
       if (hideCompleted && j.tinhTrang === 'Xong') return false;
+      if (missingTimeOrAddress) {
+        const parsed = splitJobDetail(j.chiTiet);
+        const hasTime = Boolean(parsed.thoiGian && parsed.thoiGian.trim() !== '');
+        const hasAddr = Boolean(parsed.diaChi && parsed.diaChi.trim() !== '');
+        if (hasTime && hasAddr) return false;
+      }
       if (selectedMonth) {
         let p = j.ngay.split('/');
         if (p.length !== 3 || `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
@@ -2314,7 +3005,7 @@
       return arr;
     };
 
-    const isFilteringSpecific = (keyword !== '' || selectedJobType !== '' || selectedCust !== '' || selectedExecutor !== '' || selectedStatus !== '');
+    const isFilteringSpecific = (keyword !== '' || selectedJobType !== '' || selectedCust !== '' || selectedExecutor !== '' || selectedStatus !== '' || missingTimeOrAddress);
     const effectiveBaseJobs = (onlyEmptyDays && !isFilteringSpecific && !hideCompleted) ? [] : baseFilteredJobs;
 
     const activeJobTypes = extractUniqueOptions(
@@ -2345,38 +3036,90 @@
     );
     if (selectedStatus && !activeStatuses.some(x => x.toLowerCase() === selectedStatus.toLowerCase())) activeStatuses.unshift(selectedStatus);
 
-    document.getElementById('btnDropdownJobType').innerHTML = selectedJobType ? `${selectedJobType} ✕` : `Công việc`;
-    document.getElementById('btnDropdownCustomer').innerHTML = selectedCust ? `${selectedCust} ✕` : `Khách hàng`;
-    document.getElementById('btnDropdownExecutor').innerHTML = selectedExecutor ? `${selectedExecutor} ✕` : `Người thực hiện`;
-    document.getElementById('btnDropdownStatus').innerHTML = selectedStatus ? `${selectedStatus} ✕` : `Tình trạng`;
+    const visibleCols = tableColumns.filter(c => c.visible);
+    let theadHtml = `<tr>`;
+    visibleCols.forEach(col => {
+      let thAttr = `draggable="true" ondragstart="handleDragStart(event, '${col.id}')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, '${col.id}')" ondragend="handleDragEnd(event)"`;
+      if (col.id === 'checkbox') thAttr = `style="width: 40px;"`;
+      if (col.width) thAttr += ` style="width: ${col.width};"`;
 
-    let jobTypeMenuHtml = `<li><a class="dropdown-item ${!selectedJobType ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('jobType', '')">Tất cả Công việc (${activeJobTypes.length})</a></li>`;
-    activeJobTypes.forEach(jt => {
-      const isAct = selectedJobType.toLowerCase() === jt.toLowerCase();
-      jobTypeMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('jobType', '${escapeJsQuotes(jt)}')">${jt}</a></li>`;
+      if (col.id === 'congViec') {
+        theadHtml += `<th ${thAttr}>
+          <div class="dropdown d-inline-block w-100">
+            <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-dark shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownJobType" style="font-size: 12px; border-radius: 6px;">
+              ${selectedJobType ? selectedJobType + ' ✕' : 'Công việc'}
+            </button>
+            <ul class="dropdown-menu shadow-sm py-1" id="menuFilterJobType" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+          </div>
+        </th>`;
+      } else if (col.id === 'khachHang') {
+        theadHtml += `<th ${thAttr}>
+          <div class="dropdown d-inline-block w-100">
+            <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-primary shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownCustomer" style="font-size: 12px; border-radius: 6px;">
+              ${selectedCust ? selectedCust + ' ✕' : 'Khách hàng'}
+            </button>
+            <ul class="dropdown-menu shadow-sm py-1" id="menuFilterCustomer" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+          </div>
+        </th>`;
+      } else if (col.id === 'nguoiThucHien') {
+        theadHtml += `<th ${thAttr}>
+          <div class="dropdown d-inline-block w-100">
+            <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-success shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownExecutor" style="font-size: 12px; border-radius: 6px;">
+              ${selectedExecutor ? selectedExecutor + ' ✕' : 'Người thực hiện'}
+            </button>
+            <ul class="dropdown-menu shadow-sm py-1" id="menuFilterExecutor" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+          </div>
+        </th>`;
+      } else if (col.id === 'tinhTrang') {
+        theadHtml += `<th ${thAttr}>
+          <div class="dropdown d-inline-block w-100">
+            <button class="btn btn-sm dropdown-toggle fw-semibold border bg-white text-danger shadow-sm w-100 py-1" type="button" data-bs-toggle="dropdown" id="btnDropdownStatus" style="font-size: 12px; border-radius: 6px;">
+              ${selectedStatus ? selectedStatus + ' ✕' : 'Tình trạng'}
+            </button>
+            <ul class="dropdown-menu shadow-sm py-1" id="menuFilterStatus" style="font-size: 13px; max-height: 250px; overflow-y: auto;"></ul>
+          </div>
+        </th>`;
+      } else {
+        let alignClass = col.align === 'end' ? 'text-end' : '';
+        theadHtml += `<th class="${alignClass}" ${thAttr}>${col.label}</th>`;
+      }
     });
-    document.getElementById('menuFilterJobType').innerHTML = jobTypeMenuHtml;
+    theadHtml += `</tr>`;
+    document.getElementById('masterTableHead').innerHTML = theadHtml;
 
-    let custMenuHtml = `<li><a class="dropdown-item ${!selectedCust ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('customer', '')">Tất cả Khách hàng (${activeCustomers.length})</a></li>`;
-    activeCustomers.forEach(c => {
-      const isAct = selectedCust.toLowerCase() === c.toLowerCase();
-      custMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('customer', '${escapeJsQuotes(c)}')">${c}</a></li>`;
-    });
-    document.getElementById('menuFilterCustomer').innerHTML = custMenuHtml;
+    setTimeout(() => {
+      let jobTypeMenuHtml = `<li><a class="dropdown-item ${!selectedJobType ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('jobType', '')">Tất cả Công việc (${activeJobTypes.length})</a></li>`;
+      activeJobTypes.forEach(jt => {
+        const isAct = selectedJobType.toLowerCase() === jt.toLowerCase();
+        jobTypeMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('jobType', '${escapeJsQuotes(jt)}')">${jt}</a></li>`;
+      });
+      const jtMenu = document.getElementById('menuFilterJobType');
+      if (jtMenu) jtMenu.innerHTML = jobTypeMenuHtml;
 
-    let execMenuHtml = `<li><a class="dropdown-item ${!selectedExecutor ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('executor', '')">Tất cả Người thực hiện (${activeExecutors.length})</a></li>`;
-    activeExecutors.forEach(e => {
-      const isAct = selectedExecutor.toLowerCase() === e.toLowerCase();
-      execMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('executor', '${escapeJsQuotes(e)}')">${e}</a></li>`;
-    });
-    document.getElementById('menuFilterExecutor').innerHTML = execMenuHtml;
+      let custMenuHtml = `<li><a class="dropdown-item ${!selectedCust ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('customer', '')">Tất cả Khách hàng (${activeCustomers.length})</a></li>`;
+      activeCustomers.forEach(c => {
+        const isAct = selectedCust.toLowerCase() === c.toLowerCase();
+        custMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('customer', '${escapeJsQuotes(c)}')">${c}</a></li>`;
+      });
+      const cMenu = document.getElementById('menuFilterCustomer');
+      if (cMenu) cMenu.innerHTML = custMenuHtml;
 
-    let statusMenuHtml = `<li><a class="dropdown-item ${!selectedStatus ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('status', '')">Tất cả Tình trạng (${activeStatuses.length})</a></li>`;
-    activeStatuses.forEach(s => {
-      const isAct = selectedStatus === s;
-      statusMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('status', '${escapeJsQuotes(s)}')">${s}</a></li>`;
-    });
-    document.getElementById('menuFilterStatus').innerHTML = statusMenuHtml;
+      let execMenuHtml = `<li><a class="dropdown-item ${!selectedExecutor ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('executor', '')">Tất cả Người thực hiện (${activeExecutors.length})</a></li>`;
+      activeExecutors.forEach(e => {
+        const isAct = selectedExecutor.toLowerCase() === e.toLowerCase();
+        execMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('executor', '${escapeJsQuotes(e)}')">${e}</a></li>`;
+      });
+      const eMenu = document.getElementById('menuFilterExecutor');
+      if (eMenu) eMenu.innerHTML = execMenuHtml;
+
+      let statusMenuHtml = `<li><a class="dropdown-item ${!selectedStatus ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('status', '')">Tất cả Tình trạng (${activeStatuses.length})</a></li>`;
+      activeStatuses.forEach(s => {
+        const isAct = selectedStatus === s;
+        statusMenuHtml += `<li><a class="dropdown-item ${isAct ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="setFilter('status', '${escapeJsQuotes(s)}')">${s}</a></li>`;
+      });
+      const sMenu = document.getElementById('menuFilterStatus');
+      if (sMenu) sMenu.innerHTML = statusMenuHtml;
+    }, 50);
 
     let displayItems = [];
 
@@ -2441,20 +3184,23 @@
       const todayBadge = isToday ? ` <span class="badge bg-warning text-dark ms-1">Hôm nay</span>` : '';
 
       if (item.isEmpty) {
-        html += `<tr ${rowIdAttr} class="empty-day-row ${isToday ? 'today-row' : ''}">
-          <td class="text-center text-nowrap">${item.thu}</td>
-          <td class="text-center text-nowrap">${item.dateStr}${todayBadge}</td>
-          <td class="text-center">-</td>
-          <td class="text-center">-</td>
-          <td>Trống lịch</td>
-          <td class="text-center">-</td>
-          <td class="text-center">-</td>
-          <td class="text-center">-</td>
-          <td class="text-end">-</td>
-          <td class="text-end">-</td>
-          <td class="text-end">-</td>
-          <td class="text-center">-</td>
-        </tr>`;
+        html += `<tr ${rowIdAttr} class="empty-day-row ${isToday ? 'today-row' : ''}">`;
+        visibleCols.forEach(col => {
+          if (col.id === 'checkbox') html += `<td class="text-center">-</td>`;
+          else if (col.id === 'thu') html += `<td class="text-center text-nowrap">${item.thu}</td>`;
+          else if (col.id === 'ngay') html += `<td class="text-center text-nowrap">${item.dateStr}${todayBadge}</td>`;
+          else if (col.id === 'congViec') html += `<td class="text-center">-</td>`;
+          else if (col.id === 'thoiGian') html += `<td class="text-center">-</td>`;
+          else if (col.id === 'diaChi') html += `<td>-</td>`;
+          else if (col.id === 'khachHang') html += `<td class="text-center">-</td>`;
+          else if (col.id === 'nguoiThucHien') html += `<td class="text-center">-</td>`;
+          else if (col.id === 'tinhTrang') html += `<td class="text-center">-</td>`;
+          else if (col.id === 'giaTri') html += `<td class="text-end">-</td>`;
+          else if (col.id === 'daCoc') html += `<td class="text-end">-</td>`;
+          else if (col.id === 'chiPhi') html += `<td class="text-end">-</td>`;
+          else if (col.id === 'ttChiPhi') html += `<td class="text-center">-</td>`;
+        });
+        html += `</tr>`;
       } else {
         const j = item.job;
         filteredJobCount++;
@@ -2471,12 +3217,6 @@
           sumChuaTT += (gVal > 0 ? Math.max(0, gVal - cCoc) : lVal);
         }
 
-        let selectClass = 'status-cho';
-        if (j.tinhTrang === 'Chưa thực hiện') selectClass = 'status-chua-thuc-hien';
-        else if (j.tinhTrang === 'Chưa TT') selectClass = 'status-chua-tt';
-        else if (j.tinhTrang === 'Đã TT') selectClass = 'status-da-tt';
-        else if (j.tinhTrang === 'Xong') selectClass = 'status-xong';
-
         let isXong = (j.tinhTrang === 'Xong');
         let rowClassAttr = isXong ? 'row-status-xong' : '';
         if (isToday) rowClassAttr += (rowClassAttr ? ' today-row' : 'today-row');
@@ -2489,47 +3229,80 @@
           diaChiDisplay = (diaChiDisplay === '-') ? mapBtn : (diaChiDisplay + ' ' + mapBtn);
         }
 
+        let execOpts = [...executorList];
+        const execName = j.nguoiThucHien || 'Lê Tân';
+        if (execName && !execOpts.includes(execName)) execOpts.push(execName);
+        let execOptionsHtml = execOpts.map(e => `<li><a class="dropdown-item ${execName === e ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="changeExecutorValue(${j.rowNumber}, '${escapeJsQuotes(e)}')">${e}</a></li>`).join('');
+
+        let executorHtml = `<div class="dropdown d-inline-block w-100">
+          <button class="btn btn-sm dropdown-toggle job-badge w-100 fw-semibold text-success py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f0fdf4; border-color: #bbf7d0;">
+            ${execName}
+          </button>
+          <ul class="dropdown-menu shadow-sm py-1" style="font-size: 13px;">
+            ${execOptionsHtml}
+          </ul>
+        </div>`;
+
         let statusOpts = [...statusList];
         if (j.tinhTrang && !statusOpts.includes(j.tinhTrang)) statusOpts.push(j.tinhTrang);
-        let statusOptionsHtml = statusOpts.map(s => `<option value="${s}" ${j.tinhTrang === s ? 'selected' : ''}>${s}</option>`).join('');
+        let statusOptionsHtml = statusOpts.map(s => `<li><a class="dropdown-item ${j.tinhTrang === s ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="changeStatusValue(${j.rowNumber}, '${escapeJsQuotes(s)}')">${s}</a></li>`).join('');
+
+        let statusBgStyle = "background-color: #f1f5f9; color: #475569; border-color: #cbd5e1;";
+        if (j.tinhTrang === 'Chưa thực hiện') {
+          statusBgStyle = "background-color: #cfe2ff; color: #084298; border-color: #b6d4fe;";
+        } else if (j.tinhTrang === 'Chưa TT') {
+          statusBgStyle = "background-color: #f8d7da; color: #842029; border-color: #f5c2c7;";
+        } else if (j.tinhTrang === 'Đã TT' || j.tinhTrang === 'Xong') {
+          statusBgStyle = "background-color: #d1e7dd; color: #0f5132; border-color: #badbcc;";
+        }
+
+        let statusHtml = `<div class="dropdown d-inline-block w-100">
+          <button class="btn btn-sm dropdown-toggle job-badge w-100 fw-semibold py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="${statusBgStyle}">
+            ${j.tinhTrang}
+          </button>
+          <ul class="dropdown-menu shadow-sm py-1" style="font-size: 13px;">
+            ${statusOptionsHtml}
+          </ul>
+        </div>`;
 
         const isCustFiltered = selectedCust && j.khachHang && j.khachHang.trim().toLowerCase() === selectedCust.toLowerCase();
         const safeCust = escapeJsQuotes(j.khachHang || '');
 
-        const execName = j.nguoiThucHien || 'Lê Tân';
-        const isExecFiltered = selectedExecutor && execName.trim().toLowerCase() === selectedExecutor.toLowerCase();
-        const safeExec = escapeJsQuotes(execName);
-
-        html += `<tr ${rowIdAttr} class="${rowClassAttr}">
-          <td class="text-center text-nowrap">${item.thu}</td>
-          <td class="text-center text-nowrap">${j.ngay}${todayBadge}</td>
-          <td class="text-center">
-            <span class="job-badge" onclick="openJobInfoPopup(${j.rowNumber})" title="Bấm để xem chi tiết & thao tác">${j.congViec}</span>
-          </td>
-          <td class="text-center fw-medium">${thoiGianDisplay}</td>
-          <td>${diaChiDisplay}</td>
-          <td class="text-center">
-            <span class="customer-badge ${isCustFiltered ? 'active-filter' : ''}" onclick="toggleCustomerFilter('${safeCust}')" title="${isCustFiltered ? 'Bấm lần nữa để bỏ lọc' : 'Bấm để lọc riêng khách hàng này'}">${j.khachHang}</span>
-          </td>
-          <td class="text-center">
-            <span class="executor-badge ${isExecFiltered ? 'active-filter' : ''}" onclick="toggleExecutorFilter('${safeExec}')" title="${isExecFiltered ? 'Bấm lần nữa để bỏ lọc' : 'Bấm để lọc riêng nhân sự này'}">${execName}</span>
-          </td>
-          <td class="text-center">
-            <select class="form-select form-select-sm status-select ${selectClass}" onchange="changeStatusDropdown(${j.rowNumber}, this)">
-              ${statusOptionsHtml}
-            </select>
-          </td>
-          <td class="text-end text-nowrap">${gVal.toLocaleString('vi-VN')} đ</td>
-          <td class="text-end text-muted text-nowrap">${cCoc.toLocaleString('vi-VN')} đ</td>
-          <td class="text-end text-muted text-nowrap">${cVal.toLocaleString('vi-VN')} đ</td>
-          <td class="text-center">
-            <input type="checkbox" class="cost-checkbox" ${j.ttChiPhi === 'Đã trả' ? 'checked' : ''} onchange="toggleCostStatus(${j.rowNumber}, this)" title="Tích chọn nếu đã thanh toán chi phí">
-          </td>
-        </tr>`;
+        html += `<tr ${rowIdAttr} class="${rowClassAttr}">`;
+        visibleCols.forEach(col => {
+          if (col.id === 'checkbox') {
+            html += `<td class="text-center"><input type="checkbox" class="form-check-input mt-0 job-row-checkbox" data-row="${j.rowNumber}"></td>`;
+          } else if (col.id === 'thu') {
+            html += `<td class="text-center text-nowrap">${item.thu}</td>`;
+          } else if (col.id === 'ngay') {
+            html += `<td class="text-center text-nowrap">${j.ngay}${todayBadge}</td>`;
+          } else if (col.id === 'congViec') {
+            html += `<td class="text-center"><span class="job-badge" onclick="openJobInfoPopup(${j.rowNumber})" title="Bấm để xem chi tiết & thao tác">${j.congViec}</span></td>`;
+          } else if (col.id === 'thoiGian') {
+            html += `<td class="text-center fw-medium">${thoiGianDisplay}</td>`;
+          } else if (col.id === 'diaChi') {
+            html += `<td>${diaChiDisplay}</td>`;
+          } else if (col.id === 'khachHang') {
+            html += `<td class="text-center"><span class="customer-badge ${isCustFiltered ? 'active-filter' : ''}" onclick="toggleCustomerFilter('${safeCust}')" title="${isCustFiltered ? 'Bấm lần nữa để bỏ lọc' : 'Bấm để lọc riêng khách hàng này'}">${j.khachHang}</span></td>`;
+          } else if (col.id === 'nguoiThucHien') {
+            html += `<td class="text-center">${executorHtml}</td>`;
+          } else if (col.id === 'tinhTrang') {
+            html += `<td class="text-center">${statusHtml}</td>`;
+          } else if (col.id === 'giaTri') {
+            html += `<td class="text-end text-nowrap">${gVal.toLocaleString('vi-VN')} đ</td>`;
+          } else if (col.id === 'daCoc') {
+            html += `<td class="text-end text-muted text-nowrap">${cCoc.toLocaleString('vi-VN')} đ</td>`;
+          } else if (col.id === 'chiPhi') {
+            html += `<td class="text-end text-muted text-nowrap">${cVal.toLocaleString('vi-VN')} đ</td>`;
+          } else if (col.id === 'ttChiPhi') {
+            html += `<td class="text-center"><input type="checkbox" class="cost-checkbox" ${j.ttChiPhi === 'Đã trả' ? 'checked' : ''} onchange="toggleCostStatus(${j.rowNumber}, this)" title="Tích chọn nếu đã thanh toán chi phí"></td>`;
+          }
+        });
+        html += `</tr>`;
       }
     });
 
-    tbody.innerHTML = html || `<tr><td colspan="12" class="text-center py-4 text-muted">Không có dữ liệu phù hợp</td></tr>`;
+    tbody.innerHTML = html || `<tr><td colspan="${visibleCols.length}" class="text-center py-4 text-muted">Không có dữ liệu phù hợp</td></tr>`;
 
     document.getElementById('tableStatusHint').innerText = isFilteringSpecific 
       ? `Đang lọc theo tiêu chí (${filteredJobCount} job hiển thị)` 
@@ -2541,34 +3314,6 @@
     document.getElementById('repTotalCost').innerText = sumChiPhi.toLocaleString('vi-VN') + ' đ';
     document.getElementById('repTotalProfit').innerText = sumLoiNhuan.toLocaleString('vi-VN') + ' đ';
     document.getElementById('repTotalUnpaid').innerText = sumChuaTT.toLocaleString('vi-VN') + ' đ';
-  }
-
-  function changeStatusDropdown(rowNumber, selectEl) {
-    const chosenStatus = selectEl.value;
-    google.script.run
-      .withSuccessHandler(function(res) {
-        allJobs = res.jobs || [];
-        renderCalendar();
-        updateHeaderStats();
-        renderSelectedDayJobs();
-        renderMasterTable();
-        showToast(`Đã chuyển sang "${chosenStatus}"`);
-      })
-      .quickSetStatus(rowNumber, chosenStatus);
-  }
-
-  function toggleCostStatus(rowNumber, checkboxEl) {
-    const newStatus = checkboxEl.checked ? "Đã trả" : "Chưa trả";
-    google.script.run
-      .withSuccessHandler(function(res) {
-        allJobs = res.jobs || [];
-        showToast(checkboxEl.checked ? 'Đã thanh toán chi phí' : 'Đã bỏ tích chi phí');
-      })
-      .withFailureHandler(function(err) {
-        showToast("Lỗi cập nhật chi phí", true);
-        checkboxEl.checked = !checkboxEl.checked;
-      })
-      .quickSetCostStatus(rowNumber, newStatus);
   }
 
   function openAddModal() {
@@ -2588,7 +3333,7 @@
     document.getElementById('modalTitle').innerText = 'Thêm lịch quay / chụp mới';
     const delBtn = document.getElementById('btnDeleteInModal');
     if (delBtn) delBtn.classList.add('d-none');
-    populateModalDropdowns("", "", "Lê Tân", "Chờ");
+    populateModalDropdowns("", "", executorList[0] || "Lê Tân", statusList[0] || "Chờ");
     jobModalInstance.show();
   }
 
@@ -2603,9 +3348,14 @@
     document.getElementById('formThoiGian').value = parsedDetail.thoiGian || '';
     document.getElementById('formDiaChi').value = parsedDetail.diaChi || '';
     document.getElementById('formMapLink').value = j.mapLink || '';
-    document.getElementById('formGiaTri').value = j.luuTruGiaTri || '';
-    document.getElementById('formDaCoc').value = j.luuTruDaCoc || '';
-    document.getElementById('formChiPhi').value = j.luuTruChiPhi || '';
+
+    const gVal = j.luuTruGiaTri || 0;
+    const cCocVal = j.luuTruDaCoc || 0;
+    const cVal = j.luuTruChiPhi || 0;
+
+    document.getElementById('formGiaTri').value = gVal > 0 ? gVal.toLocaleString('vi-VN') + " đ" : '';
+    document.getElementById('formDaCoc').value = cCocVal > 0 ? cCocVal.toLocaleString('vi-VN') + " đ" : '';
+    document.getElementById('formChiPhi').value = cVal > 0 ? cVal.toLocaleString('vi-VN') + " đ" : '';
 
     populateModalDropdowns(j.congViec || "", j.khachHang || "", j.nguoiThucHien || "Lê Tân", j.tinhTrang || "Chờ");
 
@@ -2627,6 +3377,8 @@
     btn.disabled = true; btn.innerText = 'Đang lưu...';
 
     const formData = Object.fromEntries(new FormData(formEl).entries());
+    formData.accessCode = CURRENT_ACCESS_CODE;
+
     google.script.run
       .withSuccessHandler(function(res) {
         allJobs = res.jobs || [];
@@ -2642,7 +3394,7 @@
         showToast('Lỗi khi lưu: ' + err.message, true);
         btn.disabled = false; btn.innerText = 'Lưu';
       })
-      .saveJobData(formData);
+      .saveJobData(formData, CURRENT_ACCESS_CODE);
   }
 
   function confirmDeleteFromModal() {
@@ -2660,7 +3412,7 @@
           jobModalInstance.hide();
           showToast('Đã xóa lịch');
         })
-        .deleteOrClearJob(rowNumber);
+        .deleteOrClearJob(rowNumber, CURRENT_ACCESS_CODE);
     });
   }
 
@@ -2680,18 +3432,30 @@
         .withFailureHandler(function(err) {
           showToast("Lỗi khi xóa", true);
         })
-        .deleteOrClearJob(rowNumber);
+        .deleteOrClearJob(rowNumber, CURRENT_ACCESS_CODE);
     });
+  }
+
+  function switchStatementMode() {
+    const isCust = document.getElementById('modeCustomer').checked;
+    document.getElementById('customerSelectorGroup').classList.toggle('d-none', !isCust);
+    document.getElementById('executorSelectorGroup').classList.toggle('d-none', isCust);
+    generateQrStatement();
   }
 
   function openDebtQrModal() {
     const custMap = new Map();
+    const execMap = new Map();
     const setMonths = new Set();
 
     allJobs.forEach(j => {
       if (j.tinhTrang === 'Chưa TT' && j.khachHang && j.khachHang.trim() !== '') {
         const cName = j.khachHang.trim();
         custMap.set(cName, (custMap.get(cName) || 0) + 1);
+      }
+      const execName = (j.nguoiThucHien || 'Lê Tân').trim();
+      if (execName && (j.congViec || j.khachHang)) {
+        execMap.set(execName, (execMap.get(execName) || 0) + 1);
       }
       if (j.ngay && j.ngay.includes('/')) {
         const p = j.ngay.split('/');
@@ -2700,6 +3464,7 @@
     });
 
     qrUnpaidCustomersCache = Array.from(custMap.entries()).map(([name, count]) => ({ name, count }));
+    qrExecutorsCache = Array.from(execMap.entries()).map(([name, count]) => ({ name, count }));
 
     const sortedMonths = Array.from(setMonths).sort((a, b) => {
       const [m1, y1] = a.split('/').map(Number);
@@ -2715,7 +3480,9 @@
     document.getElementById('qrMonthSelect').innerHTML = monthOpts;
 
     document.getElementById('qrSearchCustomerInput').value = '';
+    document.getElementById('qrSearchExecutorInput').value = '';
     filterQrCustomerDropdown(filterCustomerVal);
+    filterQrExecutorDropdown();
 
     generateQrStatement();
     debtQrModalInstance.show();
@@ -2745,15 +3512,52 @@
     generateQrStatement();
   }
 
-  function generateQrStatement() {
-    const cust = document.getElementById('qrCustomerSelect').value;
-    const selectedMonth = document.getElementById('qrMonthSelect').value;
+  function filterQrExecutorDropdown(preferredExec = null) {
+    const keyword = document.getElementById('qrSearchExecutorInput').value.toLowerCase().trim();
+    const selectEl = document.getElementById('qrExecutorSelect');
+    const previousSelected = preferredExec !== null ? preferredExec : selectEl.value;
 
-    if (!cust) {
-      document.getElementById('qrStatementText').value = "Vui lòng chọn hoặc tìm kiếm khách hàng ở trên để tạo bảng kê công nợ.";
-      return;
+    const filtered = qrExecutorsCache.filter(item =>
+      item.name.toLowerCase().includes(keyword)
+    );
+
+    let opts = `<option value="">-- Chọn nhân sự (${filtered.length}) --</option>`;
+    filtered.forEach(item => {
+      const isSelected = (item.name.toLowerCase() === String(previousSelected).toLowerCase());
+      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} job)</option>`;
+    });
+
+    if (keyword && filtered.length === 1) {
+      opts = `<option value="">-- Chọn nhân sự (1) --</option>` +
+             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} job)</option>`;
     }
 
+    selectEl.innerHTML = opts;
+    generateQrStatement();
+  }
+
+  function generateQrStatement() {
+    const isCustMode = document.getElementById('modeCustomer').checked;
+    const selectedMonth = document.getElementById('qrMonthSelect').value;
+
+    if (isCustMode) {
+      const cust = document.getElementById('qrCustomerSelect').value;
+      if (!cust) {
+        document.getElementById('qrStatementText').value = "Vui lòng chọn hoặc tìm kiếm khách hàng ở trên để tạo bảng kê công nợ.";
+        return;
+      }
+      generateCustomerDebtStatement(cust, selectedMonth);
+    } else {
+      const exec = document.getElementById('qrExecutorSelect').value;
+      if (!exec) {
+        document.getElementById('qrStatementText').value = "Vui lòng chọn hoặc tìm kiếm nhân sự ở trên để tạo bảng kê lương.";
+        return;
+      }
+      generateExecutorSalaryStatement(exec, selectedMonth);
+    }
+  }
+
+  function generateCustomerDebtStatement(cust, selectedMonth) {
     const unpaidJobs = allJobs.filter(j => {
       if (!j.khachHang || j.khachHang.trim().toLowerCase() !== cust.toLowerCase() || j.tinhTrang !== 'Chưa TT') return false;
       if (selectedMonth) {
@@ -2773,7 +3577,7 @@
     let lines = [];
 
     lines.push(`BẢNG KÊ TỔNG JOB - ${cust.toUpperCase()}${selectedMonth ? ' (Tháng ' + selectedMonth + ')' : ' (Tất cả tháng)'}`);
-    lines.push(`-------------------------------------------`);
+    lines.push(`----------------------------`);
 
     unpaidJobs.forEach((j, i) => {
       let g = j.luuTruGiaTri || parseMoney(j.giaTri);
@@ -2807,15 +3611,57 @@
     document.getElementById('qrStatementText').value = lines.join('\n');
   }
 
+  function generateExecutorSalaryStatement(execName, selectedMonth) {
+    const filteredJobs = allJobs.filter(j => {
+      const jExec = (j.nguoiThucHien || 'Lê Tân').trim();
+      if (jExec.toLowerCase() !== execName.toLowerCase()) return false;
+      if (!j.congViec && !j.khachHang) return false;
+      if (selectedMonth) {
+        let p = j.ngay.split('/');
+        if (p.length === 3 && `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
+      }
+      return true;
+    });
+
+    if (filteredJobs.length === 0) {
+      document.getElementById('qrStatementText').value = `Nhân sự "${execName}" không có job nào trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
+      return;
+    }
+
+    let totalSalary = 0;
+    let lines = [];
+
+    const monthLabel = selectedMonth ? `Tháng ${selectedMonth}` : 'Tất cả tháng';
+    lines.push(`BẢNG KÊ TỔNG LƯƠNG - ${execName.toUpperCase()} (${monthLabel})`);
+    lines.push(`----------------------------`);
+
+    filteredJobs.forEach((j, i) => {
+      let sal = j.luuTruChiPhi || parseMoney(j.chiPhi);
+      totalSalary += sal;
+
+      const parsed = splitJobDetail(j.chiTiet);
+      const cleanDetail = [parsed.thoiGian, parsed.diaChi].filter(Boolean).join(' - ');
+      const detailStr = cleanDetail ? ` (${cleanDetail})` : '';
+
+      lines.push(`${i + 1}. Ngày ${j.ngay}: ${j.congViec || 'Job'}${detailStr} — ${sal.toLocaleString('vi-VN')} đ`);
+    });
+
+    lines.push(`-------------------------------------------`);
+    lines.push(`Tổng giá trị (${filteredJobs.length} job): ${totalSalary.toLocaleString('vi-VN')} đ`);
+    lines.push(`-------------------------------------------`);
+    lines.push(`Cảm ơn đã hoàn thành xuất sắc nhiệm vụ!`);
+
+    document.getElementById('qrStatementText').value = lines.join('\n');
+  }
+
   function copyDebtText(btnEl) {
     const ta = document.getElementById('qrStatementText');
     navigator.clipboard.writeText(ta.value).then(() => {
       animateCopyButton(btnEl, 'Copy Bảng Kê Gửi Zalo');
-      showToast("Đã copy bảng kê công nợ");
+      showToast("Đã copy nội dung bảng kê");
     });
   }
 
-  // === LOGIC KÉO THẢ ASSISTIVETOUCH ===
   const bubble = document.getElementById('floatingMenuBubble');
   const assistiveBtn = document.getElementById('assistiveBtn');
   let isDragging = false;
@@ -2943,6 +3789,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     initCustomDialog();
     loadCategoriesPrefs();
+    loadTableColumnSettings();
     jobModalInstance = new bootstrap.Modal(document.getElementById('jobModal'));
     debtQrModalInstance = new bootstrap.Modal(document.getElementById('debtQrModal'));
     manageCatalogsModalInstance = new bootstrap.Modal(document.getElementById('manageCatalogsModal'));
@@ -2952,7 +3799,11 @@
     renderCalendar();
     updateHeaderStats();
     renderSelectedDayJobs();
-    loadData();
+
+    if (CURRENT_ACCESS_CODE) {
+      document.getElementById('inputLoginCode').value = CURRENT_ACCESS_CODE;
+      submitLoginCode(CURRENT_ACCESS_CODE);
+    }
   });
 </script>
 </body>
