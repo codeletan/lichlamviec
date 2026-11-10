@@ -3,84 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Lịch LETAN</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  
-  <!-- Cấu hình Full màn hình như App gốc trên iPhone (iOS PWA) & Android -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Lịch LETAN">
-  <meta name="theme-color" content="#111111">
-
-  <!-- Icon hiển thị trên tab trình duyệt (Favicon SVG) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%237b1113'/%3E%3Crect x='96' y='116' width='320' height='300' rx='36' fill='%23ffffff'/%3E%3Cpath d='M96 152 c0-20 16-36 36-36 h248 c20 0 36 16 36 36 v48 H96 z' fill='%23111111'/%3E%3Ccircle cx='176' cy='116' r='18' fill='%23d4d4d8'/%3E%3Ccircle cx='336' cy='116' r='18' fill='%23d4d4d8'/%3E%3Ctext x='256' y='345' font-family='Arial, sans-serif' font-size='135' font-weight='900' fill='%237b1113' text-anchor='middle'%3ELT%3C/text%3E%3C/svg%3E">
-
-  <!-- Script tự động vẽ Icon độ nét cao cho Màn hình chính iPhone & tạo Web Manifest -->
-  <script>
-    (function() {
-      try {
-        var canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 512;
-        var ctx = canvas.getContext('2d');
-
-        // 1. Nền đỏ đậm thương hiệu (#7b1113)
-        ctx.fillStyle = '#7b1113';
-        ctx.fillRect(0, 0, 512, 512);
-
-        // 2. Khung tờ lịch trắng ở giữa
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.roundRect(86, 106, 340, 320, 42);
-        ctx.fill();
-
-        // 3. Thanh gáy lịch màu đen (#111111)
-        ctx.fillStyle = '#111111';
-        ctx.beginPath();
-        ctx.roundRect(86, 106, 340, 86, [42, 42, 0, 0]);
-        ctx.fill();
-
-        // 4. Hai khuyên lịch màu bạc
-        ctx.fillStyle = '#e4e4e7';
-        ctx.beginPath();
-        ctx.arc(176, 149, 16, 0, Math.PI * 2);
-        ctx.arc(336, 149, 16, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 5. Chữ LT nổi bật ở giữa tờ lịch
-        ctx.fillStyle = '#7b1113';
-        ctx.font = '900 150px "Segoe UI", Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('LT', 256, 315);
-
-        var pngIconUrl = canvas.toDataURL('image/png');
-
-        // Gắn Apple Touch Icon cho iOS Safari
-        var appleIcon = document.createElement('link');
-        appleIcon.rel = 'apple-touch-icon';
-        appleIcon.href = pngIconUrl;
-        document.head.appendChild(appleIcon);
-
-        // Tạo file Manifest ảo giúp iOS & Android nhận diện chuẩn Standalone App
-        var manifest = {
-          name: "Quản Lý Job - Lịch LETAN",
-          short_name: "Lịch LETAN",
-          start_url: ".",
-          display: "standalone",
-          background_color: "#111111",
-          theme_color: "#111111",
-          icons: [{ src: pngIconUrl, sizes: "512x512", type: "image/png" }]
-        };
-        var manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
-        document.head.appendChild(manifestLink);
-      } catch (e) {}
-    })();
-  </script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
     :root {
       --sidebar-width: 250px;
       --primary-dark: #7b1113;
@@ -1135,7 +1060,7 @@
   // =========================================================================
   // DÁN LINK WEB APP GOOGLE APPS SCRIPT (/exec) CỦA BẠN VÀO DÒNG DƯỚI ĐÂY:
   // =========================================================================
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1ejYEbbnM_IAZIuEnOsFByh1O8nQeL7LILoJtVpCSy8wphj93GB0PiAxri6Dz2MKZA/exec";
+  const APPS_SCRIPT_URL = "DÁN_LINK_WEB_APP_EXEC_CỦA_BẠN_VÀO_ĐÂY";
 
   // Cầu nối giả lập google.script.run khi chạy trên GitHub Pages
   if (typeof google === 'undefined' || !google.script) {
