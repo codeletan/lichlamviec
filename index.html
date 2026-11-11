@@ -71,177 +71,7 @@
   </script>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <!-- ================= CSS POPUP XÁC THỰC & ADMIN ================= -->
   <style>
-    .auth-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .auth-card {
-      background: #ffffff;
-      width: 92%;
-      max-width: 420px;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-    .auth-card.admin-wide {
-      max-width: 680px;
-    }
-    .auth-title {
-      margin: 0 0 6px;
-      font-size: 20px;
-      font-weight: 700;
-      color: #0f172a;
-      text-align: center;
-    }
-    .auth-subtitle {
-      margin: 0 0 18px;
-      font-size: 13px;
-      color: #64748b;
-      text-align: center;
-    }
-    .auth-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      background: #f1f5f9;
-      padding: 4px;
-      border-radius: 10px;
-      margin-bottom: 18px;
-    }
-    .auth-tab-btn {
-      border: none;
-      background: transparent;
-      padding: 8px 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #475569;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .auth-tab-btn.active {
-      background: #ffffff;
-      color: #2563eb;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
-    .auth-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px 14px;
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-align: center;
-      text-transform: uppercase;
-      border: 2px solid #cbd5e1;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      outline: none;
-    }
-    .auth-input:focus {
-      border-color: #2563eb;
-    }
-    .auth-btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #2563eb;
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .auth-btn:hover { background: #1d4ed8; }
-    .auth-btn:disabled { background: #94a3b8; cursor: not-allowed; }
-    .auth-msg {
-      margin-top: 12px;
-      font-size: 13px;
-      text-align: center;
-      min-height: 18px;
-    }
-    .auth-msg.error { color: #dc2626; font-weight: 600; }
-    .auth-msg.success { color: #16a34a; font-weight: 600; }
-
-    /* Thanh hiển thị mã đang dùng */
-    .auth-Session-bar {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      background: #1e293b;
-      color: #f8fafc;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      position: fixed;
-      bottom: 16px;
-      left: 16px;
-      z-index: 9990;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    .auth-Session-bar button {
-      border: none;
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-switch-code { background: #334155; color: #fff; }
-    .btn-admin-panel { background: #f59e0b; color: #0f172a; }
-
-    /* Bảng Admin */
-    .admin-table-wrap {
-      max-height: 360px;
-      overflow-y: auto;
-      margin-top: 12px;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-    }
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .admin-table th, .admin-table td {
-      padding: 10px 8px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: left;
-    }
-    .admin-table th { background: #f8fafc; font-weight: 700; color: #334155; }
-    .badge-status {
-      padding: 3px 8px;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .badge-ACTIVE { background: #dcfce7; color: #15803d; }
-    .badge-PENDING { background: #fef3c7; color: #b45309; }
-    .badge-PAUSED { background: #fee2e2; color: #b91c1c; }
-    .act-btn {
-      border: none;
-      padding: 5px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-right: 4px;
-    }
-    .act-approve { background: #16a34a; color: #fff; }
-    .act-pause { background: #eab308; color: #0f172a; }
-    .act-delete { background: #dc2626; color: #fff; }
-
     :root {
       --sidebar-width: 250px;
       --primary-dark: #7b1113;
@@ -421,6 +251,7 @@
       opacity: 1;
     }
 
+    /* Giao diện nút và menu Cột hiển thị tinh tế */
     .column-visibility-dropdown {
       border: 1px solid #e2e8f0 !important;
       border-radius: 12px !important;
@@ -756,85 +587,6 @@
 </head>
 <body>
 
-<!-- ================= POPUP ĐĂNG NHẬP / TẠO MÃ / ĐỔI MÃ ================= -->
-<div id="authModal" class="auth-overlay">
-  <div class="auth-card">
-    <h3 class="auth-title">MÃ TRUY CẬP DỮ LIỆU</h3>
-    <p class="auth-subtitle">Nhập mật mã được cấp để kết nối trang tính</p>
-
-    <div class="auth-tabs">
-      <button class="auth-tab-btn active" onclick="switchAuthTab('LOGIN')">Đăng nhập</button>
-      <button class="auth-tab-btn" onclick="switchAuthTab('REGISTER')">Tạo mã mới</button>
-      <button class="auth-tab-btn" onclick="switchAuthTab('CHANGE')">Đổi mã</button>
-    </div>
-
-    <!-- Form Đăng Nhập -->
-    <div id="tabLogin">
-      <input type="text" id="inputLoginCode" class="auth-input" placeholder="NHẬP MÃ TRUY CẬP"
-             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')"
-             onkeydown="if(event.key==='Enter') submitLoginCode()" />
-      <button id="btnLoginSubmit" class="auth-btn" onclick="submitLoginCode()">Kết nối dữ liệu</button>
-    </div>
-
-    <!-- Form Tạo Mã Mới -->
-    <div id="tabRegister" style="display:none;">
-      <input type="text" id="inputRegisterCode" class="auth-input" placeholder="NHẬP MÃ MUỐN TẠO"
-             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')"
-             onkeydown="if(event.key==='Enter') submitRegisterCode()" />
-      <button id="btnRegisterSubmit" class="auth-btn" onclick="submitRegisterCode()">Gửi yêu cầu tạo mã</button>
-    </div>
-
-    <!-- Form Đổi Mã -->
-    <div id="tabChange" style="display:none;">
-      <input type="text" id="inputOldCode" class="auth-input" placeholder="MÃ HIỆN TẠI"
-             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')" />
-      <input type="text" id="inputNewCode" class="auth-input" placeholder="MÃ MỚI MUỐN ĐỔI"
-             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, '')"
-             onkeydown="if(event.key==='Enter') submitChangeCode()" />
-      <button id="btnChangeSubmit" class="auth-btn" onclick="submitChangeCode()">Cập nhật mã mới</button>
-    </div>
-
-    <div id="authMessage" class="auth-msg"></div>
-  </div>
-</div>
-
-<!-- ================= POPUP QUẢN TRỊ MÃ (CHỈ DÀNH CHO LETAN2306) ================= -->
-<div id="adminCodeModal" class="auth-overlay" style="display:none;">
-  <div class="auth-card admin-wide">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 class="auth-title" style="text-align:left; margin:0;">QUẢN LÝ MÃ TRUY CẬP (ADMIN)</h3>
-      <button onclick="closeAdminModal()" style="border:none; background:#e2e8f0; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:700;">Đóng ✕</button>
-    </div>
-    <p style="font-size:13px; color:#64748b; margin:6px 0 12px;">
-      Mã mới duyệt sẽ tự động tạo trang tính riêng (trống dữ liệu job và trống danh mục).
-    </p>
-    <div class="admin-table-wrap">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Mã</th>
-            <th>Trang tính</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody id="adminCodeTableBody">
-          <tr><td colspan="4" style="text-align:center;">Đang tải...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ================= THANH TRẠNG THÁI MÃ ĐANG KẾT NỐI ================= -->
-<div id="authSessionBar" class="auth-Session-bar">
-  <span>Mã: <strong id="currentCodeLabel">---</strong></span>
-  <button id="btnOpenAdmin" class="btn-admin-panel" style="display:none;" onclick="openAdminModal()">
-    Quản lý mã <span id="adminPendingBadge"></span>
-  </button>
-  <button class="btn-switch-code" onclick="logoutOrSwitchCode()">Đổi mã</button>
-</div>
-
 <div id="appToast" class="app-toast"></div>
 
 <div class="app-layout">
@@ -926,6 +678,7 @@
               <button type="button" id="btnClearAllFilters" class="btn-clear-filter" onclick="clearAllFilters()" title="Xóa tìm kiếm & tất cả bộ lọc">✕</button>
             </div>
 
+            <!-- Nút Cột hiển thị được thiết kế mới tinh tế -->
             <div class="dropdown">
               <button class="btn btn-sm dropdown-toggle bg-white fw-semibold shadow-sm d-flex align-items-center gap-1.5 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155; transition: all 0.2s;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -964,7 +717,7 @@
           <table class="table table-bordered table-hover align-middle mb-0" style="font-size: 13px;">
             <thead class="table-light text-center align-middle" id="masterTableHead"></thead>
             <tbody id="masterTableBody">
-              <tr><td colspan="13" class="text-center py-4 text-muted">⏳ Vui lòng nhập mã truy cập để tải dữ liệu...</td></tr>
+              <tr><td colspan="13" class="text-center py-4 text-muted">⏳ Đang đồng bộ dữ liệu từ Google Sheet...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1055,6 +808,7 @@
         <label class="form-label small fw-bold text-secondary mb-1">Nội dung tin nhắn gửi Zalo:</label>
         <textarea id="infoPopupZaloText" class="form-control font-monospace mb-3" rows="7" style="font-size: 12.5px; background-color: #f8fafc;"></textarea>
 
+        <!-- Các nút bấm được tinh chỉnh nhỏ gọn và tinh tế -->
         <div class="d-flex gap-2 justify-content-end align-items-center">
           <button type="button" class="btn btn-outline-secondary btn-sm px-3 fw-semibold" id="btnEditFromInfoPopup" style="border-radius: 8px; font-size: 12.5px;">✏️ Sửa</button>
           <button type="button" class="btn btn-outline-danger btn-sm px-3 fw-semibold" id="btnDeleteFromInfoPopup" style="border-radius: 8px; font-size: 12.5px;">🗑️ Xoá</button>
@@ -1092,7 +846,7 @@
           <button class="btn btn-primary fw-bold px-3" type="button" onclick="addCatalogItemDirect()">+ Thêm</button>
         </div>
 
-        <label class="form-label small fw-bold">Danh sách hiện tại (Tự động lưu theo mã truy cập):</label>
+        <label class="form-label small fw-bold">Danh sách hiện tại (Tự động lưu vĩnh viễn):</label>
         <div id="catalogItemsContainer" class="border rounded p-2 bg-light" style="max-height: 240px; overflow-y: auto;"></div>
       </div>
       <div class="modal-footer py-2">
@@ -1213,6 +967,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body py-3">
+        <!-- Chuyển đổi chế độ: Công nợ khách hàng hoặc Bảng kê lương nhân sự -->
         <div class="mb-2 d-flex align-items-center gap-4 bg-light p-2 rounded border">
           <div class="form-check mb-0">
             <input class="form-check-input" type="radio" name="statementMode" id="modeCustomer" value="customer" checked onchange="switchStatementMode()">
@@ -1226,6 +981,7 @@
 
         <div class="row g-2 mb-2">
           <div class="col-7">
+            <!-- Nhóm chọn Khách hàng -->
             <div id="customerSelectorGroup">
               <label class="form-label small fw-bold mb-1">1. Tìm & Chọn Khách hàng:</label>
               <input type="text" id="qrSearchCustomerInput" class="form-control form-control-sm mb-1" placeholder="🔍 Gõ tên khách / studio..." oninput="filterQrCustomerDropdown()">
@@ -1233,6 +989,7 @@
                 <option value="">-- Chọn khách hàng --</option>
               </select>
             </div>
+            <!-- Nhóm chọn Người thực hiện (Lương) -->
             <div id="executorSelectorGroup" class="d-none">
               <label class="form-label small fw-bold mb-1">1. Tìm & Chọn Nhân sự:</label>
               <input type="text" id="qrSearchExecutorInput" class="form-control form-control-sm mb-1" placeholder="🔍 Gõ tên nhân sự..." oninput="filterQrExecutorDropdown()">
@@ -1327,13 +1084,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnhaLb4UTNQ4l-SfZT9pgXu0_zftrX2QTDAeSKPlQla8LGtwVwNXci307CmU6_ssM28A/exec";
-  const IS_GAS_NATIVE = (typeof google !== 'undefined' && google.script && google.script.run);
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw92ww1BrRzp9dW-ql4GPgn2sCL5BwH8ZkQ4h0fhzAHMwY1EINgx4i7zOG7QZyyCGZ3/exec";
 
-  let CURRENT_ACCESS_CODE = localStorage.getItem('APP_ACCESS_CODE') || '';
-  let IS_ADMIN_SESSION = false;
-
-  if (!IS_GAS_NATIVE) {
+  if (typeof google === 'undefined' || !google.script) {
     function createGasRunner(successCb, failureCb) {
       return new Proxy({}, {
         get: function(target, prop) {
@@ -1347,11 +1100,7 @@
             fetch(APPS_SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: prop,
-                args: args,
-                accessCode: CURRENT_ACCESS_CODE
-              })
+              body: JSON.stringify({ action: prop, args: args })
             })
             .then(res => res.json())
             .then(res => {
@@ -1371,239 +1120,6 @@
     window.google = { script: { get run() { return createGasRunner(null, null); } } };
   }
 
-  // ================= XỬ LÝ XÁC THỰC & ADMIN MÃ TRUY CẬP =================
-  async function callAuthApi(payload) {
-    payload.action = 'auth';
-    if (IS_GAS_NATIVE) {
-      return new Promise((resolve, reject) => {
-        google.script.run
-          .withSuccessHandler(resolve)
-          .withFailureHandler(reject)
-          .handleAuthAction(payload);
-      });
-    }
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const json = await response.json();
-    if (json.status === 'error') {
-      throw new Error(json.message);
-    }
-    return json.data !== undefined ? json.data : json;
-  }
-
-  function showAuthMsg(text, isError = true) {
-    const el = document.getElementById('authMessage');
-    el.textContent = text;
-    el.className = 'auth-msg ' + (isError ? 'error' : 'success');
-  }
-
-  function switchAuthTab(mode) {
-    showAuthMsg('', false);
-    const tabs = document.querySelectorAll('.auth-tab-btn');
-    tabs[0].classList.toggle('active', mode === 'LOGIN');
-    tabs[1].classList.toggle('active', mode === 'REGISTER');
-    tabs[2].classList.toggle('active', mode === 'CHANGE');
-
-    document.getElementById('tabLogin').style.display = mode === 'LOGIN' ? 'block' : 'none';
-    document.getElementById('tabRegister').style.display = mode === 'REGISTER' ? 'block' : 'none';
-    document.getElementById('tabChange').style.display = mode === 'CHANGE' ? 'block' : 'none';
-  }
-
-  async function submitLoginCode(autoCode) {
-    const inputEl = document.getElementById('inputLoginCode');
-    const code = (autoCode || inputEl.value || '').trim().toUpperCase();
-    if (!code) {
-      showAuthMsg('Vui lòng nhập mã truy cập!');
-      return;
-    }
-
-    const btn = document.getElementById('btnLoginSubmit');
-    btn.disabled = true;
-    showAuthMsg('Đang kiểm tra mã và kết nối dữ liệu...', false);
-
-    try {
-      const res = await callAuthApi({ authAction: 'LOGIN', code: code });
-      btn.disabled = false;
-
-      if (!res || !res.success) {
-        localStorage.removeItem('APP_ACCESS_CODE');
-        document.getElementById('authModal').style.display = 'flex';
-        showAuthMsg((res && res.message) || 'Mã truy cập không hợp lệ!', true);
-        return;
-      }
-
-      CURRENT_ACCESS_CODE = res.code;
-      IS_ADMIN_SESSION = Boolean(res.isAdmin);
-      localStorage.setItem('APP_ACCESS_CODE', res.code);
-
-      document.getElementById('authModal').style.display = 'none';
-      document.getElementById('authSessionBar').style.display = 'flex';
-      document.getElementById('currentCodeLabel').textContent = res.code;
-
-      const adminBtn = document.getElementById('btnOpenAdmin');
-      if (res.isAdmin) {
-        adminBtn.style.display = 'inline-block';
-        document.getElementById('adminPendingBadge').textContent =
-          res.pendingCount > 0 ? '(' + res.pendingCount + ' chờ duyệt)' : '';
-      } else {
-        adminBtn.style.display = 'none';
-      }
-
-      loadCategoriesPrefs();
-      loadData();
-    } catch (err) {
-      btn.disabled = false;
-      document.getElementById('authModal').style.display = 'flex';
-      showAuthMsg('Lỗi kết nối máy chủ: ' + err.message, true);
-    }
-  }
-
-  async function submitRegisterCode() {
-    const newCode = document.getElementById('inputRegisterCode').value.trim().toUpperCase();
-    if (!newCode) return showAuthMsg('Vui lòng nhập mã muốn tạo!');
-
-    const btn = document.getElementById('btnRegisterSubmit');
-    btn.disabled = true;
-    try {
-      const res = await callAuthApi({ authAction: 'REGISTER', newCode: newCode });
-      btn.disabled = false;
-      showAuthMsg(res.message, !res.success);
-      if (res.success) document.getElementById('inputRegisterCode').value = '';
-    } catch (err) {
-      btn.disabled = false;
-      showAuthMsg('Lỗi: ' + err.message, true);
-    }
-  }
-
-  async function submitChangeCode() {
-    const oldCode = document.getElementById('inputOldCode').value.trim().toUpperCase();
-    const newCode = document.getElementById('inputNewCode').value.trim().toUpperCase();
-    if (!oldCode || !newCode) return showAuthMsg('Vui lòng nhập cả mã cũ và mã mới!');
-
-    const btn = document.getElementById('btnChangeSubmit');
-    btn.disabled = true;
-    try {
-      const res = await callAuthApi({ authAction: 'CHANGE_CODE', oldCode: oldCode, newCode: newCode });
-      btn.disabled = false;
-      showAuthMsg(res.message, !res.success);
-      if (res.success) {
-        document.getElementById('inputLoginCode').value = res.newCode;
-        setTimeout(() => switchAuthTab('LOGIN'), 1200);
-      }
-    } catch (err) {
-      btn.disabled = false;
-      showAuthMsg('Lỗi: ' + err.message, true);
-    }
-  }
-
-  function logoutOrSwitchCode() {
-    localStorage.removeItem('APP_ACCESS_CODE');
-    CURRENT_ACCESS_CODE = '';
-    IS_ADMIN_SESSION = false;
-    allJobs = [];
-    renderCalendar();
-    renderSelectedDayJobs();
-    renderMasterTable();
-    document.getElementById('inputLoginCode').value = '';
-    showAuthMsg('', false);
-    switchAuthTab('LOGIN');
-    document.getElementById('authModal').style.display = 'flex';
-  }
-
-  async function openAdminModal() {
-    document.getElementById('adminCodeModal').style.display = 'flex';
-    await loadAdminCodeList();
-  }
-
-  function closeAdminModal() {
-    document.getElementById('adminCodeModal').style.display = 'none';
-  }
-
-  async function loadAdminCodeList() {
-    const tbody = document.getElementById('adminCodeTableBody');
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Đang tải danh sách mã...</td></tr>';
-
-    try {
-      const res = await callAuthApi({ authAction: 'ADMIN_LIST', adminCode: CURRENT_ACCESS_CODE });
-      if (!res.success) {
-        tbody.innerHTML = '<tr><td colspan="4" style="color:red;text-align:center;">' + res.message + '</td></tr>';
-        return;
-      }
-
-      const pendingItems = res.list.filter(item => item.status === 'PENDING').length;
-      document.getElementById('adminPendingBadge').textContent =
-        pendingItems > 0 ? '(' + pendingItems + ' chờ duyệt)' : '';
-
-      tbody.innerHTML = res.list.map(item => {
-        const isMaster = item.code === 'LETAN2306';
-        let actionsHtml = '<span style="color:#64748b;font-size:12px;">Mặc định (Admin)</span>';
-
-        if (!isMaster) {
-          const approveBtn = item.status === 'PENDING'
-            ? `<button class="act-btn act-approve" onclick="adminApproveCode('${item.code}')">Duyệt & Tạo Sheet</button>`
-            : '';
-          const pauseLabel = item.status === 'PAUSED' ? 'Mở lại' : 'Tạm dừng';
-          const pauseBtn = item.status !== 'PENDING'
-            ? `<button class="act-btn act-pause" onclick="adminTogglePause('${item.code}')">${pauseLabel}</button>`
-            : '';
-          const deleteBtn = `<button class="act-btn act-delete" onclick="adminDeleteCode('${item.code}')">Xoá</button>`;
-          actionsHtml = approveBtn + pauseBtn + deleteBtn;
-        }
-
-        return `
-          <tr>
-            <td><strong>${item.code}</strong></td>
-            <td>${item.jobSheetName}</td>
-            <td><span class="badge-status badge-${item.status}">${item.status}</span></td>
-            <td>${actionsHtml}</td>
-          </tr>
-        `;
-      }).join('');
-    } catch (err) {
-      tbody.innerHTML = '<tr><td colspan="4" style="color:red;text-align:center;">Lỗi tải danh sách: ' + err.message + '</td></tr>';
-    }
-  }
-
-  async function adminApproveCode(targetCode) {
-    const res = await callAuthApi({
-      authAction: 'ADMIN_APPROVE',
-      adminCode: CURRENT_ACCESS_CODE,
-      targetCode: targetCode
-    });
-    showToast(res.message, !res.success);
-    await loadAdminCodeList();
-  }
-
-  async function adminTogglePause(targetCode) {
-    const res = await callAuthApi({
-      authAction: 'ADMIN_TOGGLE_PAUSE',
-      adminCode: CURRENT_ACCESS_CODE,
-      targetCode: targetCode
-    });
-    showToast(res.message, !res.success);
-    await loadAdminCodeList();
-  }
-
-  async function adminDeleteCode(targetCode) {
-    if (!confirm('Bạn có chắc chắn muốn XOÁ mã "' + targetCode + '" và toàn bộ trang tính dữ liệu của mã này?')) return;
-    const res = await callAuthApi({
-      authAction: 'ADMIN_DELETE',
-      adminCode: CURRENT_ACCESS_CODE,
-      targetCode: targetCode
-    });
-    showToast(res.message, !res.success);
-    await loadAdminCodeList();
-  }
-
-  // ================= DỮ LIỆU & LOGIC ỨNG DỤNG CHÍNH =================
-  const DEFAULT_ADMIN_JOB_TYPES = ["Chụp PSC", "Quay PSC", "Chụp SK", "Quay SK", "Ăn hỏi", "Khác"];
-  const DEFAULT_ADMIN_CUSTOMERS = ["OneStory", "Chiến", "June", "Lita", "Kog", "MinhThe", "Thangken", "Dungcasau", "Mira", "Khách lẻ"];
-  const DEFAULT_ADMIN_EXECUTORS = ["Lê Tân", "Cộng sự 1", "Cộng sự 2", "Team Media"];
-  const DEFAULT_ADMIN_STATUSES = ["Chờ", "Chưa thực hiện", "Chưa TT", "Đã TT", "Xong"];
-
   let allJobs = [];
   let currentDisplayDate = new Date();
   let selectedDateIso = getLocalIsoDate(new Date());
@@ -1615,10 +1131,10 @@
   let customDialogModalInstance;
   let toastTimeout;
 
-  let jobTypes = [...DEFAULT_ADMIN_JOB_TYPES];
-  let customerList = [...DEFAULT_ADMIN_CUSTOMERS];
-  let executorList = [...DEFAULT_ADMIN_EXECUTORS];
-  let statusList = [...DEFAULT_ADMIN_STATUSES];
+  let jobTypes = ["Chụp PSC", "Quay PSC", "Chụp SK", "Quay SK", "Ăn hỏi", "Khác"];
+  let customerList = ["OneStory", "Chiến", "June", "Lita", "Kog", "MinhThe", "Thangken", "Dungcasau", "Mira", "Khách lẻ"];
+  let executorList = ["Lê Tân", "Cộng sự 1", "Cộng sự 2", "Team Media"];
+  let statusList = ["Chờ", "Chưa thực hiện", "Chưa TT", "Đã TT", "Xong"];
 
   let filterJobTypeVal = "";
   let filterCustomerVal = "";
@@ -1644,10 +1160,6 @@
     { id: 'chiPhi', label: 'Chi phí', removable: true, visible: true, align: 'end' },
     { id: 'ttChiPhi', label: 'TT Chi phí', removable: true, visible: true }
   ];
-
-  function getPrefKey(baseKey) {
-    return CURRENT_ACCESS_CODE ? `${baseKey}_${CURRENT_ACCESS_CODE}` : baseKey;
-  }
 
   function loadTableColumnSettings() {
     try {
@@ -2121,25 +1633,23 @@
 
   function loadCategoriesPrefs() {
     try {
-      const isMaster = (CURRENT_ACCESS_CODE === 'LETAN2306' || !CURRENT_ACCESS_CODE);
-      const savedJobTypes = localStorage.getItem(getPrefKey('pref_job_types'));
-      const savedCustomers = localStorage.getItem(getPrefKey('pref_customer_list'));
-      const savedExecutors = localStorage.getItem(getPrefKey('pref_executor_list'));
-      const savedStatuses = localStorage.getItem(getPrefKey('pref_status_list'));
-
-      jobTypes = savedJobTypes ? JSON.parse(savedJobTypes) : (isMaster ? [...DEFAULT_ADMIN_JOB_TYPES] : []);
-      customerList = savedCustomers ? JSON.parse(savedCustomers) : (isMaster ? [...DEFAULT_ADMIN_CUSTOMERS] : []);
-      executorList = savedExecutors ? JSON.parse(savedExecutors) : (isMaster ? [...DEFAULT_ADMIN_EXECUTORS] : []);
-      statusList = savedStatuses ? JSON.parse(savedStatuses) : (isMaster ? [...DEFAULT_ADMIN_STATUSES] : []);
+      const savedJobTypes = localStorage.getItem('pref_job_types');
+      const savedCustomers = localStorage.getItem('pref_customer_list');
+      const savedExecutors = localStorage.getItem('pref_executor_list');
+      const savedStatuses = localStorage.getItem('pref_status_list');
+      if (savedJobTypes) jobTypes = JSON.parse(savedJobTypes);
+      if (savedCustomers) customerList = JSON.parse(savedCustomers);
+      if (savedExecutors) executorList = JSON.parse(savedExecutors);
+      if (savedStatuses) statusList = JSON.parse(savedStatuses);
     } catch(e) {}
   }
 
   function saveCategoriesPrefs() {
     try {
-      localStorage.setItem(getPrefKey('pref_job_types'), JSON.stringify(jobTypes));
-      localStorage.setItem(getPrefKey('pref_customer_list'), JSON.stringify(customerList));
-      localStorage.setItem(getPrefKey('pref_executor_list'), JSON.stringify(executorList));
-      localStorage.setItem(getPrefKey('pref_status_list'), JSON.stringify(statusList));
+      localStorage.setItem('pref_job_types', JSON.stringify(jobTypes));
+      localStorage.setItem('pref_customer_list', JSON.stringify(customerList));
+      localStorage.setItem('pref_executor_list', JSON.stringify(executorList));
+      localStorage.setItem('pref_status_list', JSON.stringify(statusList));
     } catch(e) {}
 
     const cats = {
@@ -2148,8 +1658,8 @@
       executorList: executorList,
       statusList: statusList
     };
-    if (typeof google !== 'undefined' && google.script && CURRENT_ACCESS_CODE) {
-      google.script.run.saveCategoriesToSheet(cats, CURRENT_ACCESS_CODE);
+    if (typeof google !== 'undefined' && google.script) {
+      google.script.run.saveCategoriesToSheet(cats);
     }
   }
 
@@ -2255,11 +1765,6 @@
   }
 
   function loadData(doneCallback) {
-    if (!CURRENT_ACCESS_CODE) {
-      if (doneCallback) doneCallback();
-      return;
-    }
-
     const errBanner = document.getElementById('errorBanner');
     errBanner.classList.add('d-none');
 
@@ -2280,10 +1785,10 @@
           if (Array.isArray(res.categories.executorList)) executorList = res.categories.executorList;
           if (Array.isArray(res.categories.statusList)) statusList = res.categories.statusList;
           try {
-            localStorage.setItem(getPrefKey('pref_job_types'), JSON.stringify(jobTypes));
-            localStorage.setItem(getPrefKey('pref_customer_list'), JSON.stringify(customerList));
-            localStorage.setItem(getPrefKey('pref_executor_list'), JSON.stringify(executorList));
-            localStorage.setItem(getPrefKey('pref_status_list'), JSON.stringify(statusList));
+            localStorage.setItem('pref_job_types', JSON.stringify(jobTypes));
+            localStorage.setItem('pref_customer_list', JSON.stringify(customerList));
+            localStorage.setItem('pref_executor_list', JSON.stringify(executorList));
+            localStorage.setItem('pref_status_list', JSON.stringify(statusList));
           } catch(e) {}
         } else {
           allJobs.forEach(j => {
@@ -2307,7 +1812,7 @@
         errBanner.classList.remove('d-none');
         if (doneCallback) doneCallback();
       })
-      .getAllJobsData(CURRENT_ACCESS_CODE);
+      .getAllJobsData();
   }
 
   function changeMonth(direction) {
@@ -2483,13 +1988,13 @@
     custSel.innerHTML = `<option value="">-- Chọn khách hàng --</option>` + custOpts.map(c => `<option value="${c}" ${c === selectedCust ? 'selected' : ''}>${c}</option>`).join('');
 
     let execOpts = [...executorList];
-    const targetExec = selectedExec || (execOpts[0] || "Lê Tân");
+    const targetExec = selectedExec || "Lê Tân";
     if (targetExec && !execOpts.includes(targetExec)) execOpts.push(targetExec);
     const execSel = document.getElementById('formNguoiThucHien');
     execSel.innerHTML = `<option value="">-- Chọn người thực hiện --</option>` + execOpts.map(e => `<option value="${e}" ${e === targetExec ? 'selected' : ''}>${e}</option>`).join('');
 
     let statusOpts = [...statusList];
-    const targetStatus = selectedStatus || (statusOpts[0] || "Chờ");
+    const targetStatus = selectedStatus || "Chờ";
     if (targetStatus && !statusOpts.includes(targetStatus)) statusOpts.push(targetStatus);
     const statusSel = document.getElementById('formTinhTrang');
     if (statusSel) {
@@ -2718,19 +2223,15 @@
     else if (catKey === 'statusList') list = statusList;
     
     let html = '';
-    if (list.length === 0) {
-      html = `<div class="text-center text-muted small py-3">Danh mục đang trống. Hãy nhập tên mới ở trên để thêm!</div>`;
-    } else {
-      list.forEach((item, idx) => {
-        html += `<div class="d-flex justify-content-between align-items-center bg-white border rounded p-2 mb-1">
-          <span class="fw-semibold">${item}</span>
-          <div>
-            <button class="btn btn-outline-primary btn-sm py-0 px-2 me-1" style="font-size:11px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
-            <button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>
-          </div>
-        </div>`;
-      });
-    }
+    list.forEach((item, idx) => {
+      html += `<div class="d-flex justify-content-between align-items-center bg-white border rounded p-2 mb-1">
+        <span class="fw-semibold">${item}</span>
+        <div>
+          <button class="btn btn-outline-primary btn-sm py-0 px-2 me-1" style="font-size:11px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
+          ${list.length > 1 ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>` : ''}
+        </div>
+      </div>`;
+    });
     document.getElementById('catalogItemsContainer').innerHTML = html;
   }
 
@@ -2766,7 +2267,7 @@
           .withFailureHandler(function(err) {
             showToast("Lỗi cập nhật danh mục", true);
           })
-          .updateCatalogItemInSheet(catKey, oldName, newName.trim(), CURRENT_ACCESS_CODE);
+          .updateCatalogItemInSheet(catKey, oldName, newName.trim());
       }
     });
   }
@@ -2864,7 +2365,7 @@
       .withFailureHandler(function() {
         showToast("Lỗi cập nhật người thực hiện", true);
       })
-      .batchUpdateExecutor(targetRows, newExecutor, CURRENT_ACCESS_CODE);
+      .batchUpdateExecutor(targetRows, newExecutor);
   }
 
   function changeStatusValue(targetRowNumber, chosenStatus) {
@@ -2886,7 +2387,7 @@
       .withFailureHandler(function() {
         showToast("Lỗi cập nhật tình trạng", true);
       })
-      .batchUpdateStatus(targetRows, chosenStatus, CURRENT_ACCESS_CODE);
+      .batchUpdateStatus(targetRows, chosenStatus);
   }
 
   function toggleCostStatus(targetRowNumber, checkboxEl) {
@@ -2908,7 +2409,7 @@
         showToast("Lỗi cập nhật chi phí", true);
         checkboxEl.checked = !checkboxEl.checked;
       })
-      .batchUpdateCostStatus(targetRows, newCostStatus, CURRENT_ACCESS_CODE);
+      .batchUpdateCostStatus(targetRows, newCostStatus);
   }
 
   function renderMasterTable() {
@@ -3333,7 +2834,7 @@
     document.getElementById('modalTitle').innerText = 'Thêm lịch quay / chụp mới';
     const delBtn = document.getElementById('btnDeleteInModal');
     if (delBtn) delBtn.classList.add('d-none');
-    populateModalDropdowns("", "", executorList[0] || "Lê Tân", statusList[0] || "Chờ");
+    populateModalDropdowns("", "", "Lê Tân", "Chờ");
     jobModalInstance.show();
   }
 
@@ -3377,8 +2878,6 @@
     btn.disabled = true; btn.innerText = 'Đang lưu...';
 
     const formData = Object.fromEntries(new FormData(formEl).entries());
-    formData.accessCode = CURRENT_ACCESS_CODE;
-
     google.script.run
       .withSuccessHandler(function(res) {
         allJobs = res.jobs || [];
@@ -3394,7 +2893,7 @@
         showToast('Lỗi khi lưu: ' + err.message, true);
         btn.disabled = false; btn.innerText = 'Lưu';
       })
-      .saveJobData(formData, CURRENT_ACCESS_CODE);
+      .saveJobData(formData);
   }
 
   function confirmDeleteFromModal() {
@@ -3412,7 +2911,7 @@
           jobModalInstance.hide();
           showToast('Đã xóa lịch');
         })
-        .deleteOrClearJob(rowNumber, CURRENT_ACCESS_CODE);
+        .deleteOrClearJob(rowNumber);
     });
   }
 
@@ -3432,7 +2931,7 @@
         .withFailureHandler(function(err) {
           showToast("Lỗi khi xóa", true);
         })
-        .deleteOrClearJob(rowNumber, CURRENT_ACCESS_CODE);
+        .deleteOrClearJob(rowNumber);
     });
   }
 
@@ -3649,7 +3148,7 @@
     lines.push(`-------------------------------------------`);
     lines.push(`Tổng giá trị (${filteredJobs.length} job): ${totalSalary.toLocaleString('vi-VN')} đ`);
     lines.push(`-------------------------------------------`);
-    lines.push(`Cảm ơn đã hoàn thành xuất sắc nhiệm vụ!`);
+    lines.push(`Cảm ơn đã hoàn thành suất sắc nhiệm vụ!`);
 
     document.getElementById('qrStatementText').value = lines.join('\n');
   }
@@ -3799,11 +3298,7 @@
     renderCalendar();
     updateHeaderStats();
     renderSelectedDayJobs();
-
-    if (CURRENT_ACCESS_CODE) {
-      document.getElementById('inputLoginCode').value = CURRENT_ACCESS_CODE;
-      submitLoginCode(CURRENT_ACCESS_CODE);
-    }
+    loadData();
   });
 </script>
 </body>
