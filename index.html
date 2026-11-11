@@ -659,7 +659,7 @@
 </div>
 
 <div class="app-layout">
-  <nav class="sidebar">
+  <nav class="sidebar d-none">
     <div class="sidebar-brand mb-2">QUẢN LÝ JOB by LETAN</div>
     <ul class="sidebar-menu">
       <li class="sidebar-item active" id="nav-lich" onclick="switchTab('lich')">
@@ -734,9 +734,14 @@
 
     <!-- TAB 2 -->
     <div id="tabChitiet" class="d-none">
-      <div class="mb-3">
-        <div class="page-subtitle">QUẢN LÝ TÀI CHÍNH & CÔNG NỢ</div>
-        <div class="page-title mb-0">Chi Tiết Lịch & Báo Cáo Tài Chính</div>
+      <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <div class="page-subtitle">QUẢN LÝ TÀI CHÍNH & CÔNG NỢ</div>
+          <div class="page-title mb-0">Chi Tiết Lịch & Báo Cáo Tài Chính</div>
+        </div>
+        <button class="btn btn-outline-dark btn-sm fw-semibold px-3" style="border-radius: 8px;" onclick="switchTab('lich')">
+          📅 Quay lại Lịch làm việc
+        </button>
       </div>
 
       <div class="card border-0 shadow-sm p-3 mb-3">
@@ -844,6 +849,14 @@
     <button class="at-action-btn" onclick="openManageCatalogsModal(); closeAssistiveMenu();">
       <div class="at-icon-box">⚙️</div>
       <span class="at-label">QL Danh mục</span>
+    </button>
+    <button class="at-action-btn" id="btnPopupToggleTab" onclick="toggleTabFromPopup(); closeAssistiveMenu();">
+      <div class="at-icon-box" id="iconPopupToggleTab">💰</div>
+      <span class="at-label" id="labelPopupToggleTab">Quản lý</span>
+    </button>
+    <button class="at-action-btn" onclick="logoutCode(); closeAssistiveMenu();">
+      <div class="at-icon-box">🔑</div>
+      <span class="at-label">Đổi mã</span>
     </button>
   </div>
 </div>
@@ -1167,7 +1180,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP0eJFusuEI83a2BmHlVJkBLV9Vi802u-zMInShahy_ESZLFgCQPqby_DHeVIweBIF6w/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWQtEpx9As4bjfF94uu74vjWkh4GwXTbdGdpKl_Iel4lvw9eFJ6qgu2Uq-PBaD0DOe_w/exec";
 
   let currentAuthCode = "";
   let isAdminAccount = false;
@@ -1868,18 +1881,32 @@
     });
   }
 
+  function toggleTabFromPopup() {
+    const isLichHidden = document.getElementById('tabLich').classList.contains('d-none');
+    switchTab(isLichHidden ? 'lich' : 'chitiet');
+  }
+
   function switchTab(tabKey) {
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
     document.getElementById('tabLich').classList.add('d-none');
     document.getElementById('tabChitiet').classList.add('d-none');
 
+    const iconEl = document.getElementById('iconPopupToggleTab');
+    const labelEl = document.getElementById('labelPopupToggleTab');
+
     if (tabKey === 'lich') {
-      document.getElementById('nav-lich').classList.add('active');
+      const navLich = document.getElementById('nav-lich');
+      if (navLich) navLich.classList.add('active');
       document.getElementById('tabLich').classList.remove('d-none');
+      if (iconEl) iconEl.innerText = '💰';
+      if (labelEl) labelEl.innerText = 'Quản lý';
       renderCalendar();
     } else if (tabKey === 'chitiet') {
-      document.getElementById('nav-chitiet').classList.add('active');
+      const navChitiet = document.getElementById('nav-chitiet');
+      if (navChitiet) navChitiet.classList.add('active');
       document.getElementById('tabChitiet').classList.remove('d-none');
+      if (iconEl) iconEl.innerText = '📅';
+      if (labelEl) labelEl.innerText = 'Lịch';
       renderColumnVisibilityMenu();
       renderMasterTable();
     }
