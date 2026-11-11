@@ -781,6 +781,7 @@
               </div>
               <div class="btn-group">
                 <button class="btn btn-outline-secondary btn-sm px-3" onclick="changeMonth(-1)">&lt;</button>
+                <button class="btn btn-outline-secondary btn-sm px-3 fw-semibold" onclick="goToTodayMonth()">Hôm nay</button>
                 <button class="btn btn-outline-secondary btn-sm px-3" onclick="changeMonth(1)">&gt;</button>
               </div>
             </div>
@@ -801,9 +802,14 @@
 
         <div class="col-lg-5">
           <div class="day-detail-panel">
-            <div class="mb-3">
-              <h6 class="fw-bold mb-0 text-dark" id="selectedDateHeader">Hôm nay</h6>
-              <small class="text-muted" id="selectedDateSubCount">0 lịch làm việc</small>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h6 class="fw-bold mb-0 text-dark" id="selectedDateHeader">Hôm nay</h6>
+                <small class="text-muted" id="selectedDateSubCount">0 lịch làm việc</small>
+              </div>
+              <button class="btn btn-sm fw-bold text-white px-3 shadow-sm" style="background-color: #7b1113; border-radius: 8px;" onclick="openAddModal()">
+                + Thêm job
+              </button>
             </div>
             <input type="text" id="filterCustomerInput" class="form-control form-control-sm mb-3" placeholder="🔍 Tìm tên dâu rể / studio..." oninput="renderSelectedDayJobs()">
 
