@@ -832,7 +832,7 @@
       </div>
 
       <div class="card border-0 shadow-sm p-3 mb-3">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
           <div class="d-flex align-items-center flex-wrap gap-2">
             <select id="filterMonthTable" class="form-select form-select-sm fw-semibold text-primary shadow-sm" style="width: 165px; border-radius: 8px; height: 31px;" onchange="renderMasterTable(false)">
               <option value="">📅 Tất cả tháng</option>
@@ -849,7 +849,7 @@
               <button type="button" id="btnClearAllFilters" class="btn-clear-filter" onclick="clearAllFilters()" title="Xóa tìm kiếm & tất cả bộ lọc">✕</button>
             </div>
 
-            <!-- Nút Cột hiển thị được thiết kế mới tinh tế -->
+            <!-- Nút Cột hiển thị -->
             <div class="dropdown">
               <button class="btn btn-sm dropdown-toggle bg-white fw-semibold shadow-sm d-flex align-items-center gap-1.5 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155; transition: all 0.2s;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -859,20 +859,40 @@
               </button>
               <ul class="dropdown-menu column-visibility-dropdown shadow" id="columnVisibilityDropdown"></ul>
             </div>
-          </div>
-          
-          <div class="d-flex flex-wrap align-items-center gap-2">
-            <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
-              <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleOnlyEmptyDays" style="cursor: pointer;">Chỉ ngày trống</label>
-              <input class="form-check-input mt-0" type="checkbox" id="toggleOnlyEmptyDays" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
-            </div>
-            <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
-              <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleMissingTimeOrAddress" style="cursor: pointer;">Thiếu giờ/địa chỉ</label>
-              <input class="form-check-input mt-0" type="checkbox" id="toggleMissingTimeOrAddress" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
-            </div>
-            <div class="form-check form-switch mb-0 bg-white border shadow-sm px-3 py-1 rounded-3 d-flex align-items-center justify-content-between gap-3" style="height: 31px;">
-              <label class="form-check-label small fw-semibold text-secondary mb-0" for="toggleHideCompleted" style="cursor: pointer;">Ẩn job đã xong</label>
-              <input class="form-check-input mt-0" type="checkbox" id="toggleHideCompleted" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer; float: none; margin-left: 0;">
+
+            <!-- Nút gộp 3 bộ lọc: Chỉ ngày trống, Thiếu giờ/địa chỉ, Ẩn job đã xong -->
+            <div class="dropdown">
+              <button class="btn btn-sm dropdown-toggle bg-white fw-semibold shadow-sm d-flex align-items-center gap-1.5 px-3" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155; transition: all 0.2s;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                <span>Bộ lọc hiển thị</span>
+                <span id="quickFilterActiveBadge" class="badge rounded-pill d-none ms-1" style="background-color: #7b1113; font-size: 10px; padding: 2px 6px;">0</span>
+              </button>
+              <div class="dropdown-menu column-visibility-dropdown shadow" style="min-width: 225px !important;">
+                <div class="px-2 py-1 mb-1 d-flex justify-content-between align-items-center border-bottom" style="font-size: 11.5px;">
+                  <span class="fw-bold text-uppercase text-muted" style="letter-spacing: 0.5px;">Lọc nhanh</span>
+                  <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-danger fw-semibold" style="font-size: 11.5px;" onclick="resetQuickFilters(event)">Tắt hết</button>
+                </div>
+                <label class="col-vis-item justify-content-between mb-0" for="toggleOnlyEmptyDays">
+                  <span>Chỉ ngày trống</span>
+                  <div class="form-check form-switch mb-0 p-0 d-flex align-items-center">
+                    <input class="form-check-input m-0" type="checkbox" id="toggleOnlyEmptyDays" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer;">
+                  </div>
+                </label>
+                <label class="col-vis-item justify-content-between mb-0" for="toggleMissingTimeOrAddress">
+                  <span>Thiếu giờ/địa chỉ</span>
+                  <div class="form-check form-switch mb-0 p-0 d-flex align-items-center">
+                    <input class="form-check-input m-0" type="checkbox" id="toggleMissingTimeOrAddress" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer;">
+                  </div>
+                </label>
+                <label class="col-vis-item justify-content-between mb-0" for="toggleHideCompleted">
+                  <span>Ẩn job đã xong</span>
+                  <div class="form-check form-switch mb-0 p-0 d-flex align-items-center">
+                    <input class="form-check-input m-0" type="checkbox" id="toggleHideCompleted" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer;">
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
         </div>
