@@ -2660,6 +2660,27 @@
     });
   }
 
+  function updateQuickFilterBadge() {
+    const badge = document.getElementById('quickFilterActiveBadge');
+    if (!badge) return;
+    const c1 = document.getElementById('toggleOnlyEmptyDays')?.checked ? 1 : 0;
+    const c2 = document.getElementById('toggleMissingTimeOrAddress')?.checked ? 1 : 0;
+    const c3 = document.getElementById('toggleHideCompleted')?.checked ? 1 : 0;
+    const count = c1 + c2 + c3;
+    badge.innerText = count;
+    badge.classList.toggle('d-none', count === 0);
+  }
+
+  function resetQuickFilters(e) {
+    if (e) e.stopPropagation();
+    document.getElementById('toggleOnlyEmptyDays').checked = false;
+    document.getElementById('toggleMissingTimeOrAddress').checked = false;
+    document.getElementById('toggleHideCompleted').checked = false;
+    saveTablePrefs();
+    renderMasterTable(false);
+    showToast('Đã tắt các bộ lọc hiển thị');
+  }
+
   function loadTablePrefs() {
     try {
       const onlyEmpty = localStorage.getItem('pref_only_empty_days');
@@ -2669,6 +2690,7 @@
       if (onlyEmpty !== null) document.getElementById('toggleOnlyEmptyDays').checked = (onlyEmpty === 'true');
       if (missingTimeAddr !== null) document.getElementById('toggleMissingTimeOrAddress').checked = (missingTimeAddr === 'true');
       if (hideCompleted !== null) document.getElementById('toggleHideCompleted').checked = (hideCompleted === 'true');
+      updateQuickFilterBadge();
     } catch (e) {}
   }
 
@@ -2677,6 +2699,7 @@
       localStorage.setItem('pref_only_empty_days', document.getElementById('toggleOnlyEmptyDays').checked);
       localStorage.setItem('pref_missing_time_addr', document.getElementById('toggleMissingTimeOrAddress').checked);
       localStorage.setItem('pref_hide_completed', document.getElementById('toggleHideCompleted').checked);
+      updateQuickFilterBadge();
     } catch (e) {}
   }
 
