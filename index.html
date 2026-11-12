@@ -3356,7 +3356,7 @@
         custMap.set(cName, (custMap.get(cName) || 0) + 1);
       }
       const execName = (j.nguoiThucHien || 'Lê Tân').trim();
-      if (execName && (j.congViec || j.khachHang)) {
+      if (execName && (j.congViec || j.khachHang) && j.ttChiPhi !== 'Đã trả') {
         execMap.set(execName, (execMap.get(execName) || 0) + 1);
       }
       if (j.ngay && j.ngay.includes('/')) {
@@ -3426,12 +3426,12 @@
     let opts = `<option value="">-- Chọn nhân sự (${filtered.length}) --</option>`;
     filtered.forEach(item => {
       const isSelected = (item.name.toLowerCase() === String(previousSelected).toLowerCase());
-      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} job)</option>`;
+      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} job chưa trả)</option>`;
     });
 
     if (keyword && filtered.length === 1) {
       opts = `<option value="">-- Chọn nhân sự (1) --</option>` +
-             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} job)</option>`;
+             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} job chưa trả)</option>`;
     }
 
     selectEl.innerHTML = opts;
@@ -3517,6 +3517,7 @@
       const jExec = (j.nguoiThucHien || 'Lê Tân').trim();
       if (jExec.toLowerCase() !== execName.toLowerCase()) return false;
       if (!j.congViec && !j.khachHang) return false;
+      if (j.ttChiPhi === 'Đã trả') return false;
       if (selectedMonth) {
         let p = j.ngay.split('/');
         if (p.length === 3 && `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
@@ -3525,7 +3526,7 @@
     });
 
     if (filteredJobs.length === 0) {
-      document.getElementById('qrStatementText').value = `Nhân sự "${execName}" không có job nào trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
+      document.getElementById('qrStatementText').value = `Nhân sự "${execName}" không có khoản lương/chi phí nào chưa thanh toán trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
       return;
     }
 
