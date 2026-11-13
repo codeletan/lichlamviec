@@ -4697,7 +4697,7 @@
     let totalRemain = Math.max(0, totalValue - totalDeposit);
 
     lines.push(`----------------------------`);
-    lines.push(`Tổng giá trị (${unpaidJobs.length} công việc): ${totalValue.toLocaleString('vi-VN')} đ`);
+    lines.push(`Tổng giá trị: ${totalValue.toLocaleString('vi-VN')} đ`);
     if (totalDeposit > 0) {
       lines.push(`Đã cọc: -${totalDeposit.toLocaleString('vi-VN')} đ`);
     }
@@ -4744,7 +4744,7 @@
     });
 
     lines.push(`----------------------------`);
-    lines.push(`Tổng giá trị (${filteredJobs.length} công việc): ${totalSalary.toLocaleString('vi-VN')} đ`);
+    lines.push(`Tổng giá trị: ${totalSalary.toLocaleString('vi-VN')} đ`);
     lines.push(`-------------------------------------------`);
 
     document.getElementById('qrStatementText').value = lines.join('\n');
