@@ -1393,6 +1393,152 @@
       box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
     }
 
+
+    /* === FIX TRIỆT ĐỂ LỖI CẮT CỘT & CUỘN NGANG BẢNG TRÊN IPHONE (iOS SAFARI) === */
+    .app-layout {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .main-content {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box;
+    }
+
+    #tabLich, #tabChitiet {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    #tabChitiet > .card {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box;
+    }
+
+    #masterTableContainer {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+      -webkit-overflow-scrolling: touch !important;
+      overscroll-behavior-x: contain;
+      padding-bottom: 12px;
+      border-radius: 12px;
+      /* Hiển thị thanh cuộn ngang mảnh trên mobile để dễ nhận biết */
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+    }
+
+    #masterTableContainer::-webkit-scrollbar {
+      height: 6px;
+    }
+    #masterTableContainer::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 999px;
+    }
+    #masterTableContainer::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+
+    #masterTableContainer table {
+      min-width: 1060px !important;
+      width: 100% !important;
+    }
+
+    #masterTableContainer table th,
+    #masterTableContainer table td {
+      white-space: nowrap !important;
+    }
+
+    /* Cột Địa chỉ cho phép xuống dòng gọn gàng với độ rộng tối thiểu rõ ràng */
+    #masterTableContainer table td.col-address-cell {
+      white-space: normal !important;
+      min-width: 210px !important;
+      max-width: 290px !important;
+      text-align: left !important;
+      line-height: 1.4;
+    }
+
+    /* Ghim nhẹ cột Ngày trên mobile khi vuốt ngang để không bị mất dấu dòng */
+    @media (max-width: 768px) {
+      #tabChitiet > .card {
+        padding: 12px !important;
+      }
+      #masterTableContainer table th,
+      #masterTableContainer table td {
+        padding: 10px 8px !important;
+        font-size: 12.5px !important;
+      }
+      .mobile-scroll-hint {
+        display: flex !important;
+      }
+    }
+
+    .mobile-scroll-hint {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fff1f2;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    /* Giao diện Thẻ Chi Tiết đầy đủ các cột dành cho iPhone (Mobile Card View) */
+    .mobile-job-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #7b1113;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .mobile-job-card.card-status-xong {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      border-left-color: #16a34a;
+    }
+    .mobile-job-card.card-today {
+      background: #fffbeb;
+      border-color: #fde68a;
+      border-left-color: #f59e0b;
+    }
+    .mobile-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-top: 10px;
+    }
+    .mobile-card-stat-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+    .mobile-card-stat-val {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+      font-variant-numeric: tabular-nums;
+    }
+
   </style>
 </head>
 <body>
@@ -1584,14 +1730,23 @@
       </div>
 
       <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="mobile-scroll-hint" id="mobileViewBar">
+          <span>↔️ Vuốt ngang bảng để xem hết các cột hoặc đổi chế độ xem:</span>
+          <button type="button" id="btnToggleMobileCards" class="btn btn-sm py-1 px-2.5 fw-bold text-white flex-shrink-0" style="background-color: #7b1113; font-size: 11.5px; border-radius: 8px;" onclick="toggleMobileListView()">
+            Xem dạng Thẻ
+          </button>
+        </div>
+
         <div class="table-responsive" id="masterTableContainer">
-          <table class="table table-bordered table-hover align-middle mb-0" style="font-size: 13px;">
+          <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
             <thead class="table-light text-center align-middle" id="masterTableHead"></thead>
             <tbody id="masterTableBody">
               <tr><td colspan="13" class="text-center py-4 text-muted">⏳ Đang đồng bộ dữ liệu từ Google Sheet...</td></tr>
             </tbody>
           </table>
         </div>
+
+        <div id="mobileCardsContainer" class="d-none"></div>
       </div>
     </div>
 
@@ -2063,6 +2218,24 @@
   let qrUnpaidCustomersCache = [];
   let qrExecutorsCache = [];
   let customDialogCallback = null;
+  let isMobileCardView = false;
+
+  function toggleMobileListView() {
+    isMobileCardView = !isMobileCardView;
+    try { localStorage.setItem('pref_mobile_card_view', isMobileCardView ? 'true' : 'false'); } catch (e) {}
+    const tableWrap = document.getElementById('masterTableContainer');
+    const cardsWrap = document.getElementById('mobileCardsContainer');
+    const btn = document.getElementById('btnToggleMobileCards');
+    if (isMobileCardView) {
+      tableWrap.classList.add('d-none');
+      cardsWrap.classList.remove('d-none');
+      if (btn) btn.innerText = 'Xem dạng Bảng';
+    } else {
+      tableWrap.classList.remove('d-none');
+      cardsWrap.classList.add('d-none');
+      if (btn) btn.innerText = 'Xem dạng Thẻ';
+    }
+  }
 
   let tableColumns = [
     { id: 'checkbox', label: '<input type="checkbox" id="selectAllJobs" class="form-check-input mt-0" onclick="toggleSelectAllJobs(this)" title="Chọn tất cả">', removable: false, visible: true, width: '40px' },
@@ -3839,7 +4012,7 @@
           else if (col.id === 'ngay') html += `<td class="text-center text-nowrap">${item.dateStr}${todayBadge}</td>`;
           else if (col.id === 'congViec') html += `<td class="text-center">-</td>`;
           else if (col.id === 'thoiGian') html += `<td class="text-center">-</td>`;
-          else if (col.id === 'diaChi') html += `<td>-</td>`;
+          else if (col.id === 'diaChi') html += `<td class="col-address-cell">-</td>`;
           else if (col.id === 'khachHang') html += `<td class="text-center">-</td>`;
           else if (col.id === 'nguoiThucHien') html += `<td class="text-center">-</td>`;
           else if (col.id === 'tinhTrang') html += `<td class="text-center">-</td>`;
@@ -3933,7 +4106,7 @@
           } else if (col.id === 'thoiGian') {
             html += `<td class="text-center fw-semibold text-dark">${thoiGianDisplay}</td>`;
           } else if (col.id === 'diaChi') {
-            html += `<td class="text-secondary">${diaChiDisplay}</td>`;
+            html += `<td class="text-secondary col-address-cell">${diaChiDisplay}</td>`;
           } else if (col.id === 'khachHang') {
             html += `<td class="text-center"><span class="customer-badge ${isCustFiltered ? 'active-filter' : ''}" onclick="toggleCustomerFilter('${safeCust}')" title="${isCustFiltered ? 'Bấm lần nữa để bỏ lọc' : 'Bấm để lọc riêng khách hàng này'}">${j.khachHang}</span></td>`;
           } else if (col.id === 'nguoiThucHien') {
@@ -3975,6 +4148,111 @@
           </div>
         </td>
       </tr>`;
+
+    // Render danh sách dạng Thẻ đầy đủ thông tin các cột cho iPhone
+    const mobileCardsEl = document.getElementById('mobileCardsContainer');
+    if (mobileCardsEl) {
+      let cardsHtml = '';
+      displayItems.forEach(item => {
+        const isToday = (item.dateStr === todayFormatted);
+        const todayBadge = isToday ? `<span class="badge bg-warning text-dark ms-1">Hôm nay</span>` : '';
+        if (item.isEmpty) {
+          cardsHtml += `
+            <div class="mobile-job-card ${isToday ? 'card-today' : ''}" style="border-left-color: #cbd5e1; opacity: 0.8;">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-secondary">${item.thu}, ${item.dateStr} ${todayBadge}</span>
+                <span class="small fst-italic text-muted">Ngày trống lịch</span>
+              </div>
+            </div>`;
+        } else {
+          const j = item.job;
+          let gVal = j.luuTruGiaTri || parseMoney(j.giaTri);
+          let cCoc = j.luuTruDaCoc || parseMoney(j.daCoc);
+          let cVal = j.luuTruChiPhi || parseMoney(j.chiPhi);
+          const parsedDetail = splitJobDetail(j.chiTiet);
+          const thoiGianDisplay = parsedDetail.thoiGian || 'Chưa có giờ';
+          const diaChiText = parsedDetail.diaChi || 'Chưa có địa chỉ';
+          const mapBtnHtml = (j.mapLink && j.mapLink.trim() !== '')
+            ? `<a href="${j.mapLink.trim()}" target="_blank" class="badge bg-success text-decoration-none ms-1">📍 Mở Bản Đồ</a>`
+            : '';
+
+          let execOpts = [...executorList];
+          const execName = j.nguoiThucHien || 'Lê Tân';
+          if (execName && !execOpts.includes(execName)) execOpts.push(execName);
+          let execOptionsHtml = execOpts.map(e => `<li><a class="dropdown-item ${execName === e ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="changeExecutorValue(${j.rowNumber}, '${escapeJsQuotes(e)}')">${e}</a></li>`).join('');
+
+          let statusOpts = [...statusList];
+          if (j.tinhTrang && !statusOpts.includes(j.tinhTrang)) statusOpts.push(j.tinhTrang);
+          let statusOptionsHtml = statusOpts.map(s => `<li><a class="dropdown-item ${j.tinhTrang === s ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="changeStatusValue(${j.rowNumber}, '${escapeJsQuotes(s)}')">${s}</a></li>`).join('');
+
+          let statusPillClass = "status-pill-wait";
+          if (j.tinhTrang === 'Chưa thực hiện' || j.tinhTrang === 'Pending') statusPillClass = "status-pill-pending";
+          else if (j.tinhTrang === 'Chưa TT') statusPillClass = "status-pill-unpaid";
+          else if (j.tinhTrang === 'Đã TT') statusPillClass = "status-pill-paid";
+          else if (j.tinhTrang === 'Xong') statusPillClass = "status-pill-done";
+
+          const isCustFiltered = selectedCust && j.khachHang && j.khachHang.trim().toLowerCase() === selectedCust.toLowerCase();
+          const safeCust = escapeJsQuotes(j.khachHang || '');
+
+          cardsHtml += `
+            <div class="mobile-job-card ${j.tinhTrang === 'Xong' ? 'card-status-xong' : ''} ${isToday ? 'card-today' : ''}">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center gap-1.5">
+                  <span class="fw-bold text-dark" style="font-size: 13.5px;">${item.thu}, ${j.ngay}</span>
+                  ${todayBadge}
+                </div>
+                <div class="dropdown">
+                  <button class="dropdown-toggle status-pill ${statusPillClass}" type="button" data-bs-toggle="dropdown">
+                    <span class="status-dot"></span>
+                    <span>${j.tinhTrang}</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-sm py-1" style="font-size: 13px;">${statusOptionsHtml}</ul>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                <div class="d-flex align-items-center flex-wrap gap-1.5">
+                  <span class="job-badge" onclick="openJobInfoPopup(${j.rowNumber})">${j.congViec || 'Job'}</span>
+                  <span class="customer-badge ${isCustFiltered ? 'active-filter' : ''}" onclick="toggleCustomerFilter('${safeCust}')">${j.khachHang || 'Khách lẻ'}</span>
+                </div>
+                <div class="dropdown">
+                  <button class="btn btn-sm dropdown-toggle job-badge fw-semibold text-success py-1 px-2.5" type="button" data-bs-toggle="dropdown" style="background-color: #f0fdf4; border-color: #bbf7d0; font-size: 12px;">
+                    👤 ${execName}
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-sm py-1" style="font-size: 13px;">${execOptionsHtml}</ul>
+                </div>
+              </div>
+
+              <div class="small text-dark fw-semibold mb-1">⏰ Thời gian: <span class="fw-normal">${thoiGianDisplay}</span></div>
+              <div class="small text-secondary mb-2">📍 Địa chỉ: ${diaChiText} ${mapBtnHtml}</div>
+
+              <div class="mobile-card-grid">
+                <div>
+                  <div class="mobile-card-stat-label">Giá trị</div>
+                  <div class="mobile-card-stat-val text-primary">${gVal.toLocaleString('vi-VN')} đ</div>
+                </div>
+                <div>
+                  <div class="mobile-card-stat-label">Đã cọc</div>
+                  <div class="mobile-card-stat-val text-secondary">${cCoc.toLocaleString('vi-VN')} đ</div>
+                </div>
+                <div>
+                  <div class="mobile-card-stat-label">Chi phí</div>
+                  <div class="mobile-card-stat-val text-secondary">${cVal.toLocaleString('vi-VN')} đ</div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="font-size: 12px;">
+                <label class="d-flex align-items-center gap-2 text-secondary fw-semibold mb-0" style="cursor: pointer;">
+                  <input type="checkbox" class="cost-checkbox m-0" ${j.ttChiPhi === 'Đã trả' ? 'checked' : ''} onchange="toggleCostStatus(${j.rowNumber}, this)">
+                  <span>TT Chi phí (${j.ttChiPhi === 'Đã trả' ? 'Đã trả' : 'Chưa trả'})</span>
+                </label>
+                ${isAdminAccount ? `<span class="badge bg-light text-secondary border">Mã: ${j.maDangNhap || 'ADMINLETAN'}</span>` : ''}
+              </div>
+            </div>`;
+        }
+      });
+      mobileCardsEl.innerHTML = cardsHtml || `<div class="text-center py-4 text-muted small">Không có công việc nào phù hợp</div>`;
+    }
 
     document.getElementById('tableStatusHint').innerText = isFilteringSpecific 
       ? `Đang lọc theo tiêu chí (${filteredJobCount} job hiển thị)` 
