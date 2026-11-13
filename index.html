@@ -54,7 +54,7 @@
         document.head.appendChild(appleIcon);
 
         var manifest = {
-          name: "Quản Lý Job - Lịch LETAN",
+          name: "Quản Lý Công Việc - Lịch LETAN",
           short_name: "Lịch LETAN",
           start_url: ".",
           display: "standalone",
@@ -1539,6 +1539,137 @@
       font-variant-numeric: tabular-nums;
     }
 
+
+    /* === ĐỒNG BỘ GIAO DIỆN POPUP MODAL HIỆN ĐẠI (CHI TIẾT, THÊM/SỬA CÔNG VIỆC, QUẢN LÝ DANH MỤC) === */
+    .modal-backdrop.show {
+      opacity: 0.55 !important;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal .modal-content {
+      border-radius: 20px !important;
+      border: 1px solid rgba(226, 232, 240, 0.9) !important;
+      box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.22), 0 4px 16px -2px rgba(15, 23, 42, 0.08) !important;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .modal .modal-header {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      padding: 18px 22px 14px !important;
+      border-bottom: 1px solid #f1f5f9 !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal .modal-title {
+      font-size: 16px !important;
+      font-weight: 800 !important;
+      color: #0f172a !important;
+      letter-spacing: -0.015em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .modal .modal-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 18px;
+      background-color: #7b1113;
+      border-radius: 999px;
+    }
+
+    .modal .modal-header .btn-close,
+    .modal .modal-header .btn-close-white {
+      filter: none !important;
+      background-color: #f1f5f9;
+      border-radius: 10px;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      opacity: 0.75;
+      transition: all 0.15s ease;
+      background-size: 11px;
+    }
+
+    .modal .modal-header .btn-close:hover {
+      background-color: #fee2e2;
+      opacity: 1;
+    }
+
+    .modal .modal-body {
+      padding: 20px 22px !important;
+      background-color: #ffffff !important;
+    }
+
+    .modal .modal-footer {
+      background-color: #f8fafc !important;
+      border-top: 1px solid #f1f5f9 !important;
+      padding: 14px 22px !important;
+    }
+
+    /* Chi tiết thông tin công việc card */
+    .info-detail-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 6px 16px;
+      margin-bottom: 16px;
+    }
+
+    .job-info-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13.5px;
+    }
+    .job-info-row:last-child { border-bottom: none; }
+    .job-info-label {
+      width: 130px;
+      flex-shrink: 0;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+    .job-info-val {
+      flex-grow: 1;
+      color: #0f172a;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    /* Danh sách mục trong Quản lý danh mục */
+    .catalog-list-box {
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 14px !important;
+      padding: 10px !important;
+      background-color: #f8fafc !important;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .catalog-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      transition: all 0.15s ease;
+    }
+    .catalog-item-row:last-child { margin-bottom: 0; }
+    .catalog-item-row:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
+
   </style>
 </head>
 <body>
@@ -1570,7 +1701,7 @@
 
 <div class="app-layout">
   <nav class="sidebar d-none">
-    <div class="sidebar-brand mb-2">QUẢN LÝ JOB by LETAN</div>
+    <div class="sidebar-brand mb-2">QUẢN LÝ CÔNG VIỆC by LETAN</div>
     <ul class="sidebar-menu">
       <li class="sidebar-item active" id="nav-lich" onclick="switchTab('lich')">
         <span>📅</span> Lịch làm việc
@@ -1637,7 +1768,7 @@
                 <small class="text-muted" id="selectedDateSubCount">0 lịch làm việc</small>
               </div>
               <button class="btn btn-sm fw-bold text-white px-3 shadow-sm" style="background-color: #7b1113; border-radius: 8px;" onclick="openAddModal()">
-                + Thêm job
+                + Thêm công việc
               </button>
             </div>
             <input type="text" id="filterCustomerInput" class="form-control form-control-sm mb-3" placeholder="🔍 Tìm tên dâu rể / studio..." oninput="renderSelectedDayJobs()">
@@ -1684,7 +1815,7 @@
               <ul class="dropdown-menu column-visibility-dropdown shadow" id="columnVisibilityDropdown"></ul>
             </div>
 
-            <!-- Nút gộp 3 bộ lọc: Chỉ ngày trống, Thiếu giờ/địa chỉ, Ẩn job đã xong -->
+            <!-- Nút gộp 3 bộ lọc: Chỉ ngày trống, Thiếu giờ/địa chỉ, Ẩn công việc đã xong -->
             <div class="dropdown">
               <button class="btn btn-sm dropdown-toggle btn-toolbar-modern" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                 <i data-lucide="sliders-horizontal"></i>
@@ -1709,7 +1840,7 @@
                   </div>
                 </label>
                 <label class="col-vis-item justify-content-between mb-0" for="toggleHideCompleted">
-                  <span>Ẩn job đã xong</span>
+                  <span>Ẩn công việc đã xong</span>
                   <div class="form-check form-switch mb-0 p-0 d-flex align-items-center">
                     <input class="form-check-input m-0" type="checkbox" id="toggleHideCompleted" onchange="saveTablePrefs(); renderMasterTable(false);" style="cursor: pointer;">
                   </div>
@@ -1797,54 +1928,53 @@
   </div>
 </div>
 
-<!-- Modal Popup Hiển thị Thông tin Job & Copy gửi Zalo -->
+<!-- Modal Popup Hiển thị Thông tin Công việc & Copy gửi Zalo -->
 <div class="modal fade" id="jobInfoPopupModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header py-2 bg-dark text-white">
-        <h6 class="modal-title fw-bold">Chi Tiết Thông Tin Job</h6>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Chi Tiết Thông Tin Công Việc</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body py-3">
-        <div class="bg-light border rounded-3 px-3 py-2 mb-3">
+      <div class="modal-body">
+        <div class="info-detail-card">
           <div class="job-info-row">
-            <div class="job-info-label">Ngày:</div>
-            <div class="job-info-val fw-bold" id="infoPopupNgay">-</div>
+            <div class="job-info-label">Ngày thực hiện</div>
+            <div class="job-info-val fw-bold text-dark" id="infoPopupNgay">-</div>
           </div>
           <div class="job-info-row">
-            <div class="job-info-label">Công việc:</div>
-            <div class="job-info-val"><span class="badge bg-danger" id="infoPopupCongViec">-</span></div>
+            <div class="job-info-label">Công việc</div>
+            <div class="job-info-val"><span class="badge rounded-pill px-2.5 py-1" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3; font-size: 12px; font-weight: 700;" id="infoPopupCongViec">-</span></div>
           </div>
           <div class="job-info-row">
-            <div class="job-info-label">Thời gian:</div>
+            <div class="job-info-label">Thời gian</div>
             <div class="job-info-val" id="infoPopupThoiGian">-</div>
           </div>
           <div class="job-info-row">
-            <div class="job-info-label">Địa chỉ:</div>
+            <div class="job-info-label">Địa chỉ</div>
             <div class="job-info-val" id="infoPopupDiaChi">-</div>
           </div>
           <div class="job-info-row">
-            <div class="job-info-label">Khách hàng:</div>
+            <div class="job-info-label">Khách hàng</div>
             <div class="job-info-val text-primary fw-bold" id="infoPopupKhachHang">-</div>
           </div>
           <div class="job-info-row">
-            <div class="job-info-label">Người thực hiện:</div>
+            <div class="job-info-label">Người thực hiện</div>
             <div class="job-info-val text-success fw-semibold" id="infoPopupNguoiThucHien">-</div>
           </div>
         </div>
 
-        <label class="form-label small fw-bold text-secondary mb-1">Nội dung tin nhắn gửi Zalo:</label>
-        <textarea id="infoPopupZaloText" class="form-control font-monospace mb-3" rows="7" style="font-size: 12.5px; background-color: #f8fafc;"></textarea>
+        <label class="form-label small fw-bold text-secondary mb-1.5">Nội dung tin nhắn gửi Zalo:</label>
+        <textarea id="infoPopupZaloText" class="form-control font-monospace mb-3" rows="6" style="font-size: 12.5px; background-color: #f8fafc;"></textarea>
 
-        <!-- Các nút bấm được tinh chỉnh nhỏ gọn và tinh tế -->
         <div class="d-flex gap-2 justify-content-end align-items-center">
-          <button type="button" class="btn btn-outline-secondary btn-sm px-3 fw-semibold" id="btnEditFromInfoPopup" style="border-radius: 8px; font-size: 12.5px;">✏️ Sửa</button>
-          <button type="button" class="btn btn-outline-danger btn-sm px-3 fw-semibold" id="btnDeleteFromInfoPopup" style="border-radius: 8px; font-size: 12.5px;">🗑️ Xoá</button>
-          <button type="button" class="btn btn-dark btn-sm px-4 fw-bold" id="btnCopyJobInfoZalo" onclick="copyJobInfoZalo(this)" style="border-radius: 8px; font-size: 12.5px; background-color: #7b1113; border-color: #7b1113;">📤 Gửi</button>
+          <button type="button" class="btn btn-toolbar-modern btn-sm px-3" id="btnEditFromInfoPopup">✏️ Sửa công việc</button>
+          <button type="button" class="btn btn-outline-danger btn-sm px-3" id="btnDeleteFromInfoPopup" style="height: 36px;">🗑️ Xoá</button>
+          <button type="button" class="btn btn-sm px-4 text-white" id="btnCopyJobInfoZalo" onclick="copyJobInfoZalo(this)" style="height: 36px; background-color: #7b1113; border-color: #7b1113;">📤 Gửi Zalo</button>
         </div>
       </div>
-      <div class="modal-footer py-2">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light border btn-sm px-3" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
@@ -1853,142 +1983,142 @@
 <!-- Modal Quản lý & Sửa tên danh mục -->
 <div class="modal fade" id="manageCatalogsModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header py-2 bg-dark text-white">
-        <h6 class="modal-title fw-bold">Quản lý & Sửa tên danh mục</h6>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Quản Lý Danh Mục</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body py-3">
+      <div class="modal-body">
         <div class="mb-3">
-          <label class="form-label small fw-bold">Chọn danh mục cần chỉnh sửa:</label>
-          <select id="catalogCategorySelect" class="form-select form-select-sm mb-2 fw-semibold" onchange="renderCatalogItemsList()">
+          <label class="form-label small fw-bold text-secondary mb-1.5">Chọn nhóm danh mục cần chỉnh sửa:</label>
+          <select id="catalogCategorySelect" class="form-select fw-semibold" onchange="renderCatalogItemsList()">
             <option value="jobTypes">Loại Công việc</option>
             <option value="customerList">Khách hàng</option>
             <option value="executorList">Người thực hiện</option>
-            <option value="statusList">Tình trạng Job</option>
+            <option value="statusList">Tình trạng công việc</option>
           </select>
         </div>
 
-        <div class="input-group input-group-sm mb-3">
+        <div class="d-flex gap-2 mb-3">
           <input type="text" id="newCatalogItemInput" class="form-control" placeholder="Nhập tên mục mới để thêm..." onkeyup="if(event.key==='Enter') addCatalogItemDirect()">
-          <button class="btn btn-primary fw-bold px-3" type="button" onclick="addCatalogItemDirect()">+ Thêm</button>
+          <button class="btn text-white px-3 flex-shrink-0" type="button" style="background-color: #7b1113;" onclick="addCatalogItemDirect()">+ Thêm</button>
         </div>
 
-        <label class="form-label small fw-bold">Danh sách hiện tại (Tự động lưu vĩnh viễn):</label>
-        <div id="catalogItemsContainer" class="border rounded p-2 bg-light" style="max-height: 240px; overflow-y: auto;"></div>
+        <label class="form-label small fw-bold text-secondary mb-1.5">Danh sách hiện tại (Tự động đồng bộ):</label>
+        <div id="catalogItemsContainer" class="catalog-list-box"></div>
       </div>
-      <div class="modal-footer py-2">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light border btn-sm px-3" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Thêm / Sửa Job -->
+<!-- Modal Thêm / Sửa Công việc -->
 <div class="modal fade" id="jobModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header text-white">
-        <h6 class="modal-title fw-bold mb-0" id="modalTitle">Thêm lịch quay / chụp</h6>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" id="modalTitle">Thêm công việc mới</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form id="jobForm">
           <input type="hidden" name="rowNumber" id="formRowNumber">
           <input type="hidden" name="chiTiet" id="formChiTiet">
           
-          <div class="row g-2 mb-2.5">
+          <div class="row g-2.5 mb-2.5">
             <div class="col-12 d-none mb-2" id="adminOwnerCodeGroup">
               <label class="form-label text-danger">🔑 Mã đăng nhập</label>
               <input type="text" class="form-control form-control-sm fw-bold text-uppercase" name="maDangNhap" id="formMaDangNhap">
             </div>
             <div class="col-12 mb-2">
               <label class="form-label">Ngày thực hiện</label>
-              <input type="date" class="form-control form-control-sm fw-semibold" name="ngay" id="formNgay" required>
+              <input type="date" class="form-control fw-semibold" name="ngay" id="formNgay" required>
             </div>
           </div>
 
-          <div class="row g-2 mb-2">
+          <div class="row g-2.5 mb-2.5">
             <div class="col-6">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <label class="form-label mb-0">Công việc</label>
-                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewJobTypeOption()">Thêm</a>
+                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewJobTypeOption()">+ Thêm</a>
               </div>
-              <select class="form-select form-select-sm" name="congViec" id="formCongViec" required></select>
+              <select class="form-select" name="congViec" id="formCongViec" required></select>
             </div>
             <div class="col-6">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <label class="form-label mb-0">Tình trạng</label>
-                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewStatusOption()">Thêm</a>
+                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewStatusOption()">+ Thêm</a>
               </div>
-              <select class="form-select form-select-sm" name="tinhTrang" id="formTinhTrang" required></select>
+              <select class="form-select" name="tinhTrang" id="formTinhTrang" required></select>
             </div>
           </div>
 
-          <div class="row g-2 mb-2">
+          <div class="row g-2.5 mb-2.5">
             <div class="col-6">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <label class="form-label mb-0">Khách hàng</label>
-                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewCustomerOption()">Thêm</a>
+                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewCustomerOption()">+ Thêm</a>
               </div>
-              <select class="form-select form-select-sm" name="khachHang" id="formKhachHang" required></select>
+              <select class="form-select" name="khachHang" id="formKhachHang" required></select>
             </div>
             <div class="col-6">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <label class="form-label mb-0">Người thực hiện</label>
-                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewExecutorOption()">Thêm</a>
+                <a href="javascript:void(0)" class="btn-quick-add" onclick="addNewExecutorOption()">+ Thêm</a>
               </div>
-              <select class="form-select form-select-sm" name="nguoiThucHien" id="formNguoiThucHien" required></select>
+              <select class="form-select" name="nguoiThucHien" id="formNguoiThucHien" required></select>
             </div>
           </div>
           
-          <div class="row g-2 mb-2">
+          <div class="row g-2.5 mb-2.5">
             <div class="col-4">
               <label class="form-label">Thời gian</label>
-              <input type="text" class="form-control form-control-sm" id="formThoiGian">
+              <input type="text" class="form-control" id="formThoiGian">
             </div>
             <div class="col-8">
               <label class="form-label">Địa chỉ</label>
-              <div class="input-group input-group-sm">
+              <div class="input-group">
                 <input type="text" class="form-control" id="formDiaChi">
-                <button class="btn btn-outline-primary" type="button" onclick="generateMapLinkFromDetail(this)" title="Tạo link Google Maps rút gọn từ địa chỉ">Tạo map</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="generateMapLinkFromDetail(this)" title="Tạo link Google Maps rút gọn từ địa chỉ">Tạo map</button>
               </div>
             </div>
           </div>
           
-          <div class="mb-2">
+          <div class="mb-2.5">
             <label class="form-label text-success">Link Google Maps</label>
-            <div class="input-group input-group-sm">
+            <div class="input-group">
               <input type="text" class="form-control" name="mapLink" id="formMapLink">
-              <button class="btn btn-outline-primary" type="button" onclick="fixMapLinkInput(this)" title="Chuẩn hóa về link rút gọn">Fix maps</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="fixMapLinkInput(this)" title="Chuẩn hóa về link rút gọn">Fix maps</button>
               <button class="btn btn-outline-success" type="button" onclick="fetchAddressFromMap(this)" title="Trích xuất địa chỉ tự động vào ô Địa chỉ">Lấy địa chỉ</button>
             </div>
           </div>
 
-          <div class="row g-2 pt-1">
+          <div class="row g-2.5 pt-1">
             <div class="col-4">
               <label class="form-label">Giá trị</label>
-              <input type="text" inputmode="numeric" class="form-control form-control-sm fw-semibold text-primary" name="giaTri" id="formGiaTri" oninput="handleMoneyInput(this, 'chipsGiaTri')" onblur="formatMoneyBlur(this)">
+              <input type="text" inputmode="numeric" class="form-control fw-semibold text-primary" name="giaTri" id="formGiaTri" oninput="handleMoneyInput(this, 'chipsGiaTri')" onblur="formatMoneyBlur(this)">
               <div id="chipsGiaTri" class="money-quick-chips"></div>
             </div>
             <div class="col-4">
               <label class="form-label">Đã cọc</label>
-              <input type="text" inputmode="numeric" class="form-control form-control-sm" name="daCoc" id="formDaCoc" oninput="handleMoneyInput(this, 'chipsDaCoc')" onblur="formatMoneyBlur(this)">
+              <input type="text" inputmode="numeric" class="form-control" name="daCoc" id="formDaCoc" oninput="handleMoneyInput(this, 'chipsDaCoc')" onblur="formatMoneyBlur(this)">
               <div id="chipsDaCoc" class="money-quick-chips"></div>
             </div>
             <div class="col-4">
               <label class="form-label">Chi phí</label>
-              <input type="text" inputmode="numeric" class="form-control form-control-sm" name="chiPhi" id="formChiPhi" oninput="handleMoneyInput(this, 'chipsChiPhi')" onblur="formatMoneyBlur(this)">
+              <input type="text" inputmode="numeric" class="form-control" name="chiPhi" id="formChiPhi" oninput="handleMoneyInput(this, 'chipsChiPhi')" onblur="formatMoneyBlur(this)">
               <div id="chipsChiPhi" class="money-quick-chips"></div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-outline-danger btn-sm px-3 fw-semibold d-none" id="btnDeleteInModal" style="border-radius: 8px;" onclick="confirmDeleteFromModal()">Xóa Job</button>
+        <button type="button" class="btn btn-outline-danger btn-sm px-3 fw-semibold d-none" id="btnDeleteInModal" onclick="confirmDeleteFromModal()">🗑️ Xóa công việc</button>
         <div class="d-flex gap-2 ms-auto">
-          <button type="button" class="btn btn-light border btn-sm px-3 fw-semibold" style="border-radius: 8px;" data-bs-dismiss="modal">Đóng</button>
-          <button type="button" class="btn btn-sm px-4 fw-bold text-white" id="btnSave" style="background-color: #7b1113; border-radius: 8px;" onclick="submitJob()">Lưu</button>
+          <button type="button" class="btn btn-light border btn-sm px-3 fw-semibold" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-sm px-4 fw-bold text-white" id="btnSave" style="background-color: #7b1113;" onclick="submitJob()">Lưu công việc</button>
         </div>
       </div>
     </div>
@@ -2069,7 +2199,7 @@
             <div class="p-3 rounded bg-light border">
               <div class="small text-muted mb-1">Tổng Doanh Thu (Giá trị)</div>
               <div class="fs-5 fw-bold text-primary" id="repTotalRevenue">0 đ</div>
-              <small class="text-muted" id="repTotalJobCount">0 job</small>
+              <small class="text-muted" id="repTotalJobCount">0 công việc</small>
             </div>
           </div>
           <div class="col-6 col-md-3">
@@ -2121,7 +2251,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPcxZjYNE8OE2YKkZnaIAEAHYvBmhtd3pGavRRVwV3mtv-E7nHhtrwGAJlyCj5iW6BQw/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxchZqRFj_K0lSud4_JTvpqGyRGWJ2ulAWoiBlZc0x8jKfpd9ZxIxmKnmMHPVpD_lmK6Q/exec";
 
   let currentAuthCode = "";
   let isAdminAccount = false;
@@ -2239,7 +2369,7 @@
 
   let tableColumns = [
     { id: 'checkbox', label: '<input type="checkbox" id="selectAllJobs" class="form-check-input mt-0" onclick="toggleSelectAllJobs(this)" title="Chọn tất cả">', removable: false, visible: true, width: '40px' },
-    { id: 'thu', label: 'Thứ', removable: true, visible: true, width: '60px' },
+    { id: 'thu', label: 'Thứ', removable: true, visible: false, width: '60px' },
     { id: 'ngay', label: 'Ngày', removable: false, visible: true, width: '100px' },
     { id: 'congViec', label: 'Công việc', removable: false, visible: true },
     { id: 'thoiGian', label: 'Thời gian', removable: true, visible: true, width: '95px' },
@@ -2257,7 +2387,7 @@
   function loadTableColumnSettings() {
     try {
       const savedOrder = localStorage.getItem('pref_table_col_order');
-      const savedVis = localStorage.getItem('pref_table_col_vis');
+      const savedVis = localStorage.getItem('pref_table_col_vis_v2');
       if (savedOrder) {
         const orderIds = JSON.parse(savedOrder);
         let reordered = [];
@@ -2289,7 +2419,7 @@
       tableColumns.forEach(c => {
         if (c.removable) visMap[c.id] = c.visible;
       });
-      localStorage.setItem('pref_table_col_vis', JSON.stringify(visMap));
+      localStorage.setItem('pref_table_col_vis_v2', JSON.stringify(visMap));
     } catch (e) {}
   }
 
@@ -2746,8 +2876,8 @@
   function copyJobInfoZalo(btnEl) {
     const ta = document.getElementById('infoPopupZaloText');
     navigator.clipboard.writeText(ta.value).then(() => {
-      animateCopyButton(btnEl, '📤 Gửi');
-      showToast('Đã copy thông tin Job');
+      animateCopyButton(btnEl, '📤 Gửi Zalo');
+      showToast('Đã copy thông tin công việc');
     });
   }
 
@@ -2950,6 +3080,22 @@
         allJobs = (res && res.jobs) ? res.jobs : [];
         isAdminAccount = Boolean(res && res.isAdmin);
 
+        // Tự động chuyển trạng thái từ "Chờ" sang "Chưa TT" khi đã qua ngày mới
+        const todayStartTs = parseDateTimestamp(getTodayFormatted());
+        const overdueWaitRows = [];
+        allJobs.forEach(j => {
+          if (j.tinhTrang === 'Chờ' && j.ngay) {
+            const jobTs = parseDateTimestamp(j.ngay);
+            if (jobTs > 0 && jobTs < todayStartTs) {
+              j.tinhTrang = 'Chưa TT';
+              if (j.rowNumber) overdueWaitRows.push(j.rowNumber);
+            }
+          }
+        });
+        if (overdueWaitRows.length > 0 && typeof google !== 'undefined' && google.script) {
+          google.script.run.batchUpdateStatus(overdueWaitRows, 'Chưa TT');
+        }
+
         document.getElementById('loginOverlay').classList.add('d-none');
         document.getElementById('sidebarUserBox').classList.remove('d-none');
         document.getElementById('sidebarCodeDisplay').innerText = currentAuthCode;
@@ -2960,8 +3106,7 @@
         roleBadge.className = isAdminAccount ? 'badge bg-danger' : 'badge bg-secondary';
 
         document.getElementById('adminOwnerCodeGroup').classList.toggle('d-none', !isAdminAccount);
-        const colMaDN = tableColumns.find(c => c.id === 'maDangNhap');
-        if (colMaDN) colMaDN.visible = isAdminAccount;
+        // Mặc định ẩn cột Mã ĐN (người dùng có thể bật trong Cột hiển thị nếu cần)
         
         if (res && res.categories) {
           if (Array.isArray(res.categories.jobTypes)) jobTypes = res.categories.jobTypes;
@@ -3129,7 +3274,7 @@
           <div class="empty-state-desc">${isFiltering ? 'Không có dâu rể hoặc studio nào khớp với từ khóa tìm kiếm của bạn.' : 'Chưa có công việc quay chụp nào được lên lịch trong ngày này.'}</div>
           ${isFiltering
             ? `<button type="button" class="btn btn-outline-secondary btn-sm px-3 fw-semibold" style="border-radius:8px; font-size:12px;" onclick="document.getElementById('filterCustomerInput').value=''; renderSelectedDayJobs();">Xóa tìm kiếm</button>`
-            : `<button type="button" class="empty-state-btn" onclick="openAddModal()">+ Thêm job cho ngày này</button>`
+            : `<button type="button" class="empty-state-btn" onclick="openAddModal()">+ Thêm công việc cho ngày này</button>`
           }
         </div>`;
       return;
@@ -3243,7 +3388,7 @@
   }
 
   function addNewStatusOption() {
-    showPromptDialog("Nhập tình trạng Job mới:", "", (newName) => {
+    showPromptDialog("Nhập tình trạng công việc mới:", "", (newName) => {
       if (newName && newName.trim() !== "") {
         const cleanName = newName.trim();
         if (!statusList.includes(cleanName)) statusList.push(cleanName);
@@ -3523,11 +3668,11 @@
     
     let html = '';
     list.forEach((item, idx) => {
-      html += `<div class="d-flex justify-content-between align-items-center bg-white border rounded p-2 mb-1">
-        <span class="fw-semibold">${item}</span>
-        <div>
-          <button class="btn btn-outline-primary btn-sm py-0 px-2 me-1" style="font-size:11px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
-          ${list.length > 1 ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>` : ''}
+      html += `<div class="catalog-item-row">
+        <span class="fw-semibold text-dark" style="font-size: 13.5px;">${item}</span>
+        <div class="d-flex gap-1.5">
+          <button class="btn btn-outline-secondary btn-sm py-1 px-2.5" style="font-size:11.5px; border-radius: 7px;" onclick="renameCatalogItem('${catKey}', ${idx})">Sửa</button>
+          ${list.length > 1 ? `<button class="btn btn-outline-danger btn-sm py-1 px-2.5" style="font-size:11.5px; border-radius: 7px;" onclick="deleteCatalogItem('${catKey}', ${idx})">Xóa</button>` : ''}
         </div>
       </div>`;
     });
@@ -3682,7 +3827,7 @@
         updateHeaderStats();
         renderSelectedDayJobs();
         renderMasterTable();
-        showToast(`Đã đổi Người thực hiện thành "${newExecutor}"` + (targetRows.length > 1 ? ` (${targetRows.length} job)` : ''));
+        showToast(`Đã đổi Người thực hiện thành "${newExecutor}"` + (targetRows.length > 1 ? ` (${targetRows.length} công việc)` : ''));
       })
       .withFailureHandler(function() {
         showToast("Lỗi cập nhật người thực hiện", true);
@@ -3704,7 +3849,7 @@
         updateHeaderStats();
         renderSelectedDayJobs();
         renderMasterTable();
-        showToast(`Đã chuyển sang "${chosenStatus}"` + (targetRows.length > 1 ? ` (${targetRows.length} job)` : ''));
+        showToast(`Đã chuyển sang "${chosenStatus}"` + (targetRows.length > 1 ? ` (${targetRows.length} công việc)` : ''));
       })
       .withFailureHandler(function() {
         showToast("Lỗi cập nhật tình trạng", true);
@@ -3725,7 +3870,7 @@
       .withSuccessHandler(function(res) {
         allJobs = res.jobs || [];
         renderMasterTable();
-        showToast((checkboxEl.checked ? 'Đã thanh toán chi phí' : 'Đã bỏ tích chi phí') + (targetRows.length > 1 ? ` (${targetRows.length} job)` : ''));
+        showToast((checkboxEl.checked ? 'Đã thanh toán chi phí' : 'Đã bỏ tích chi phí') + (targetRows.length > 1 ? ` (${targetRows.length} công việc)` : ''));
       })
       .withFailureHandler(function(err) {
         showToast("Lỗi cập nhật chi phí", true);
@@ -4143,7 +4288,7 @@
             <div class="empty-state-desc">Không tìm thấy lịch làm việc nào khớp với bộ lọc hiện tại hoặc danh sách tháng này đang trống.</div>
             ${(hasAnyFilter || onlyEmptyDays || hideCompleted)
               ? `<button type="button" class="btn btn-outline-secondary btn-sm px-3 fw-semibold" style="border-radius:8px; font-size:12px;" onclick="clearAllFilters(); resetQuickFilters(event);">Đặt lại toàn bộ bộ lọc</button>`
-              : `<button type="button" class="empty-state-btn" onclick="openAddModal()">+ Thêm job mới ngay</button>`
+              : `<button type="button" class="empty-state-btn" onclick="openAddModal()">+ Thêm công việc mới ngay</button>`
             }
           </div>
         </td>
@@ -4212,7 +4357,7 @@
 
               <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
                 <div class="d-flex align-items-center flex-wrap gap-1.5">
-                  <span class="job-badge" onclick="openJobInfoPopup(${j.rowNumber})">${j.congViec || 'Job'}</span>
+                  <span class="job-badge" onclick="openJobInfoPopup(${j.rowNumber})">${j.congViec || 'Công việc'}</span>
                   <span class="customer-badge ${isCustFiltered ? 'active-filter' : ''}" onclick="toggleCustomerFilter('${safeCust}')">${j.khachHang || 'Khách lẻ'}</span>
                 </div>
                 <div class="dropdown">
@@ -4255,12 +4400,12 @@
     }
 
     document.getElementById('tableStatusHint').innerText = isFilteringSpecific 
-      ? `Đang lọc theo tiêu chí (${filteredJobCount} job hiển thị)` 
-      : `Hiển thị ${displayItems.length} dòng (${filteredJobCount} job có lịch)`;
+      ? `Đang lọc theo tiêu chí (${filteredJobCount} công việc hiển thị)` 
+      : `Hiển thị ${displayItems.length} dòng (${filteredJobCount} công việc có lịch)`;
 
     document.getElementById('reportSubtitleModal').innerText = selectedExecutor ? `(Nhân sự: ${selectedExecutor})` : '';
     document.getElementById('repTotalRevenue').innerText = sumGiaTri.toLocaleString('vi-VN') + ' đ';
-    document.getElementById('repTotalJobCount').innerText = `${filteredJobCount} job`;
+    document.getElementById('repTotalJobCount').innerText = `${filteredJobCount} công việc`;
     document.getElementById('repTotalCost').innerText = sumChiPhi.toLocaleString('vi-VN') + ' đ';
     document.getElementById('repTotalProfit').innerText = sumLoiNhuan.toLocaleString('vi-VN') + ' đ';
     document.getElementById('repTotalUnpaid').innerText = sumChuaTT.toLocaleString('vi-VN') + ' đ';
@@ -4282,7 +4427,7 @@
     document.getElementById('chipsGiaTri').innerHTML = '';
     document.getElementById('chipsDaCoc').innerHTML = '';
     document.getElementById('chipsChiPhi').innerHTML = '';
-    document.getElementById('modalTitle').innerText = 'Thêm lịch quay / chụp mới';
+    document.getElementById('modalTitle').innerText = 'Thêm công việc mới';
     const delBtn = document.getElementById('btnDeleteInModal');
     if (delBtn) delBtn.classList.add('d-none');
     populateModalDropdowns("", "", "Lê Tân", "Chờ");
@@ -4313,7 +4458,7 @@
 
     populateModalDropdowns(j.congViec || "", j.khachHang || "", j.nguoiThucHien || "Lê Tân", j.tinhTrang || "Chờ");
 
-    document.getElementById('modalTitle').innerText = `Sửa Job ngày ${j.ngay}`;
+    document.getElementById('modalTitle').innerText = `Sửa công việc ngày ${j.ngay}`;
     const delBtn = document.getElementById('btnDeleteInModal');
     if (delBtn) delBtn.classList.remove('d-none');
     jobModalInstance.show();
@@ -4338,13 +4483,13 @@
         updateHeaderStats();
         renderSelectedDayJobs();
         renderMasterTable();
-        btn.disabled = false; btn.innerText = 'Lưu';
+        btn.disabled = false; btn.innerText = 'Lưu công việc';
         jobModalInstance.hide();
         showToast('Đã lưu lịch thành công');
       })
       .withFailureHandler(function(err) {
         showToast('Lỗi khi lưu: ' + err.message, true);
-        btn.disabled = false; btn.innerText = 'Lưu';
+        btn.disabled = false; btn.innerText = 'Lưu công việc';
       })
       .saveJobData(formData);
   }
@@ -4452,12 +4597,12 @@
     let opts = `<option value="">-- Chọn khách hàng (${filtered.length}) --</option>`;
     filtered.forEach(item => {
       const isSelected = (item.name.toLowerCase() === String(previousSelected).toLowerCase());
-      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} job chưa TT)</option>`;
+      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} công việc chưa TT)</option>`;
     });
 
     if (keyword && filtered.length === 1) {
       opts = `<option value="">-- Chọn khách hàng (1) --</option>` +
-             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} job chưa TT)</option>`;
+             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} công việc chưa TT)</option>`;
     }
 
     selectEl.innerHTML = opts;
@@ -4476,12 +4621,12 @@
     let opts = `<option value="">-- Chọn nhân sự (${filtered.length}) --</option>`;
     filtered.forEach(item => {
       const isSelected = (item.name.toLowerCase() === String(previousSelected).toLowerCase());
-      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} job chưa trả)</option>`;
+      opts += `<option value="${item.name}" ${isSelected ? 'selected' : ''}>${item.name} (${item.count} công việc chưa trả)</option>`;
     });
 
     if (keyword && filtered.length === 1) {
       opts = `<option value="">-- Chọn nhân sự (1) --</option>` +
-             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} job chưa trả)</option>`;
+             `<option value="${filtered[0].name}" selected>${filtered[0].name} (${filtered[0].count} công việc chưa trả)</option>`;
     }
 
     selectEl.innerHTML = opts;
@@ -4520,7 +4665,7 @@
     }).sort(compareJobsChronologically);
 
     if (unpaidJobs.length === 0) {
-      document.getElementById('qrStatementText').value = `Khách hàng "${cust}" không có job nào Chưa TT trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
+      document.getElementById('qrStatementText').value = `Khách hàng "${cust}" không có công việc nào Chưa TT trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
       return;
     }
 
@@ -4528,7 +4673,7 @@
     let totalDeposit = 0;
     let lines = [];
 
-    lines.push(`BẢNG KÊ TỔNG JOB - ${cust.toUpperCase()}${selectedMonth ? ' (Tháng ' + selectedMonth + ')' : ' (Tất cả tháng)'}`);
+    lines.push(`BẢNG KÊ TỔNG CÔNG VIỆC - ${cust.toUpperCase()}${selectedMonth ? ' (Tháng ' + selectedMonth + ')' : ' (Tất cả tháng)'}`);
     lines.push(`----------------------------`);
 
     unpaidJobs.forEach((j, i) => {
@@ -4552,7 +4697,7 @@
     let totalRemain = Math.max(0, totalValue - totalDeposit);
 
     lines.push(`----------------------------`);
-    lines.push(`Tổng giá trị (${unpaidJobs.length} job): ${totalValue.toLocaleString('vi-VN')} đ`);
+    lines.push(`Tổng giá trị (${unpaidJobs.length} công việc): ${totalValue.toLocaleString('vi-VN')} đ`);
     if (totalDeposit > 0) {
       lines.push(`Đã cọc: -${totalDeposit.toLocaleString('vi-VN')} đ`);
     }
@@ -4595,11 +4740,11 @@
       const cleanDetail = [parsed.thoiGian, parsed.diaChi].filter(Boolean).join(' - ');
       const detailStr = cleanDetail ? ` (${cleanDetail})` : '';
 
-      lines.push(`${i + 1}. Ngày ${j.ngay}: ${j.congViec || 'Job'}${detailStr} — ${sal.toLocaleString('vi-VN')} đ`);
+      lines.push(`${i + 1}. Ngày ${j.ngay}: ${j.congViec || 'Công việc'}${detailStr} — ${sal.toLocaleString('vi-VN')} đ`);
     });
 
     lines.push(`----------------------------`);
-    lines.push(`Tổng giá trị (${filteredJobs.length} job): ${totalSalary.toLocaleString('vi-VN')} đ`);
+    lines.push(`Tổng giá trị (${filteredJobs.length} công việc): ${totalSalary.toLocaleString('vi-VN')} đ`);
     lines.push(`-------------------------------------------`);
 
     document.getElementById('qrStatementText').value = lines.join('\n');
