@@ -71,6 +71,26 @@
   </script>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: { preflight: false },
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              600: '#991b1b',
+              700: '#7b1113',
+              800: '#5a0c0e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
       --sidebar-width: 250px;
@@ -1202,6 +1222,177 @@
       }
     }
 
+
+    /* === TAILWIND + LUCIDE MODERN UI UPGRADE & IFRAME OVERFLOW PROTECTION === */
+    html, body {
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+      background-color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .app-layout {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .lucide {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2.2;
+      vertical-align: -2px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* Modern Inputs & Selects with soft borders, generous padding, and clear focus ring */
+    .form-control, .form-select, .search-filter-box {
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      background-color: #ffffff;
+      color: #0f172a;
+      padding: 7px 12px;
+      font-size: 13px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .form-control:hover, .form-select:hover, .search-filter-box:hover {
+      border-color: #94a3b8 !important;
+    }
+
+    .form-control:focus, .form-select:focus, .search-filter-box:focus-within {
+      border-color: #7b1113 !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 0 0 3.5px rgba(123, 17, 19, 0.14) !important;
+      outline: none !important;
+    }
+
+    .search-filter-box {
+      padding: 0 8px 0 11px !important;
+      height: 36px !important;
+    }
+
+    #filterMonthTable {
+      height: 36px !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    /* Modern Buttons */
+    .btn {
+      border-radius: 10px !important;
+      font-weight: 600 !important;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3.5px rgba(123, 17, 19, 0.18) !important;
+      outline: none !important;
+    }
+
+    .btn-toolbar-modern {
+      height: 36px !important;
+      padding: 0 13px !important;
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      background: #ffffff !important;
+      color: #334155 !important;
+      font-size: 12.5px !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    }
+
+    .btn-toolbar-modern:hover {
+      background: #f8fafc !important;
+      border-color: #94a3b8 !important;
+      color: #0f172a !important;
+      transform: translateY(-1px);
+    }
+
+    /* Status Pills with distinct dot indicator & semantic colors */
+    .status-pill {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 4px 11px !important;
+      border-radius: 9999px !important;
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.01em;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .status-pill:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.97);
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+    }
+
+    .status-pill-wait {
+      background-color: #fef3c7 !important;
+      color: #92400e !important;
+      border-color: #fde68a !important;
+    }
+    .status-pill-wait .status-dot { background-color: #d97706; }
+
+    .status-pill-pending {
+      background-color: #e0f2fe !important;
+      color: #075985 !important;
+      border-color: #bae6fd !important;
+    }
+    .status-pill-pending .status-dot { background-color: #0284c7; }
+
+    .status-pill-unpaid {
+      background-color: #ffe4e6 !important;
+      color: #9f1239 !important;
+      border-color: #fecdd3 !important;
+    }
+    .status-pill-unpaid .status-dot { background-color: #e11d48; }
+
+    .status-pill-paid {
+      background-color: #dcfce7 !important;
+      color: #166534 !important;
+      border-color: #bbf7d0 !important;
+    }
+    .status-pill-paid .status-dot { background-color: #16a34a; }
+
+    .status-pill-done {
+      background-color: #d1fae5 !important;
+      color: #065f46 !important;
+      border-color: #a7f3d0 !important;
+    }
+    .status-pill-done .status-dot { background-color: #059669; }
+
+    /* Modern Table Row Hover */
+    #masterTableContainer table tbody tr {
+      transition: background-color 0.14s ease, box-shadow 0.14s ease;
+    }
+    #masterTableContainer table tbody tr:hover td {
+      background-color: #f1f5f9 !important;
+    }
+
+    /* Toast & Modal refinement */
+    .modal-content {
+      border-radius: 18px !important;
+      border: 1px solid rgba(226, 232, 240, 0.8) !important;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+    }
+
   </style>
 </head>
 <body>
@@ -1340,10 +1531,8 @@
 
             <!-- Nút Cột hiển thị -->
             <div class="dropdown">
-              <button class="btn btn-sm dropdown-toggle bg-white fw-semibold shadow-sm d-flex align-items-center gap-1.5 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155; transition: all 0.2s;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
-                </svg>
+              <button class="btn btn-sm dropdown-toggle btn-toolbar-modern" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i data-lucide="columns-3"></i>
                 <span>Cột hiển thị</span>
               </button>
               <ul class="dropdown-menu column-visibility-dropdown shadow" id="columnVisibilityDropdown"></ul>
@@ -1351,10 +1540,8 @@
 
             <!-- Nút gộp 3 bộ lọc: Chỉ ngày trống, Thiếu giờ/địa chỉ, Ẩn job đã xong -->
             <div class="dropdown">
-              <button class="btn btn-sm dropdown-toggle bg-white fw-semibold shadow-sm d-flex align-items-center gap-1.5 px-3" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155; transition: all 0.2s;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                </svg>
+              <button class="btn btn-sm dropdown-toggle btn-toolbar-modern" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                <i data-lucide="sliders-horizontal"></i>
                 <span>Bộ lọc hiển thị</span>
                 <span id="quickFilterActiveBadge" class="badge rounded-pill d-none ms-1" style="background-color: #7b1113; font-size: 10px; padding: 2px 6px;">0</span>
               </button>
@@ -1385,7 +1572,7 @@
             </div>
           </div>
 
-          <button type="button" id="btnRefreshTable" class="btn btn-sm bg-white fw-semibold shadow-sm px-3 ms-auto btn-refresh-table" onclick="triggerRefresh(this)" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155;">
+          <button type="button" id="btnRefreshTable" class="btn btn-sm btn-toolbar-modern ms-auto btn-refresh-table px-3.5" onclick="triggerRefresh(this)">
             Làm mới
           </button>
         </div>
@@ -1425,31 +1612,31 @@
     </div>
 
     <button type="button" class="menu-action-item" id="btnPopupToggleTab" onclick="toggleTabFromPopup(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap" id="iconPopupToggleTab">💰</span>
+      <span class="menu-icon-wrap" id="iconPopupToggleTab"><i data-lucide="table-2"></i></span>
       <span id="labelPopupToggleTab">Quản lý & Danh sách</span>
     </button>
 
     <div class="menu-divider"></div>
 
     <button type="button" class="menu-action-item" onclick="openDebtQrModal(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap">📋</span>
+      <span class="menu-icon-wrap"><i data-lucide="receipt"></i></span>
       <span>Công nợ & Bảng kê lương</span>
     </button>
 
     <button type="button" class="menu-action-item" onclick="openReportModal(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap">📊</span>
+      <span class="menu-icon-wrap"><i data-lucide="bar-chart-3"></i></span>
       <span>Báo cáo tài chính</span>
     </button>
 
     <button type="button" class="menu-action-item" onclick="openManageCatalogsModal(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap">⚙️</span>
+      <span class="menu-icon-wrap"><i data-lucide="sliders"></i></span>
       <span>Quản lý danh mục</span>
     </button>
 
     <div class="menu-divider"></div>
 
     <button type="button" class="menu-action-item danger" onclick="logoutCode(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap">🔑</span>
+      <span class="menu-icon-wrap"><i data-lucide="key-round"></i></span>
       <span>Đổi mã truy cập</span>
     </button>
   </div>
@@ -2552,17 +2739,19 @@
       const navLich = document.getElementById('nav-lich');
       if (navLich) navLich.classList.add('active');
       document.getElementById('tabLich').classList.remove('d-none');
-      if (iconEl) iconEl.innerText = '💰';
+      if (iconEl) iconEl.innerHTML = '<i data-lucide="table-2"></i>';
       if (labelEl) labelEl.innerText = 'Quản lý & Danh sách';
       renderCalendar();
+      if (window.lucide) lucide.createIcons();
     } else if (tabKey === 'chitiet') {
       const navChitiet = document.getElementById('nav-chitiet');
       if (navChitiet) navChitiet.classList.add('active');
       document.getElementById('tabChitiet').classList.remove('d-none');
-      if (iconEl) iconEl.innerText = '📅';
+      if (iconEl) iconEl.innerHTML = '<i data-lucide="calendar-days"></i>';
       if (labelEl) labelEl.innerText = 'Lịch làm việc';
       renderColumnVisibilityMenu();
       renderMasterTable();
+      if (window.lucide) lucide.createIcons();
     }
   }
 
@@ -3707,18 +3896,21 @@
         if (j.tinhTrang && !statusOpts.includes(j.tinhTrang)) statusOpts.push(j.tinhTrang);
         let statusOptionsHtml = statusOpts.map(s => `<li><a class="dropdown-item ${j.tinhTrang === s ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="changeStatusValue(${j.rowNumber}, '${escapeJsQuotes(s)}')">${s}</a></li>`).join('');
 
-        let statusBgStyle = "background-color: #f1f5f9; color: #475569; border-color: #cbd5e1;";
-        if (j.tinhTrang === 'Chưa thực hiện') {
-          statusBgStyle = "background-color: #cfe2ff; color: #084298; border-color: #b6d4fe;";
+        let statusPillClass = "status-pill-wait";
+        if (j.tinhTrang === 'Chưa thực hiện' || j.tinhTrang === 'Pending') {
+          statusPillClass = "status-pill-pending";
         } else if (j.tinhTrang === 'Chưa TT') {
-          statusBgStyle = "background-color: #f8d7da; color: #842029; border-color: #f5c2c7;";
-        } else if (j.tinhTrang === 'Đã TT' || j.tinhTrang === 'Xong') {
-          statusBgStyle = "background-color: #d1e7dd; color: #0f5132; border-color: #badbcc;";
+          statusPillClass = "status-pill-unpaid";
+        } else if (j.tinhTrang === 'Đã TT') {
+          statusPillClass = "status-pill-paid";
+        } else if (j.tinhTrang === 'Xong') {
+          statusPillClass = "status-pill-done";
         }
 
-        let statusHtml = `<div class="dropdown d-inline-block w-100">
-          <button class="btn btn-sm dropdown-toggle job-badge w-100 fw-semibold py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="${statusBgStyle}">
-            ${j.tinhTrang}
+        let statusHtml = `<div class="dropdown d-inline-block">
+          <button class="dropdown-toggle status-pill ${statusPillClass}" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="status-dot"></span>
+            <span>${j.tinhTrang}</span>
           </button>
           <ul class="dropdown-menu shadow-sm py-1" style="font-size: 13px;">
             ${statusOptionsHtml}
@@ -4230,6 +4422,7 @@
     renderCalendar();
     updateHeaderStats();
     renderSelectedDayJobs();
+    if (window.lucide) lucide.createIcons();
 
     try {
       const savedCode = localStorage.getItem('letan_saved_auth_code');
