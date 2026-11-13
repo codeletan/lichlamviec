@@ -1788,6 +1788,51 @@
     return d;
   }
 
+  function parseDateTimestamp(ddmmyyyy) {
+    if (!ddmmyyyy || !ddmmyyyy.includes('/')) return 0;
+    const p = ddmmyyyy.split('/');
+    if (p.length !== 3) return 0;
+    return new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0])).getTime();
+  }
+
+  function parseTimeMinutes(chiTietStr) {
+    const parsed = splitJobDetail(chiTietStr);
+    const t = String(parsed.thoiGian || "").trim().toLowerCase();
+    if (!t) return 9999;
+
+    const match = t.match(/(\d{1,2})\s*(?:[hH:]\s*(\d{1,2})?)?/);
+    if (match) {
+      let hours = parseInt(match[1], 10);
+      let mins = match[2] ? parseInt(match[2], 10) : 0;
+      if ((t.includes('chiều') || t.includes('tối') || t.includes('pm')) && hours < 12) {
+        hours += 12;
+      }
+      if ((t.includes('sáng') || t.includes('am')) && hours === 12) {
+        hours = 0;
+      }
+      if (hours >= 0 && hours <= 24 && mins >= 0 && mins < 60) {
+        return hours * 60 + mins;
+      }
+    }
+
+    if (t.includes('sáng')) return 8 * 60;
+    if (t.includes('trưa')) return 11 * 60 + 30;
+    if (t.includes('chiều')) return 14 * 60;
+    if (t.includes('tối')) return 18 * 60 + 30;
+    if (t.includes('đêm')) return 22 * 60;
+    if (t.includes('cả ngày')) return 6 * 60;
+
+    return 9998;
+  }
+
+  function compareJobsChronologically(a, b) {
+    const dDiff = parseDateTimestamp(a.ngay) - parseDateTimestamp(b.ngay);
+    if (dDiff !== 0) return dDiff;
+    const tDiff = parseTimeMinutes(a.chiTiet) - parseTimeMinutes(b.chiTiet);
+    if (tDiff !== 0) return tDiff;
+    return (a.rowNumber || 0) - (b.rowNumber || 0);
+  }
+
   function buildZaloJobText(j, mapLinkToUse) {
     const parsed = splitJobDetail(j.chiTiet);
     const ngayFull = j.thu ? `${j.thu}, ${j.ngay}` : j.ngay;
@@ -2201,7 +2246,7 @@
       if (j.ngay !== formatted || (j.congViec.trim() === '' && j.khachHang.trim() === '')) return false;
       if (filterText && !j.khachHang.toLowerCase().includes(filterText) && !j.congViec.toLowerCase().includes(filterText)) return false;
       return true;
-    });
+    }).sort(compareJobsChronologically);
 
     document.getElementById('selectedDateSubCount').innerText = `${dayJobs.length} lịch làm việc`;
     const container = document.getElementById('selectedDayEventsContainer');
@@ -3056,12 +3101,10 @@
     displayItems.sort((a, b) => {
       const d1 = a.dateStr || (a.job ? a.job.ngay : '');
       const d2 = b.dateStr || (b.job ? b.job.ngay : '');
-      const parseD = (s) => {
-        if (!s || !s.includes('/')) return 0;
-        const p = s.split('/');
-        return new Date(`${p[2]}-${p[1].padStart(2, '0')}-${p[0]}`).getTime();
-      };
-      return parseD(d1) - parseD(d2);
+      const dDiff = parseDateTimestamp(d1) - parseDateTimestamp(d2);
+      if (dDiff !== 0) return dDiff;
+      if (a.job && b.job) return compareJobsChronologically(a.job, b.job);
+      return 0;
     });
 
     const tbody = document.getElementById('masterTableBody');
@@ -3467,7 +3510,7 @@
         if (p.length === 3 && `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
       }
       return true;
-    });
+    }).sort(compareJobsChronologically);
 
     if (unpaidJobs.length === 0) {
       document.getElementById('qrStatementText').value = `Khách hàng "${cust}" không có job nào Chưa TT trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
@@ -3523,7 +3566,7 @@
         if (p.length === 3 && `${p[1].padStart(2, '0')}/${p[2]}` !== selectedMonth) return false;
       }
       return true;
-    });
+    }).sort(compareJobsChronologically);
 
     if (filteredJobs.length === 0) {
       document.getElementById('qrStatementText').value = `Nhân sự "${execName}" không có khoản lương/chi phí nào chưa thanh toán trong ${selectedMonth ? 'Tháng ' + selectedMonth : 'tất cả các tháng'}.`;
