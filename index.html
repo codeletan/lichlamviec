@@ -439,7 +439,7 @@
     .app-toast.toast-warning { background: rgba(153, 27, 27, 0.94); }
 
     .top-header-bar {
-      padding-left: 52px;
+      padding-right: 52px;
       min-height: 42px;
       display: flex;
       align-items: center;
@@ -448,7 +448,7 @@
     .fixed-menu-wrapper {
       position: fixed;
       top: max(18px, env(safe-area-inset-top));
-      left: 20px;
+      right: 20px;
       z-index: 9999;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -507,7 +507,7 @@
     .fixed-dropdown-menu {
       position: absolute;
       top: calc(100% + 10px);
-      left: 0;
+      right: 0;
       width: 255px;
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -518,8 +518,30 @@
       visibility: hidden;
       pointer-events: none;
       transform: translateY(-8px) scale(0.96);
-      transform-origin: top left;
+      transform-origin: top right;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes pulseRefreshBtn {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+    .btn-refresh-table {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .btn-refresh-table:hover:not(:disabled) {
+      border-color: #7b1113 !important;
+      color: #7b1113 !important;
+      background-color: #fff1f2 !important;
+    }
+    .btn-refresh-table.is-loading {
+      pointer-events: none;
+      background-color: #7b1113 !important;
+      border-color: #7b1113 !important;
+      color: #ffffff !important;
+      animation: pulseRefreshBtn 1s ease-in-out infinite;
     }
     .fixed-menu-wrapper.active .fixed-dropdown-menu {
       opacity: 1;
@@ -635,8 +657,8 @@
       .sidebar-item.active { border-bottom-color: var(--primary-dark); }
       .main-content { padding: 15px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
       .calendar-day { height: 64px; min-height: 64px; max-height: 64px; padding: 3px 2px; }
-      .fixed-menu-wrapper { top: max(12px, env(safe-area-inset-top)); left: 15px; }
-      .top-header-bar { padding-left: 50px; min-height: 40px; }
+      .fixed-menu-wrapper { top: max(12px, env(safe-area-inset-top)); right: 15px; }
+      .top-header-bar { padding-right: 50px; min-height: 40px; }
     }
 
     /* Giao diện màn hình khóa Đăng nhập */
@@ -881,9 +903,6 @@
           <div class="page-subtitle">QUẢN LÝ CÔNG VIỆC & CÔNG NỢ</div>
           <div class="page-title mb-0">Danh sách công việc</div>
         </div>
-        <button class="btn btn-outline-dark btn-sm fw-semibold px-3" style="border-radius: 8px;" onclick="switchTab('lich')">
-          📅 Quay lại Lịch làm việc
-        </button>
       </div>
 
       <div class="card border-0 shadow-sm p-3 mb-3">
@@ -950,6 +969,10 @@
               </div>
             </div>
           </div>
+
+          <button type="button" id="btnRefreshTable" class="btn btn-sm bg-white fw-semibold shadow-sm px-3 ms-auto btn-refresh-table" onclick="triggerRefresh(this)" style="height: 31px; border-radius: 8px; font-size: 12.5px; border: 1px solid #cbd5e1; color: #334155;">
+            Làm mới
+          </button>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="font-size: 12px;">
@@ -973,7 +996,7 @@
   </main>
 </div>
 
-<!-- Nút Menu cố định góc trên bên trái -->
+<!-- Nút Menu cố định góc trên bên phải -->
 <div id="floatingMenuBubble" class="fixed-menu-wrapper">
   <button type="button" class="hamburger-menu-btn" id="assistiveBtn" onclick="toggleAssistiveMenu(event)" title="Mở menu điều hướng">
     <span class="hamburger-line"></span>
@@ -986,29 +1009,9 @@
       <span class="menu-auth-tag" id="menuAuthCodeBadge">USER</span>
     </div>
 
-    <button type="button" class="menu-action-item primary" onclick="openAddModal(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </span>
-      <span>Thêm Job mới</span>
-    </button>
-
     <button type="button" class="menu-action-item" id="btnPopupToggleTab" onclick="toggleTabFromPopup(); closeAssistiveMenu();">
       <span class="menu-icon-wrap" id="iconPopupToggleTab">💰</span>
       <span id="labelPopupToggleTab">Quản lý & Danh sách</span>
-    </button>
-
-    <button type="button" class="menu-action-item" onclick="bubbleJumpToday(); closeAssistiveMenu();">
-      <span class="menu-icon-wrap">🎯</span>
-      <span>Về ngày Hôm nay</span>
-    </button>
-
-    <button type="button" class="menu-action-item" onclick="triggerRefresh(this)">
-      <span class="menu-icon-wrap"><span id="refreshSpinnerIcon" style="display:inline-block;">🔄</span></span>
-      <span>Làm mới dữ liệu</span>
     </button>
 
     <div class="menu-divider"></div>
@@ -2098,10 +2101,20 @@
   }
 
   function triggerRefresh(btnEl) {
-    const icon = document.getElementById('refreshSpinnerIcon');
-    if (icon) icon.classList.add('spin-anim');
+    const btn = btnEl || document.getElementById('btnRefreshTable');
+    if (btn) {
+      btn.classList.add('is-loading');
+      btn.disabled = true;
+      btn.innerText = 'Đang tải...';
+    }
     loadData(function() {
-      if (icon) setTimeout(() => icon.classList.remove('spin-anim'), 500);
+      if (btn) {
+        setTimeout(() => {
+          btn.classList.remove('is-loading');
+          btn.disabled = false;
+          btn.innerText = 'Làm mới';
+        }, 300);
+      }
       closeAssistiveMenu();
       showToast('Đã đồng bộ dữ liệu');
     });
