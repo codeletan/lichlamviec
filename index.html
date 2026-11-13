@@ -438,140 +438,193 @@
     .app-toast.show { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
     .app-toast.toast-warning { background: rgba(153, 27, 27, 0.94); }
 
-    .assistive-wrapper {
+    .top-header-bar {
+      padding-left: 52px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+    }
+
+    .fixed-menu-wrapper {
       position: fixed;
-      left: calc(100vw - 72px);
-      top: 65vh;
+      top: max(18px, env(safe-area-inset-top));
+      left: 20px;
       z-index: 9999;
       user-select: none;
-      touch-action: none;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .assistive-touch-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: rgba(30, 30, 34, 0.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: grab;
-      opacity: 0.48;
-      transition: opacity 0.35s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
-    }
-    .assistive-wrapper:hover .assistive-touch-btn,
-    .assistive-wrapper.active .assistive-touch-btn,
-    .assistive-wrapper.dragging .assistive-touch-btn {
-      opacity: 1;
-      background: rgba(28, 28, 32, 0.88);
-    }
-    .assistive-wrapper.dragging .assistive-touch-btn {
-      cursor: grabbing;
-      transform: scale(1.08);
-    }
-
-    .at-circle-outer {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    .at-circle-mid {
-      width: 27px;
-      height: 27px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.42);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .at-circle-inner {
-      width: 19px;
-      height: 19px;
-      border-radius: 50%;
+    .hamburger-menu-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       background: #ffffff;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .assistive-menu {
-      position: absolute;
-      right: 66px;
-      top: 50%;
-      transform: translateY(-50%) scale(0.6);
-      transform-origin: right center;
-      background: rgba(28, 28, 32, 0.88);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 26px;
-      padding: 14px 12px;
-      display: grid;
-      grid-template-columns: repeat(3, 76px);
-      gap: 10px 6px;
-      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.38);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .assistive-wrapper.docked-left .assistive-menu {
-      right: auto;
-      left: 66px;
-      transform-origin: left center;
-    }
-    .assistive-wrapper.active .assistive-menu {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(-50%) scale(1);
-    }
-
-    .at-action-btn {
-      background: transparent;
-      border: none;
-      color: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 8px 4px;
-      border-radius: 14px;
+      gap: 5px;
       cursor: pointer;
-      transition: background 0.18s ease, transform 0.12s ease;
+      padding: 0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .at-action-btn:hover { background: rgba(255, 255, 255, 0.14); }
-    .at-action-btn:active { transform: scale(0.92); }
-    .at-icon-box {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
+    .hamburger-menu-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+    }
+    .fixed-menu-wrapper.active .hamburger-menu-btn {
+      background: #7b1113;
+      border-color: #7b1113;
+      box-shadow: 0 6px 18px rgba(123, 17, 19, 0.28);
+    }
+
+    .hamburger-line {
+      width: 18px;
+      height: 2px;
+      background-color: #1e293b;
+      border-radius: 2px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+    }
+    .fixed-menu-wrapper.active .hamburger-line {
+      background-color: #ffffff;
+    }
+    .fixed-menu-wrapper.active .hamburger-line:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .fixed-menu-wrapper.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    .fixed-menu-wrapper.active .hamburger-line:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .fixed-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: 255px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 18px 38px -6px rgba(15, 23, 42, 0.16), 0 8px 16px -6px rgba(15, 23, 42, 0.08);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-8px) scale(0.96);
+      transform-origin: top left;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fixed-menu-wrapper.active .fixed-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .menu-header-info {
+      padding: 8px 12px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .menu-brand-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #7b1113;
+    }
+    .menu-auth-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 6px 4px;
+    }
+
+    .menu-action-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .menu-action-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .menu-action-item:active {
+      transform: scale(0.985);
+    }
+
+    .menu-action-item.primary {
+      background: #7b1113;
+      color: #ffffff;
+      margin-bottom: 4px;
+      box-shadow: 0 4px 12px rgba(123, 17, 19, 0.22);
+    }
+    .menu-action-item.primary:hover {
+      background: #991b1b;
+      color: #ffffff;
+    }
+
+    .menu-action-item.danger {
+      color: #dc2626;
+    }
+    .menu-action-item.danger:hover {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .menu-icon-wrap {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #475569;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 19px;
+      flex-shrink: 0;
+      font-size: 14px;
+      transition: all 0.15s ease;
+    }
+    .menu-action-item:hover .menu-icon-wrap {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .menu-action-item.primary .menu-icon-wrap {
+      background: rgba(255, 255, 255, 0.18);
       color: #ffffff;
     }
-    .at-action-btn.primary .at-icon-box {
-      background: #991b1b;
-      color: #ffffff !important;
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
-      box-shadow: 0 0 14px rgba(220, 38, 38, 0.6);
-    }
-    .at-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: #f4f4f5;
-      white-space: nowrap;
-      letter-spacing: 0.2px;
+    .menu-action-item.danger .menu-icon-wrap {
+      background: #fee2e2;
+      color: #dc2626;
     }
 
     @media (max-width: 992px) {
@@ -582,6 +635,8 @@
       .sidebar-item.active { border-bottom-color: var(--primary-dark); }
       .main-content { padding: 15px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
       .calendar-day { height: 64px; min-height: 64px; max-height: 64px; padding: 3px 2px; }
+      .fixed-menu-wrapper { top: max(12px, env(safe-area-inset-top)); left: 15px; }
+      .top-header-bar { padding-left: 50px; min-height: 40px; }
     }
 
     /* Giao diện màn hình khóa Đăng nhập */
@@ -768,7 +823,7 @@
 
     <!-- TAB 1 -->
     <div id="tabLich">
-      <div class="mb-3">
+      <div class="mb-3 top-header-bar">
         <div class="page-title mb-0">Lịch của Lê Tân</div>
       </div>
 
@@ -821,7 +876,7 @@
 
     <!-- TAB 2 -->
     <div id="tabChitiet" class="d-none">
-      <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2 top-header-bar">
         <div>
           <div class="page-subtitle">QUẢN LÝ CÔNG VIỆC & CÔNG NỢ</div>
           <div class="page-title mb-0">Danh sách công việc</div>
@@ -918,52 +973,66 @@
   </main>
 </div>
 
-<!-- Nút AssistiveTouch phong cách iPhone -->
-<div id="floatingMenuBubble" class="assistive-wrapper">
-  <div class="assistive-touch-btn" id="assistiveBtn" title="Chạm để mở menu, giữ để kéo">
-    <div class="at-circle-outer">
-      <div class="at-circle-mid">
-        <div class="at-circle-inner"></div>
-      </div>
+<!-- Nút Menu cố định góc trên bên trái -->
+<div id="floatingMenuBubble" class="fixed-menu-wrapper">
+  <button type="button" class="hamburger-menu-btn" id="assistiveBtn" onclick="toggleAssistiveMenu(event)" title="Mở menu điều hướng">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <div class="fixed-dropdown-menu" id="assistiveMenu">
+    <div class="menu-header-info">
+      <span class="menu-brand-title">Lịch LETAN</span>
+      <span class="menu-auth-tag" id="menuAuthCodeBadge">USER</span>
     </div>
-  </div>
-  <div class="assistive-menu" id="assistiveMenu">
-    <button class="at-action-btn primary" onclick="openAddModal(); closeAssistiveMenu();">
-      <div class="at-icon-box">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+    <button type="button" class="menu-action-item primary" onclick="openAddModal(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-      </div>
-      <span class="at-label">Thêm Job</span>
+      </span>
+      <span>Thêm Job mới</span>
     </button>
-    <button class="at-action-btn" onclick="triggerRefresh(this)">
-      <div class="at-icon-box"><span id="refreshSpinnerIcon" style="display:inline-block;">🔄</span></div>
-      <span class="at-label">Làm mới</span>
+
+    <button type="button" class="menu-action-item" id="btnPopupToggleTab" onclick="toggleTabFromPopup(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap" id="iconPopupToggleTab">💰</span>
+      <span id="labelPopupToggleTab">Quản lý & Danh sách</span>
     </button>
-    <button class="at-action-btn" onclick="bubbleJumpToday(); closeAssistiveMenu();">
-      <div class="at-icon-box">🎯</div>
-      <span class="at-label">Hôm nay</span>
+
+    <button type="button" class="menu-action-item" onclick="bubbleJumpToday(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap">🎯</span>
+      <span>Về ngày Hôm nay</span>
     </button>
-    <button class="at-action-btn" onclick="openDebtQrModal(); closeAssistiveMenu();">
-      <div class="at-icon-box">📋</div>
-      <span class="at-label">Công nợ</span>
+
+    <button type="button" class="menu-action-item" onclick="triggerRefresh(this)">
+      <span class="menu-icon-wrap"><span id="refreshSpinnerIcon" style="display:inline-block;">🔄</span></span>
+      <span>Làm mới dữ liệu</span>
     </button>
-    <button class="at-action-btn" onclick="openReportModal(); closeAssistiveMenu();">
-      <div class="at-icon-box">📊</div>
-      <span class="at-label">Báo cáo</span>
+
+    <div class="menu-divider"></div>
+
+    <button type="button" class="menu-action-item" onclick="openDebtQrModal(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap">📋</span>
+      <span>Công nợ & Bảng kê lương</span>
     </button>
-    <button class="at-action-btn" onclick="openManageCatalogsModal(); closeAssistiveMenu();">
-      <div class="at-icon-box">⚙️</div>
-      <span class="at-label">QL Danh mục</span>
+
+    <button type="button" class="menu-action-item" onclick="openReportModal(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap">📊</span>
+      <span>Báo cáo tài chính</span>
     </button>
-    <button class="at-action-btn" id="btnPopupToggleTab" onclick="toggleTabFromPopup(); closeAssistiveMenu();">
-      <div class="at-icon-box" id="iconPopupToggleTab">💰</div>
-      <span class="at-label" id="labelPopupToggleTab">Quản lý</span>
+
+    <button type="button" class="menu-action-item" onclick="openManageCatalogsModal(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap">⚙️</span>
+      <span>Quản lý danh mục</span>
     </button>
-    <button class="at-action-btn" onclick="logoutCode(); closeAssistiveMenu();">
-      <div class="at-icon-box">🔑</div>
-      <span class="at-label">Đổi mã</span>
+
+    <div class="menu-divider"></div>
+
+    <button type="button" class="menu-action-item danger" onclick="logoutCode(); closeAssistiveMenu();">
+      <span class="menu-icon-wrap">🔑</span>
+      <span>Đổi mã truy cập</span>
     </button>
   </div>
 </div>
@@ -2056,14 +2125,14 @@
       if (navLich) navLich.classList.add('active');
       document.getElementById('tabLich').classList.remove('d-none');
       if (iconEl) iconEl.innerText = '💰';
-      if (labelEl) labelEl.innerText = 'Quản lý';
+      if (labelEl) labelEl.innerText = 'Quản lý & Danh sách';
       renderCalendar();
     } else if (tabKey === 'chitiet') {
       const navChitiet = document.getElementById('nav-chitiet');
       if (navChitiet) navChitiet.classList.add('active');
       document.getElementById('tabChitiet').classList.remove('d-none');
       if (iconEl) iconEl.innerText = '📅';
-      if (labelEl) labelEl.innerText = 'Lịch';
+      if (labelEl) labelEl.innerText = 'Lịch làm việc';
       renderColumnVisibilityMenu();
       renderMasterTable();
     }
@@ -2094,6 +2163,8 @@
         document.getElementById('loginOverlay').classList.add('d-none');
         document.getElementById('sidebarUserBox').classList.remove('d-none');
         document.getElementById('sidebarCodeDisplay').innerText = currentAuthCode;
+        const menuBadge = document.getElementById('menuAuthCodeBadge');
+        if (menuBadge) menuBadge.innerText = currentAuthCode;
         const roleBadge = document.getElementById('sidebarRoleBadge');
         roleBadge.innerText = isAdminAccount ? 'TOÀN QUYỀN (ADMIN)' : 'CÁ NHÂN';
         roleBadge.className = isAdminAccount ? 'badge bg-danger' : 'badge bg-secondary';
@@ -3607,116 +3678,19 @@
   }
 
   const bubble = document.getElementById('floatingMenuBubble');
-  const assistiveBtn = document.getElementById('assistiveBtn');
-  let isDragging = false;
-  let hasMoved = false;
-  let startX = 0, startY = 0;
-  let initialLeft = 0, initialTop = 0;
+
+  function toggleAssistiveMenu(e) {
+    if (e) e.stopPropagation();
+    bubble.classList.toggle('active');
+  }
 
   function closeAssistiveMenu() {
     bubble.classList.remove('active');
   }
 
-  function startAssistiveDrag(e) {
-    if (e.target.closest('.assistive-menu')) return;
-    isDragging = true;
-    hasMoved = false;
-
-    const point = e.touches ? e.touches[0] : e;
-    startX = point.clientX;
-    startY = point.clientY;
-
-    const rect = bubble.getBoundingClientRect();
-    initialLeft = rect.left;
-    initialTop = rect.top;
-
-    bubble.style.transition = 'none';
-    bubble.style.left = initialLeft + 'px';
-    bubble.style.top = initialTop + 'px';
-
-    document.addEventListener('mousemove', onAssistiveMove);
-    document.addEventListener('mouseup', endAssistiveDrag);
-    document.addEventListener('touchmove', onAssistiveMove, { passive: false });
-    document.addEventListener('touchend', endAssistiveDrag);
-  }
-
-  function onAssistiveMove(e) {
-    if (!isDragging) return;
-    const point = e.touches ? e.touches[0] : e;
-    const dx = point.clientX - startX;
-    const dy = point.clientY - startY;
-
-    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
-      if (!hasMoved) {
-        hasMoved = true;
-        bubble.classList.add('dragging');
-        bubble.classList.remove('active');
-      }
-    }
-
-    if (!hasMoved) return;
-    if (e.cancelable) e.preventDefault();
-
-    const btnSize = 56;
-    const maxX = window.innerWidth - btnSize - 6;
-    const maxY = window.innerHeight - btnSize - 6;
-
-    const newLeft = Math.max(6, Math.min(initialLeft + dx, maxX));
-    const newTop = Math.max(6, Math.min(initialTop + dy, maxY));
-
-    bubble.style.left = newLeft + 'px';
-    bubble.style.top = newTop + 'px';
-  }
-
-  function endAssistiveDrag() {
-    if (!isDragging) return;
-    isDragging = false;
-    bubble.classList.remove('dragging');
-
-    document.removeEventListener('mousemove', onAssistiveMove);
-    document.removeEventListener('mouseup', endAssistiveDrag);
-    document.removeEventListener('touchmove', onAssistiveMove);
-    document.removeEventListener('touchend', endAssistiveDrag);
-
-    if (!hasMoved) {
-      bubble.classList.toggle('active');
-      return;
-    }
-
-    const rect = bubble.getBoundingClientRect();
-    const btnSize = 56;
-    const margin = 12;
-    const centerX = rect.left + btnSize / 2;
-    const isLeftHalf = centerX < window.innerWidth / 2;
-    const targetLeft = isLeftHalf ? margin : (window.innerWidth - btnSize - margin);
-
-    if (isLeftHalf) {
-      bubble.classList.add('docked-left');
-    } else {
-      bubble.classList.remove('docked-left');
-    }
-
-    bubble.style.transition = 'left 0.32s cubic-bezier(0.22, 1, 0.36, 1), top 0.25s ease';
-    bubble.style.left = targetLeft + 'px';
-  }
-
-  assistiveBtn.addEventListener('mousedown', startAssistiveDrag);
-  assistiveBtn.addEventListener('touchstart', startAssistiveDrag, { passive: true });
-
   document.addEventListener('click', function(e) {
-    if (!bubble.contains(e.target)) {
+    if (bubble && !bubble.contains(e.target)) {
       bubble.classList.remove('active');
-    }
-  });
-
-  window.addEventListener('resize', function() {
-    const rect = bubble.getBoundingClientRect();
-    const btnSize = 56;
-    const margin = 12;
-    const isLeft = bubble.classList.contains('docked-left');
-    bubble.style.left = (isLeft ? margin : (window.innerWidth - btnSize - margin)) + 'px';
-    if (rect.top > window.innerHeight - btnSize - margin) {
-      bubble.style.top = (window.innerHeight - btnSize - margin) + 'px';
     }
   });
 
